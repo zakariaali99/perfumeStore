@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-gold-50: #fbf8f1;
+  --color-gold-100: #f5eedb;
+  --color-gold-200: #eadcb9;
+  --color-gold-300: #dbbf8c;
+  --color-gold-400: #c9a364;
+  --color-gold-500: #c5a572;
+  /* Main Gold */
+  --color-gold-600: #a9804b;
+  --color-gold-700: #8d663e;
+
+  --color-cream-50: #fdfbf7;
+  --color-cream-100: #f5f0e8;
+
+  /* Dark theme colors */
+  --color-dark-900: #0A0908;
+  --color-dark-800: #12100C;
+  --color-dark-700: #1A150D;
+  --color-dark-600: #2C2416;
+
+  --color-text-primary: #2C2416;
+  --color-text-secondary: #6B5D4D;
+
+  --font-tajawal: "Tajawal", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+}
+
+:root {
+  --bg-primary: #FDFBF7;
+  --bg-secondary: #ffffff;
+  --text-primary: #2C2416;
+  --text-secondary: #6B5D4D;
+  --border-color: #f5eedb;
+  --card-bg: #ffffff;
+  --input-bg: #fdfbf7;
+}
+
+.dark {
+  --bg-primary: #0A0908;
+  --bg-secondary: #12100C;
+  --text-primary: #FDFBF7;
+  --text-secondary: #A9804B;
+  --border-color: #2C2416;
+  --card-bg: #1A150D;
+  --input-bg: #12100C;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-tajawal);
+  direction: rtl;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode utility classes */
+.bg-card {
+  background-color: var(--card-bg);
+}
+
+.bg-input {
+  background-color: var(--input-bg);
+}
+
+.border-theme {
+  border-color: var(--border-color);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5a572;
+  border-radius: 10px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #12100C;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}

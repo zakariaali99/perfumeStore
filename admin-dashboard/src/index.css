@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+:root {
+  /* Admin Sidebar/Theme Colors */
+  --admin-primary: #2C2416;
+  --admin-accent: #D4AF37;
+}
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  direction: rtl;
+}

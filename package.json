@@ -1,0 +1,16 @@
+{
+  "name": "mostafa-store-monorepo",
+  "version": "1.0.0",
+  "description": "Luxury Perfume Store Monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\" \"npm:dev:admin\" -c \"blue,green,magenta\" --kill-others-on-fail",
+    "dev:backend": "cd backend && source venv/bin/activate && python manage.py runserver 0.0.0.0:8000",
+    "dev:frontend": "cd frontend && npm run dev -- --port 5173",
+    "dev:admin": "cd admin-dashboard && npm run dev -- --port 5174",
+    "install:all": "npm install && cd frontend && npm install && cd ../admin-dashboard && npm install && cd ../backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements/development.txt"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
