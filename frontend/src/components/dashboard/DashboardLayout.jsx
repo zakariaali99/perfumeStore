@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useThemeStore from '../../store/themeStore';
+import ErrorBoundary from '../common/ErrorBoundary';
 
 const SidebarLink = ({ to, icon: Icon, label, active, onClick }) => (
     <Link
@@ -51,6 +52,7 @@ const DashboardLayout = () => {
     const handleLogout = () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
         navigate('/');
     };
 
@@ -128,7 +130,9 @@ const DashboardLayout = () => {
 
                 {/* Page Content */}
                 <main className="p-6 md:p-10">
-                    <Outlet />
+                    <ErrorBoundary>
+                        <Outlet />
+                    </ErrorBoundary>
                 </main>
             </div>
 

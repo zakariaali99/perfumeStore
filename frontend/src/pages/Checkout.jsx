@@ -28,6 +28,51 @@ const Checkout = () => {
     const [orderSuccess, setOrderSuccess] = useState(null);
     const navigate = useNavigate();
 
+    const [formData, setFormData] = useState({
+        name: '',
+        phone: '',
+        email: '',
+        birth_day: '',
+        birth_month: '',
+        birth_year: '',
+        city: 'طرابلس',
+        area: '',
+        address: '',
+        location_details: '',
+        notes: ''
+    });
+
+    if (orderSuccess) {
+        return (
+            <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-40 pb-20 transition-colors duration-300">
+                <div className="container mx-auto px-4 text-center max-w-lg">
+                    <motion.div
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="w-24 h-24 bg-green-50 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mx-auto mb-8"
+                    >
+                        <CheckCircle2 size={48} />
+                    </motion.div>
+                    <h1 className="text-3xl font-black mb-4 text-text-primary dark:text-cream-50">شكراً لطلبك!</h1>
+                    <p className="text-text-secondary dark:text-gold-400 mb-2">تم استلام طلبك بنجاح وهو الآن قيد المراجعة.</p>
+                    <div className="bg-white dark:bg-dark-700 p-6 rounded-3xl border border-gold-100 dark:border-dark-600 my-8">
+                        <p className="text-sm text-text-secondary dark:text-gold-400 mb-1">رقم الطلب</p>
+                        <p className="text-2xl font-black text-gold-700 dark:text-gold-400 font-poppins">{orderSuccess.order_number}</p>
+                    </div>
+                    <p className="text-sm text-text-secondary dark:text-gold-400 mb-10 leading-relaxed">
+                        سيقوم فريقنا بالتواصل معك قريباً لتأكيد تفاصيل التوصيل. يمكنك تتبع حالة طلبك باستخدام الرقم أعلاه.
+                    </p>
+                    <button
+                        onClick={() => navigate('/')}
+                        className="bg-gold-500 text-white px-10 py-4 rounded-2xl font-bold hover:bg-gold-600 transition-all shadow-lg shadow-gold-500/20"
+                    >
+                        العودة للرئيسية
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     if (!cart.items || cart.items.length === 0) {
         return (
             <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-40 pb-20 transition-colors duration-300">
@@ -45,20 +90,6 @@ const Checkout = () => {
             </div>
         );
     }
-
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        email: '',
-        birth_day: '',
-        birth_month: '',
-        birth_year: '',
-        city: 'طرابلس',
-        area: '',
-        address: '',
-        location_details: '',
-        notes: ''
-    });
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -102,42 +133,22 @@ const Checkout = () => {
             toast.success('تم إرسال طلبك بنجاح');
             if (clearCart) clearCart();
         } catch (error) {
-            toast.error('حدث خطأ أثناء إتمام الطلب، يرجى المحاولة لاحقاً');
+            console.error('Order Error:', error);
+            let msg = 'حدث خطأ أثناء إتمام الطلب، يرجى المحاولة لاحقاً';
+            if (error.response?.data) {
+                if (error.response.data.error) {
+                    msg = error.response.data.error;
+                } else if (typeof error.response.data === 'object') {
+                    // Collect all validation errors
+                    const errors = Object.values(error.response.data).flat();
+                    if (errors.length > 0) msg = errors.join('. ');
+                }
+            }
+            toast.error(msg);
         } finally {
             setIsSubmitting(false);
         }
     };
-
-    if (orderSuccess) {
-        return (
-            <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-40 pb-20 transition-colors duration-300">
-                <div className="container mx-auto px-4 text-center max-w-lg">
-                    <motion.div
-                        initial={{ scale: 0.5, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="w-24 h-24 bg-green-50 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mx-auto mb-8"
-                    >
-                        <CheckCircle2 size={48} />
-                    </motion.div>
-                    <h1 className="text-3xl font-black mb-4 text-text-primary dark:text-cream-50">شكراً لطلبك!</h1>
-                    <p className="text-text-secondary dark:text-gold-400 mb-2">تم استلام طلبك بنجاح وهو الآن قيد المراجعة.</p>
-                    <div className="bg-white dark:bg-dark-700 p-6 rounded-3xl border border-gold-100 dark:border-dark-600 my-8">
-                        <p className="text-sm text-text-secondary dark:text-gold-400 mb-1">رقم الطلب</p>
-                        <p className="text-2xl font-black text-gold-700 dark:text-gold-400 font-poppins">{orderSuccess.order_number}</p>
-                    </div>
-                    <p className="text-sm text-text-secondary dark:text-gold-400 mb-10 leading-relaxed">
-                        سيقوم فريقنا بالتواصل معك قريباً لتأكيد تفاصيل التوصيل. يمكنك تتبع حالة طلبك باستخدام الرقم أعلاه.
-                    </p>
-                    <button
-                        onClick={() => navigate('/')}
-                        className="bg-gold-500 text-white px-10 py-4 rounded-2xl font-bold hover:bg-gold-600 transition-all shadow-lg shadow-gold-500/20"
-                    >
-                        العودة للرئيسية
-                    </button>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-24 pb-20 transition-colors duration-300">

@@ -19,13 +19,19 @@ class Category(models.Model):
 
 class Brand(models.Model):
     name_ar = models.CharField(max_length=100, verbose_name="الاسم بالعربية")
-    logo = models.ImageField(upload_to='brands/', verbose_name="الشعار")
+    slug = models.SlugField(unique=True, allow_unicode=True, blank=True)
+    logo = models.ImageField(upload_to='brands/', blank=True, verbose_name="الشعار")
     description = models.TextField(blank=True, verbose_name="الوصف")
     is_active = models.BooleanField(default=True, verbose_name="نشط")
 
     class Meta:
         verbose_name = "الماركة"
         verbose_name_plural = "الماركات"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name_ar, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name_ar
@@ -43,7 +49,7 @@ class FragranceFamily(models.Model):
         return self.name_ar
 
 class Product(models.Model):
-    GENDER_CHOICES = [('M', 'رجالي'), ('F', 'نسائي'), ('U', 'للجنسين')]
+    GENDER_CHOICES = [('men', 'رجالي'), ('women', 'نسائي'), ('unisex', 'للجنسين')]
     CONCENTRATION = [
         ('EDT', 'Eau de Toilette'),
         ('EDP', 'Eau de Parfum'),
@@ -52,14 +58,14 @@ class Product(models.Model):
     
     name_ar = models.CharField(max_length=200, verbose_name="الاسم بالعربية")
     slug = models.SlugField(unique=True, allow_unicode=True)
-    description = models.TextField(verbose_name="الوصف")
-    story = models.TextField(help_text="القصة العطرية", verbose_name="القصة العطرية")
+    description = models.TextField(blank=True, default='', verbose_name="الوصف")
+    story = models.TextField(blank=True, default='', help_text="القصة العطرية", verbose_name="القصة العطرية")
     
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="الفئة")
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name="الماركة")
-    fragrance_families = models.ManyToManyField(FragranceFamily, verbose_name="العائلات العطرية")
+    fragrance_families = models.ManyToManyField(FragranceFamily, blank=True, verbose_name="العائلات العطرية")
     
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="الجنس")
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, verbose_name="الجنس")
     concentration = models.CharField(max_length=3, choices=CONCENTRATION, verbose_name="التركيز")
     
     main_image = models.ImageField(upload_to='products/', verbose_name="الصورة الرئيسية")
@@ -89,7 +95,7 @@ class ProductVariant(models.Model):
     size_ml = models.PositiveIntegerField(verbose_name="الحجم (مل)")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="السعر الأصلي")
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="سعر العرض")
-    cost_price = models.DecimalField(max_digits=10, decimal_places=2, help_text="للتقارير الداخلية", verbose_name="سعر التكلفة")
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="للتقارير الداخلية", verbose_name="سعر التكلفة")
     
     stock_quantity = models.PositiveIntegerField(default=0, verbose_name="الكمية في المخزن")
     low_stock_threshold = models.PositiveIntegerField(default=5, verbose_name="حد المخزون المنخفض")
@@ -110,6 +116,13 @@ class ProductVariant(models.Model):
     @property
     def current_price(self):
         return self.sale_price if self.sale_price else self.price
+
+    @property
+    def discount_percentage(self):
+        if self.sale_price and self.price > 0:
+            discount = ((self.price - self.sale_price) / self.price) * 100
+            return int(discount)
+        return 0
 
 class ProductNote(models.Model):
     NOTE_TYPES = [('top', 'افتتاحية'), ('heart', 'قلب'), ('base', 'قاعدية')]

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cmsApi } from '../../services/api';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
@@ -22,14 +22,23 @@ const Hero = () => {
         fetchSlides();
     }, []);
 
-    const next = () => setCurrent((current + 1) % slides.length);
-    const prev = () => setCurrent((current - 1 + slides.length) % slides.length);
+    const next = useCallback(() => {
+        if (slides.length > 0) {
+            setCurrent((prev) => (prev + 1) % slides.length);
+        }
+    }, [slides.length]);
+
+    const prev = useCallback(() => {
+        if (slides.length > 0) {
+            setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+        }
+    }, [slides.length]);
 
     useEffect(() => {
         if (slides.length < 2) return;
         const timer = setInterval(next, 7000);
         return () => clearInterval(timer);
-    }, [slides, current]);
+    }, [slides.length, next]);
 
     if (loading || slides.length === 0) return (
         <section className="relative h-[85vh] bg-cream-50 dark:bg-dark-800 animate-pulse flex items-center justify-center">

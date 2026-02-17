@@ -10,7 +10,7 @@ const ProductCard = ({ product }) => {
         >
             <Link to={`/product/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden">
                 <img
-                    src={product.main_image || 'https://via.placeholder.com/400x500'}
+                    src={product.main_image || 'https://placehold.co/400x500/F4F1EA/D4AF37?text=Perfume'}
                     alt={product.name_ar}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
@@ -28,10 +28,13 @@ const ProductCard = ({ product }) => {
                     <span className="text-xl font-bold text-gold-700 dark:text-gold-400 font-poppins">{product.min_price} د.ل</span>
                 </div>
 
-                <button className="w-full py-3 bg-cream-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white text-gold-600 dark:text-gold-400 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse border border-gold-100 dark:border-dark-600">
+                <Link
+                    to={`/product/${product.slug}`}
+                    className="w-full py-3 bg-cream-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white text-gold-600 dark:text-gold-400 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse border border-gold-100 dark:border-dark-600"
+                >
                     <ShoppingCart size={18} />
-                    <span>إضافة للسلة</span>
-                </button>
+                    <span>عرض التفاصيل</span>
+                </Link>
             </div>
         </motion.div>
     );

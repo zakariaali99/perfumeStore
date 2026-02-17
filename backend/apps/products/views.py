@@ -2,6 +2,7 @@ from django.db.models import Min, Case, When, F, DecimalField
 from rest_framework import viewsets, filters, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Category, Brand, FragranceFamily, Product, ProductVariant
 from .serializers import (
@@ -26,8 +27,8 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = []
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = {
-        'category': ['exact'],
-        'brand': ['exact'],
+        'category__slug': ['exact'],
+        'brand__slug': ['exact'],
         'gender': ['exact'],
         'is_featured': ['exact'],
         'is_new': ['exact'],
@@ -64,9 +65,12 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         return ProductListSerializer
 
 class AdminProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
     permission_classes = [permissions.IsAdminUser]
     serializer_class = ProductDetailSerializer
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_queryset(self):
+        return Product.objects.all().select_related('category', 'brand').prefetch_related('variants', 'notes', 'images', 'fragrance_families')
 
 class AdminVariantViewSet(viewsets.ModelViewSet):
     queryset = ProductVariant.objects.all()

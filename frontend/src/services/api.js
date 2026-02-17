@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/',
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -125,6 +126,14 @@ export const adminProductsApi = {
     create: (data) => api.post('products/admin/products/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     update: (id, data) => api.patch(`products/admin/products/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     delete: (id) => api.delete(`products/admin/products/${id}/`),
+};
+
+export const adminVariantsApi = {
+    getAll: (params) => api.get('products/admin/variants/', { params }),
+    getDetail: (id) => api.get(`products/admin/variants/${id}/`),
+    create: (data) => api.post('products/admin/variants/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    update: (id, data) => api.patch(`products/admin/variants/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    delete: (id) => api.delete(`products/admin/variants/${id}/`),
 };
 
 export const analyticsApi = {
