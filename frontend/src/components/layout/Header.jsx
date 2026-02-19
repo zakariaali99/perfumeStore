@@ -118,7 +118,7 @@ const Header = () => {
                     {/* Branding */}
                     <Link to="/" className="flex items-center gap-3 group">
                         <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105 transition-transform duration-500">
-                            <img src="/logo.png" alt="عطور مصطفى" className="w-full h-full object-cover" />
+                            <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-cover" />
                         </div>
                         <div className="hidden md:flex flex-col">
                             <span className="text-xl md:text-2xl font-black text-gold-600 tracking-tight transition-all">
