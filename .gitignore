@@ -22,6 +22,11 @@ dist/
 **/.env.test.local
 **/.env.production.local
 
+# Django
+db.sqlite3
+staticfiles/
+media/
+
 # IDE
 .vscode/
 .idea/
