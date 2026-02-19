@@ -8,9 +8,12 @@ import {
     CheckCircle2,
     Clock,
     AlertCircle,
-    ChevronLeft
+    ChevronLeft,
+    Copy,
+    Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 
 const OrderTracking = () => {
     const [searchParams] = useSearchParams();
@@ -148,7 +151,14 @@ const OrderTracking = () => {
                                 <div className="h-12 w-px bg-gold-100 dark:bg-dark-600 hidden md:block"></div>
                                 <div className="text-center">
                                     <p className="text-sm text-text-secondary dark:text-gold-400 mb-1">رقم الطلب</p>
-                                    <p className="text-xl font-black font-poppins text-text-primary dark:text-cream-50">{order.order_number}</p>
+                                    <div className="flex items-center justify-center gap-2 group cursor-pointer" onClick={() => {
+                                        navigator.clipboard.writeText(order.order_number);
+                                        toast.success('تم نسخ رقم الطلب');
+                                    }}>
+                                        <p className="text-xl font-black font-poppins text-text-primary dark:text-cream-50">{order.order_number}</p>
+                                        <Copy size={14} className="text-text-secondary dark:text-gold-400 group-hover:text-gold-500 transition-colors" />
+                                    </div>
+                                    <p className="text-[10px] text-gold-500 font-bold mt-1">قم بنسخ رقم الطلب لتتمكن من تتبع طلبك</p>
                                 </div>
                                 <div className="h-12 w-px bg-gold-100 dark:bg-dark-600 hidden md:block"></div>
                                 <div className="text-center md:text-left">

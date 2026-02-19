@@ -30,6 +30,13 @@ const Header = () => {
     const [scrolled, setScrolled] = useState(false);
     const [categories, setCategories] = useState([]);
 
+    // Check if user is logged in
+    const token = localStorage.getItem('access_token');
+    const userString = localStorage.getItem('user');
+    const user = userString ? JSON.parse(userString) : null;
+    const isLoggedIn = !!token;
+    const isAdmin = user?.is_staff;
+
     // Search State
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -202,15 +209,17 @@ const Header = () => {
                             )}
                         </button>
 
-                        <Link
-                            to="/dashboard"
-                            className="hidden md:flex items-center gap-3 p-1.5 pr-4 rounded-2xl bg-gray-50 dark:bg-dark-700 border border-gold-100 dark:border-dark-600 hover:border-gold-500 transition-all"
-                        >
-                            <span className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase tracking-widest leading-none">Management</span>
-                            <div className="w-9 h-9 bg-gold-100 dark:bg-dark-600 rounded-xl flex items-center justify-center text-gold-600">
-                                <User size={18} />
-                            </div>
-                        </Link>
+                        {(isLoggedIn && isAdmin) && (
+                            <Link
+                                to="/dashboard"
+                                className="hidden md:flex items-center gap-3 p-1.5 pr-4 rounded-2xl bg-gray-50 dark:bg-dark-700 border border-gold-100 dark:border-dark-600 hover:border-gold-500 transition-all"
+                            >
+                                <span className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase tracking-widest leading-none">Management</span>
+                                <div className="w-9 h-9 bg-gold-100 dark:bg-dark-600 rounded-xl flex items-center justify-center text-gold-600">
+                                    <User size={18} />
+                                </div>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </header>
@@ -330,15 +339,29 @@ const Header = () => {
                             </div>
 
                             {/* Mobile Footer */}
-                            <div className="p-8 border-t border-gold-50 dark:border-dark-700 bg-cream-50/30 dark:bg-dark-900/40">
-                                <Link
-                                    to="/dashboard/login"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="w-full flex items-center justify-center gap-3 py-4 bg-dark-900 text-gold-400 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-gold-900/20"
-                                >
-                                    Admin login
-                                </Link>
-                            </div>
+                            {(isLoggedIn && isAdmin) && (
+                                <div className="p-8 border-t border-gold-50 dark:border-dark-700 bg-cream-50/30 dark:bg-dark-900/40">
+                                    <Link
+                                        to="/dashboard"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="w-full flex items-center justify-center gap-3 py-4 bg-dark-900 text-gold-400 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-gold-900/20"
+                                    >
+                                        <User size={16} />
+                                        لوحة التحكم
+                                    </Link>
+                                </div>
+                            )}
+                            {(!isLoggedIn) && (
+                                <div className="p-8 border-t border-gold-50 dark:border-dark-700 bg-cream-50/30 dark:bg-dark-900/40">
+                                    <Link
+                                        to="/dashboard/login"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="w-full flex items-center justify-center gap-3 py-4 bg-dark-900 text-gold-400 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-gold-900/20 opacity-0 pointer-events-none"
+                                    >
+                                        Admin login
+                                    </Link>
+                                </div>
+                            )}
                         </motion.div>
                     </div>
                 )}
