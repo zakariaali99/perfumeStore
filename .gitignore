@@ -22,7 +22,6 @@ node_modules/
 
 # Django
 db.sqlite3
-staticfiles/
 media/
 
 # IDE

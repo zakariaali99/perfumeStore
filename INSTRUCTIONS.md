@@ -23,7 +23,7 @@ pip install -r requirements.txt
 ```
 
 ### ب. ملف الإعدادات (.env):
-قم بإنشاء ملف `.env` في مجلد `backend/core/` وأضف البيانات التالية:
+قم بإنشاء ملف `.env` في مجلد `backend/` وأضف البيانات التالية:
 ```env
 DEBUG=False
 SECRET_KEY=your_secret_key_here
