@@ -21,12 +21,13 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # Critical Django Settings (Must be early for cPanel stability)
 ROOT_URLCONF = "config.urls"
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-your-secret-key-goes-here-change-in-production')
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
-DEBUG = env.bool('DEBUG', default=False)
+# FORCE SETTINGS FOR CPANEL STABILITY
+ALLOWED_HOSTS = ['*']
+DEBUG = True
 
-# Security & Proxy Settings for Production
+# Security & Proxy Settings
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://*', 'https://*'])
+CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # Application definition
