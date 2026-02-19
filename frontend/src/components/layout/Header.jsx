@@ -14,7 +14,8 @@ import {
     Facebook,
     ChevronDown,
     Truck,
-    Package
+    Package,
+    Youtube
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useCartStore from '../../store/cartStore';
@@ -323,16 +324,30 @@ const Header = () => {
                                 </nav>
 
                                 {/* Mobile Contact */}
-                                <div className="space-y-6">
-                                    <p className="text-[10px] uppercase tracking-widest text-text-muted font-black border-r-2 border-gold-500 pr-3">تواصل معنا</p>
-                                    <div className="flex gap-4">
-                                        <a href="https://wa.me/0912345678" className="flex-1 flex flex-col items-center gap-2 p-5 rounded-[28px] bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 text-green-600 transition-all active:scale-95">
-                                            <MessageCircle size={28} />
+                                <div className="space-y-6 pb-20">
+                                    <p className="text-[10px] uppercase tracking-widest text-text-muted dark:text-gold-400 font-black border-r-2 border-gold-500 pr-3">تواصل معنا</p>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <a href="https://wa.me/218917359191" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 rounded-3xl bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 text-green-600 transition-all active:scale-95">
+                                            <MessageCircle size={24} />
                                             <span className="text-[10px] font-black">واتساب</span>
                                         </a>
-                                        <a href="tel:0912345678" className="flex-1 flex flex-col items-center gap-2 p-5 rounded-[28px] bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 text-blue-600 transition-all active:scale-95">
-                                            <Phone size={28} />
-                                            <span className="text-[10px] font-black">اتصال</span>
+                                        <a href="https://www.tiktok.com/@mostafaperfumes?_r=1&_t=ZS-943SX1wYWer" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 rounded-3xl bg-gray-50/50 dark:bg-dark-700/50 border border-gold-50 dark:border-dark-700 text-text-primary dark:text-cream-50 transition-all active:scale-95">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.89-.6-4.13-1.47-1.26-.88-2.12-2.22-2.49-3.66L15.8 20.06c-.05 1.05-.34 2.1-.9 3.01-.55.91-1.39 1.62-2.34 2.05-1.01.46-2.15.58-3.23.41-1.12-.17-2.18-.7-3.03-1.45-.85-.75-1.41-1.78-1.57-2.9-.16-1.12.01-2.3.56-3.29.54-1 1.41-1.79 2.45-2.22 1.04-.43 2.2-.44 3.28-.1v4.19c-.91-.32-1.95-.21-2.73.35-.78.56-1.16 1.55-1.02 2.51.14.96.84 1.78 1.75 2.1.91.31 2.01.07 2.66-.64.65-.7.83-1.72.63-2.65L12.7 0h-.175z" />
+                                            </svg>
+                                            <span className="text-[10px] font-black">تيك توك</span>
+                                        </a>
+                                        <a href="https://www.instagram.com/the.mostafa.perfumes?igsh=MXVnejh4d25qMjV4ZQ==" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 rounded-3xl bg-pink-50/50 dark:bg-pink-900/10 border border-pink-100 dark:border-pink-900/30 text-pink-600 transition-all active:scale-95">
+                                            <Instagram size={24} />
+                                            <span className="text-[10px] font-black">إنستغرام</span>
+                                        </a>
+                                        <a href="https://m.youtube.com/@mostafaperfumes?si=3KH5kj2c5Q47rVYB" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 rounded-3xl bg-red-50/50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 text-red-600 transition-all active:scale-95">
+                                            <Youtube size={24} />
+                                            <span className="text-[10px] font-black">يوتيوب</span>
+                                        </a>
+                                        <a href="tel:0917359191" className="col-span-2 flex items-center justify-center gap-3 p-4 rounded-3xl bg-gold-50/50 dark:bg-gold-900/10 border border-gold-100 dark:border-gold-900/30 text-gold-600 transition-all active:scale-95">
+                                            <Phone size={24} />
+                                            <span className="text-[12px] font-black font-poppins">0917359191</span>
                                         </a>
                                     </div>
                                 </div>

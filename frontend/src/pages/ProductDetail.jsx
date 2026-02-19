@@ -85,7 +85,6 @@ const ProductDetail = () => {
         }
     };
 
-    const notesByType = (type) => product.notes?.filter(n => n.note_type === type) || [];
 
     return (
         <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-24 pb-20 transition-colors duration-300">
@@ -212,7 +211,9 @@ const ProductDetail = () => {
                                             onClick={() => setSelectedVariant(variant)}
                                             className={`w-full px-4 py-5 rounded-3xl border-2 transition-all flex flex-col items-center gap-1 ${selectedVariant?.id === variant.id ? 'border-gold-500 bg-white dark:bg-dark-700 shadow-xl shadow-gold-500/10' : 'border-gold-100 dark:border-dark-600 bg-cream-50 dark:bg-dark-800 hover:border-gold-300'}`}
                                         >
-                                            <span className={`text-2xl font-black ${selectedVariant?.id === variant.id ? 'text-gold-700 dark:text-gold-400' : 'text-text-primary dark:text-cream-50'}`}>{variant.size_ml} مل</span>
+                                            <span className={`text-2xl font-black ${selectedVariant?.id === variant.id ? 'text-gold-700 dark:text-gold-400' : 'text-text-primary dark:text-cream-50'}`}>
+                                                {variant.name ? variant.name : `${variant.size_ml} مل`}
+                                            </span>
                                             <span className="text-sm font-bold text-text-secondary dark:text-gold-400">{variant.current_price} د.ل</span>
                                         </button>
                                     </div>

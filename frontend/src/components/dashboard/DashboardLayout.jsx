@@ -159,7 +159,7 @@ const DashboardLayout = () => {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 right-0 w-72 bg-white dark:bg-dark-800 z-50 lg:hidden flex flex-col"
+                            className="fixed inset-y-0 right-0 w-72 bg-white dark:bg-dark-800 z-50 lg:hidden flex flex-col overflow-y-auto"
                         >
                             <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex items-center justify-between">
                                 <div className="flex items-center gap-3">

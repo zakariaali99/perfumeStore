@@ -102,7 +102,7 @@ const DashboardBrands = () => {
                 await adminBrandsApi.delete(id);
                 toast.success('تم حذف الماركة');
                 fetchBrands();
-            } catch (err) {
+            } catch {
                 toast.error('فشل في حذف الماركة');
             }
         }

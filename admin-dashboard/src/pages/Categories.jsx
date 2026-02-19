@@ -104,7 +104,7 @@ const Categories = () => {
                 await adminApi.deleteCategory(id);
                 toast.success('تم حذف الفئة');
                 fetchCategories();
-            } catch (err) {
+            } catch {
                 toast.error('فشل في حذف الفئة');
             }
         }

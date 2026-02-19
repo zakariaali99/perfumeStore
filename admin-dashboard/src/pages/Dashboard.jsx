@@ -15,7 +15,7 @@ const Dashboard = () => {
                 setData(res.data);
                 setLoading(false);
             })
-            .catch(err => setLoading(false));
+            .catch(() => setLoading(false));
     }, []);
 
     if (loading) return <div className="p-8">Loading stats...</div>;
