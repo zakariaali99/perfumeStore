@@ -11,8 +11,6 @@ venv/
 # NodeJS
 node_modules/
 **/node_modules/
-dist/
-**/dist/
 .env.local
 .env.development.local
 .env.test.local
