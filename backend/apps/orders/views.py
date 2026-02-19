@@ -53,9 +53,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         if not cust_name:
             return Response({'error': 'اسم العميل مطلوب'}, status=status.HTTP_400_BAD_REQUEST)
 
-        b_day = data.get('birth_day')
-        b_month = data.get('birth_month')
-        b_year = data.get('birth_year')
+        b_day = data.get('birth_day') or None
+        b_month = data.get('birth_month') or None
+        b_year = data.get('birth_year') or None
         
         try:
             phone = data.get('customer_phone')

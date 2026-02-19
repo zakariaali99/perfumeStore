@@ -35,6 +35,9 @@ const Checkout = () => {
         customer_name: '',
         customer_phone: '',
         customer_email: '',
+        birth_day: '',
+        birth_month: '',
+        birth_year: '',
         city: '',
         area: '',
         address: '',
@@ -177,6 +180,44 @@ const Checkout = () => {
                                                     className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none"
                                                     placeholder="example@mail.com"
                                                 />
+                                            </div>
+                                            <div className="col-12">
+                                                <label className="block text-sm font-bold text-text-secondary dark:text-gold-400 mb-2">تاريخ الميلاد (للحصول على خصم يوم ميلادك)</label>
+                                                <div className="flex gap-4">
+                                                    <select
+                                                        name="birth_day"
+                                                        value={formData.birth_day}
+                                                        onChange={handleChange}
+                                                        className="flex-1 px-4 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none"
+                                                    >
+                                                        <option value="">اليوم</option>
+                                                        {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
+                                                            <option key={d} value={d}>{d}</option>
+                                                        ))}
+                                                    </select>
+                                                    <select
+                                                        name="birth_month"
+                                                        value={formData.birth_month}
+                                                        onChange={handleChange}
+                                                        className="flex-1 px-4 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none"
+                                                    >
+                                                        <option value="">الشهر</option>
+                                                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                                                            <option key={m} value={m}>{m}</option>
+                                                        ))}
+                                                    </select>
+                                                    <select
+                                                        name="birth_year"
+                                                        value={formData.birth_year}
+                                                        onChange={handleChange}
+                                                        className="flex-1 px-4 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none"
+                                                    >
+                                                        <option value="">السنة</option>
+                                                        {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(y => (
+                                                            <option key={y} value={y}>{y}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
 

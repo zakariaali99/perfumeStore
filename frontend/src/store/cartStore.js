@@ -65,7 +65,12 @@ const useCartStore = create(
                 set({ coupon: null });
             },
 
-            clearCart: () => {
+            clearCart: async () => {
+                try {
+                    await cartApi.clear();
+                } catch (error) {
+                    console.error('Failed to clear server cart', error);
+                }
                 set({ cart: { items: [], total_amount: 0 }, coupon: null });
             },
         }),

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ordersApi } from '../services/api';
 import {
     Search,
@@ -12,11 +13,32 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 const OrderTracking = () => {
+    const [searchParams] = useSearchParams();
     const [orderNumber, setOrderNumber] = useState('');
     const [phone, setPhone] = useState('');
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        const orderNumFromUrl = searchParams.get('order_number');
+        if (orderNumFromUrl) {
+            setOrderNumber(orderNumFromUrl);
+            const fetchOrder = async () => {
+                setLoading(true);
+                try {
+                    const res = await ordersApi.track(orderNumFromUrl, '');
+                    setOrder(res.data);
+                } catch (err) {
+                    console.error(err);
+                    setError('تعذر العثور على الطلب. يرجى التأكد من الرقم والمحاولة مرة أخرى.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchOrder();
+        }
+    }, [searchParams]);
 
     const handleTrack = async (e) => {
         e.preventDefault();
