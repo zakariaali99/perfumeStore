@@ -1,10 +1,12 @@
 import datetime
 import random
+import logging
 from django.db import transaction
 from django.utils import timezone
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Order, OrderItem, OrderStatusHistory
 from .serializers import OrderSerializer
 from cart.models import Cart
@@ -12,9 +14,15 @@ from products.models import ProductVariant
 
 from crm.models import CustomerProfile
 
+logger = logging.getLogger(__name__)
+
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['order_number', 'customer_name', 'customer_phone']
+    filterset_fields = ['status']
 
     def get_permissions(self):
         if self.request.method == 'POST':
@@ -25,16 +33,17 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def generate_order_number(self):
         date_str = datetime.datetime.now().strftime('%Y%m%d')
-        random_str = ''.join(random.choices('0123456789', k=4))
+        random_str = ''.join(random.choices('0123456789', k=6))
         return f"ORD-{date_str}-{random_str}"
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         from decimal import Decimal
-        print('Received order request', request.data) # Debug
+        from marketing.models import Coupon
         
         data = request.data
         items_data = data.get('items', [])
+        coupon_code = data.get('coupon_code')
         
         if not items_data:
             return Response({'error': 'السلة فارغة، لا يمكن إتمام الطلب'}, status=status.HTTP_400_BAD_REQUEST)
@@ -49,24 +58,32 @@ class OrderViewSet(viewsets.ModelViewSet):
         b_year = data.get('birth_year')
         
         try:
-            customer_profile, created = CustomerProfile.objects.get_or_create(
-                name=cust_name,
-                birth_day=b_day,
-                birth_month=b_month,
-                birth_year=b_year,
-                defaults={
-                    'phone': data.get('customer_phone'),
-                    'email': data.get('customer_email', ''),
-                    'city': data.get('city', ''),
-                    'area': data.get('area', ''),
-                    'address': data.get('address', ''),
-                    'location_details': data.get('location_details', ''),
-                }
-            )
+            phone = data.get('customer_phone')
+            # Try to find exactly matching name and phone
+            customer_profile = CustomerProfile.objects.filter(phone=phone, name=cust_name).first()
             
-            # If profile exists but data is updated
-            if not created:
-                customer_profile.phone = data.get('customer_phone', customer_profile.phone)
+            if not customer_profile:
+                # Try to find any profile with this phone
+                customer_profile = CustomerProfile.objects.filter(phone=phone).first()
+            
+            if not customer_profile:
+                customer_profile = CustomerProfile.objects.create(
+                    phone=phone,
+                    name=cust_name,
+                    birth_day=b_day,
+                    birth_month=b_month,
+                    birth_year=b_year,
+                    email=data.get('customer_email', ''),
+                    city=data.get('city', ''),
+                    area=data.get('area', ''),
+                    address=data.get('address', ''),
+                    location_details=data.get('location_details', ''),
+                )
+                created = True
+            else:
+                created = False
+                # Update existing profile
+                customer_profile.name = cust_name # Update name if changed
                 customer_profile.email = data.get('customer_email', customer_profile.email)
                 customer_profile.city = data.get('city', customer_profile.city)
                 customer_profile.area = data.get('area', customer_profile.area)
@@ -75,7 +92,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                 customer_profile.save()
 
         except Exception as e:
-            print(f"CRM Error: {e}")
+            logger.error(f"CRM Error: {e}")
             return Response({'error': 'حدث خطأ في معالجة بيانات العميل'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Calculate totals
@@ -108,11 +125,32 @@ class OrderViewSet(viewsets.ModelViewSet):
             except ProductVariant.DoesNotExist:
                 return Response({'error': f'المنتج المحدد غير موجود'}, status=status.HTTP_404_NOT_FOUND)
             except Exception as e:
-                print(f"Item Error: {e}")
+                logger.error(f"Item Error: {e}")
                 return Response({'error': 'حدث خطأ في معالجة المنتجات'}, status=status.HTTP_400_BAD_REQUEST)
 
-        shipping_cost = Decimal('25.00') # Standard shipping
-        total = subtotal + shipping_cost
+        # Handle Coupon
+        discount_amount = Decimal('0.00')
+        applied_coupon = None
+        if coupon_code:
+            try:
+                coupon = Coupon.objects.get(code=coupon_code)
+                if coupon.is_valid and subtotal >= coupon.min_order_amount:
+                    if coupon.discount_type == 'percentage':
+                        discount_amount = (subtotal * Decimal(str(coupon.discount_value))) / Decimal('100.00')
+                        if coupon.max_discount_amount:
+                            discount_amount = min(discount_amount, coupon.max_discount_amount)
+                    else:
+                        discount_amount = Decimal(str(coupon.discount_value))
+                    
+                    applied_coupon = coupon
+                    coupon.used_count += 1
+                    coupon.save()
+            except Coupon.DoesNotExist:
+                pass # Or return error if strict
+
+        shipping_cost = Decimal('0.00') # Shipping removed per user request
+        total = subtotal + shipping_cost - discount_amount
+        if total < 0: total = Decimal('0.00')
 
         try:
             order = Order.objects.create(
@@ -129,8 +167,10 @@ class OrderViewSet(viewsets.ModelViewSet):
                 address=data.get('address'),
                 location_details=data.get('location_details', ''),
                 subtotal=subtotal,
+                discount_amount=discount_amount,
                 shipping_cost=shipping_cost,
                 total=total,
+                coupon=applied_coupon,
                 notes=data.get('notes', '')
             )
 
@@ -176,16 +216,13 @@ class OrderViewSet(viewsets.ModelViewSet):
                 if cart_obj:
                     cart_obj.items.all().delete()
             except Exception as e:
-                print(f"Cart clear error: {e}")
-                pass 
-
+                logger.warning(f"Cart clear error: {e}")
+ 
             serializer = self.get_serializer(order)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
             
         except Exception as e:
-            print(f"Order Creation Error: {e}")
-            import traceback
-            traceback.print_exc()
+            logger.error(f"Order Creation Error: {e}", exc_info=True)
             return Response({'error': 'فشل إنشاء الطلب في النظام. يرجى المحاولة مرة أخرى.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=True, methods=['patch'])

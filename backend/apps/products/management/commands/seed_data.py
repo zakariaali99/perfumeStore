@@ -73,8 +73,8 @@ class Command(BaseCommand):
                     area="الوسطى",
                     address="شارع التحلية",
                     subtotal=300,
-                    shipping_cost=25,
-                    total=325,
+                    shipping_cost=0,
+                    total=300,
                     status='delivered'
                 )
                 o.created_at = timezone.now() - timezone.timedelta(days=random.randint(0, 60))

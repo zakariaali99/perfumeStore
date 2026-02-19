@@ -42,7 +42,8 @@ api.interceptors.response.use(
                     localStorage.setItem('access_token', res.data.access);
                     api.defaults.headers.common.Authorization = `Bearer ${res.data.access}`;
                     return api(originalRequest);
-                } catch (refreshError) {
+                } catch (error) {
+                    console.error(error);
                     localStorage.removeItem('access_token');
                     localStorage.removeItem('refresh_token');
                     // Only redirect to login for dashboard-related requests
@@ -107,8 +108,8 @@ export const cmsApi = {
 export const marketingApi = {
     list: (params) => api.get('marketing/coupons/', { params }),
     create: (data) => api.post('marketing/coupons/', data),
-    update: (code, data) => api.patch(`marketing/coupons/${code}/`, data),
-    delete: (code) => api.delete(`marketing/coupons/${code}/`),
+    update: (code, data) => api.patch(`marketing/coupons/${encodeURIComponent(code)}/`, data),
+    delete: (code) => api.delete(`marketing/coupons/${encodeURIComponent(code)}/`),
     validateCoupon: (code, cartTotal) => api.post('marketing/coupons/validate/', { code, cart_total: cartTotal }),
 };
 
@@ -122,7 +123,9 @@ export const crmApi = {
 
 export const adminProductsApi = {
     getAll: (params) => api.get('products/admin/products/', { params }),
-    getDetail: (id) => api.get(`products/admin/products/${id}/`),
+    get: (id) => api.get(`products/admin/products/${id}/`),
+    listCategories: () => api.get('products/categories/'),
+    listBrands: () => api.get('products/brands/'),
     create: (data) => api.post('products/admin/products/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     update: (id, data) => api.patch(`products/admin/products/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     delete: (id) => api.delete(`products/admin/products/${id}/`),
@@ -136,8 +139,22 @@ export const adminVariantsApi = {
     delete: (id) => api.delete(`products/admin/variants/${id}/`),
 };
 
+export const adminCategoriesApi = {
+    getAll: (params) => api.get('products/admin/categories/', { params }),
+    create: (data) => api.post('products/admin/categories/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    update: (id, data) => api.patch(`products/admin/categories/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    delete: (id) => api.delete(`products/admin/categories/${id}/`),
+};
+
+export const adminBrandsApi = {
+    getAll: (params) => api.get('products/admin/brands/', { params }),
+    create: (data) => api.post('products/admin/brands/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    update: (id, data) => api.patch(`products/admin/brands/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    delete: (id) => api.delete(`products/admin/brands/${id}/`),
+};
+
 export const analyticsApi = {
-    getStats: () => api.get('analytics/stats/'),
+    getStats: (params) => api.get('analytics/stats/', { params }),
     getInventory: () => api.get('analytics/inventory/'),
 };
 

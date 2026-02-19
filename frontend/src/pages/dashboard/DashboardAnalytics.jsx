@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { analyticsApi } from '../../services/api';
 import {
     BarChart as BarChartIcon,
@@ -37,21 +37,22 @@ const DashboardAnalytics = () => {
     const [loading, setLoading] = useState(true);
     const [timeRange, setTimeRange] = useState('30d');
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, [timeRange]);
-
-    const fetchAnalytics = async () => {
+    const fetchAnalytics = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await analyticsApi.getStats();
+            const res = await analyticsApi.getStats({ days: timeRange === '30d' ? 30 : 90 });
             setData(res.data);
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('تعذر تحميل البيانات التحليلية');
         } finally {
             setLoading(false);
         }
-    };
+    }, [timeRange]);
+
+    useEffect(() => {
+        fetchAnalytics();
+    }, [fetchAnalytics]);
 
     if (loading) {
         return (
@@ -61,7 +62,9 @@ const DashboardAnalytics = () => {
         );
     }
 
-    const { summary, monthly_sales, top_products, city_sales, customer_segments } = data;
+    if (!data) return <div className="p-8 text-center text-red-500">فشل تحميل البيانات</div>;
+
+    const { summary, monthly_sales = [], top_products = [], city_sales = [], customer_segments = [] } = data;
 
     // Format monthly sales for chart
     const chartData = monthly_sales.map(item => ({
@@ -103,12 +106,12 @@ const DashboardAnalytics = () => {
                         <div className="p-3 bg-gold-50 dark:bg-dark-600 rounded-2xl text-gold-600 dark:text-gold-400">
                             <DollarSign size={24} />
                         </div>
-                        <span className="flex items-center gap-1 text-[10px] bg-green-50 text-green-600 px-2 py-1 rounded-full font-black">
-                            <ArrowUpRight size={10} /> +12%
+                        <span className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-full font-black ${summary.revenue_trend >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                            {summary.revenue_trend >= 0 ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />} {Math.abs(summary.revenue_trend)}%
                         </span>
                     </div>
-                    <p className="text-text-secondary dark:text-gold-400 text-xs font-bold mb-1">إجمالي المبيعات</p>
-                    <p className="text-2xl font-black text-text-primary dark:text-cream-50 font-poppins">{summary.total_revenue.toFixed(2)} د.ل</p>
+                    <p className="text-text-secondary dark:text-gold-400 text-xs font-bold mb-1">إيرادات الشهر الحالي</p>
+                    <p className="text-2xl font-black text-text-primary dark:text-cream-50 font-poppins">{summary.monthly_revenue?.toLocaleString() || 0} د.ل</p>
                 </div>
 
                 <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
@@ -117,11 +120,11 @@ const DashboardAnalytics = () => {
                         <div className="p-3 bg-blue-50 dark:bg-dark-600 rounded-2xl text-blue-600 dark:text-gold-400">
                             <ShoppingBag size={24} />
                         </div>
-                        <span className="flex items-center gap-1 text-[10px] bg-green-50 text-green-600 px-2 py-1 rounded-full font-black">
-                            <ArrowUpRight size={10} /> +8%
+                        <span className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-full font-black ${summary.orders_trend >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                            {summary.orders_trend >= 0 ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />} {Math.abs(summary.orders_trend)}%
                         </span>
                     </div>
-                    <p className="text-text-secondary dark:text-gold-400 text-xs font-bold mb-1">إجمالي الطلبات</p>
+                    <p className="text-text-secondary dark:text-gold-400 text-xs font-bold mb-1">طلبات الشهر الحالي</p>
                     <p className="text-2xl font-black text-text-primary dark:text-cream-50 font-poppins">{summary.total_orders}</p>
                 </div>
 
@@ -131,11 +134,11 @@ const DashboardAnalytics = () => {
                         <div className="p-3 bg-purple-50 dark:bg-dark-600 rounded-2xl text-purple-600 dark:text-gold-400">
                             <Users size={24} />
                         </div>
-                        <span className="flex items-center gap-1 text-[10px] bg-green-50 text-green-600 px-2 py-1 rounded-full font-black">
-                            <ArrowUpRight size={10} /> +15%
+                        <span className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-full font-black ${summary.customers_trend >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                            {summary.customers_trend >= 0 ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />} {Math.abs(summary.customers_trend)}%
                         </span>
                     </div>
-                    <p className="text-text-secondary dark:text-gold-400 text-xs font-bold mb-1">العملاء النشطون</p>
+                    <p className="text-text-secondary dark:text-gold-400 text-xs font-bold mb-1">العملاء الجدد (الشهر)</p>
                     <p className="text-2xl font-black text-text-primary dark:text-cream-50 font-poppins">{summary.total_customers}</p>
                 </div>
 
@@ -145,23 +148,20 @@ const DashboardAnalytics = () => {
                         <div className="p-3 bg-amber-50 dark:bg-dark-600 rounded-2xl text-amber-600 dark:text-gold-400">
                             <TrendingUp size={24} />
                         </div>
-                        <span className="flex items-center gap-1 text-[10px] bg-red-50 text-red-600 px-2 py-1 rounded-full font-black">
-                            <ArrowDownRight size={10} /> -3%
-                        </span>
                     </div>
-                    <p className="text-text-secondary dark:text-gold-400 text-xs font-bold mb-1">متوسط قيمة الطلب (AOV)</p>
-                    <p className="text-2xl font-black text-text-primary dark:text-cream-50 font-poppins">{summary.aov.toFixed(2)} د.ل</p>
+                    <p className="text-text-secondary dark:text-gold-400 text-xs font-bold mb-1">إيراد العام الكلي</p>
+                    <p className="text-2xl font-black text-text-primary dark:text-cream-50 font-poppins">{summary.total_revenue.toLocaleString()} د.ل</p>
                 </div>
             </div>
 
             {/* Charts Row 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Revenue Growth Chart */}
+                {/* Revenue Growth Chart (MRR) */}
                 <div className="bg-white dark:bg-dark-700 p-8 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
                     <div className="flex justify-between items-center mb-8">
                         <div>
-                            <h3 className="text-lg font-black text-text-primary dark:text-cream-50">نمو المبيعات</h3>
-                            <p className="text-[10px] text-text-muted font-bold mt-1">مقارنة شهرية للإيرادات المحققة</p>
+                            <h3 className="text-lg font-black text-text-primary dark:text-cream-50">الإيرادات الشهرية (MRR)</h3>
+                            <p className="text-[10px] text-text-muted font-bold mt-1">تتبع نمو الإيرادات على مدار الـ 12 شهراً الماضية</p>
                         </div>
                         <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-xl flex items-center justify-center text-gold-600">
                             <TrendingUp size={20} />
@@ -266,9 +266,7 @@ const DashboardAnalytics = () => {
                                 </div>
                                 <div className="text-left">
                                     <p className="font-black text-gold-700 dark:text-gold-400 font-poppins">{product.revenue.toFixed(2)} د.ل</p>
-                                    <div className="flex items-center gap-1 text-[8px] font-black text-green-600 justify-end">
-                                        <ArrowUpRight size={8} /> +24%
-                                    </div>
+
                                 </div>
                             </div>
                         ))}

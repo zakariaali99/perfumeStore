@@ -159,8 +159,8 @@ def seed():
             area="وسط المدينة",
             address="شارع التحرير - مبنى 4",
             subtotal=0,
-            shipping_cost=20,
-            total=20,
+            shipping_cost=0,
+            total=0,
             status=random.choice(['pending', 'processing', 'shipped', 'delivered'])
         )
         # Add 1-3 items per order

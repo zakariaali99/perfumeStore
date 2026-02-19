@@ -35,57 +35,63 @@ const Dashboard = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="row g-4">
                 {stats.map((stat, i) => (
-                    <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="p-3 rounded-xl bg-gray-50">{stat.icon}</div>
-                            <div className={`flex items-center text-sm font-bold ${stat.isUp ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                {stat.trend}
-                                {stat.isUp ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                    <div key={i} className="col-12 col-md-6 col-lg-3">
+                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow h-100">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-3 rounded-xl bg-gray-50">{stat.icon}</div>
+                                <div className={`flex items-center text-sm font-bold ${stat.isUp ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                    {stat.trend}
+                                    {stat.isUp ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                                </div>
                             </div>
+                            <div className="text-sm text-gray-500 mb-1">{stat.label}</div>
+                            <div className="text-2xl font-bold text-gray-900 font-poppins">{stat.value}</div>
                         </div>
-                        <div className="text-sm text-gray-500 mb-1">{stat.label}</div>
-                        <div className="text-2xl font-bold text-gray-900 font-poppins">{stat.value}</div>
                     </div>
                 ))}
             </div>
 
             {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                    <h3 className="text-lg font-bold mb-6">نمو الإيرادات (MRR)</h3>
-                    <div className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={data?.monthly_sales}>
-                                <defs>
-                                    <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#C5A572" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#C5A572" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                                <XAxis dataKey="month" stroke="#9CA3AF" />
-                                <YAxis stroke="#9CA3AF" />
-                                <Tooltip />
-                                <Area type="monotone" dataKey="revenue" stroke="#C5A572" fillOpacity={1} fill="url(#colorRev)" strokeWidth={2} />
-                            </AreaChart>
-                        </ResponsiveContainer>
+            <div className="row g-4">
+                <div className="col-12 col-lg-6">
+                    <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm h-100">
+                        <h3 className="text-lg font-bold mb-6">نمو الإيرادات (MRR)</h3>
+                        <div className="h-[300px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={data?.monthly_sales}>
+                                    <defs>
+                                        <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#C5A572" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#C5A572" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                                    <XAxis dataKey="month" stroke="#9CA3AF" />
+                                    <YAxis stroke="#9CA3AF" />
+                                    <Tooltip />
+                                    <Area type="monotone" dataKey="revenue" stroke="#C5A572" fillOpacity={1} fill="url(#colorRev)" strokeWidth={2} />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                    <h3 className="text-lg font-bold mb-6">الطلبات حسب المدن</h3>
-                    <div className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={[{ name: 'الرياض', count: 40 }, { name: 'جدة', count: 30 }, { name: 'الدمام', count: 20 }, { name: 'مكة', count: 10 }]}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                                <XAxis dataKey="name" stroke="#9CA3AF" />
-                                <YAxis stroke="#9CA3AF" />
-                                <Tooltip />
-                                <Bar dataKey="count" fill="#2C2416" radius={[4, 4, 0, 0]} barSize={40} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                <div className="col-12 col-lg-6">
+                    <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm h-100">
+                        <h3 className="text-lg font-bold mb-6">الطلبات حسب المدن</h3>
+                        <div className="h-[300px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={[{ name: 'الرياض', count: 40 }, { name: 'جدة', count: 30 }, { name: 'الدمام', count: 20 }, { name: 'مكة', count: 10 }]}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                                    <XAxis dataKey="name" stroke="#9CA3AF" />
+                                    <YAxis stroke="#9CA3AF" />
+                                    <Tooltip />
+                                    <Bar dataKey="count" fill="#2C2416" radius={[4, 4, 0, 0]} barSize={40} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
                 </div>
             </div>

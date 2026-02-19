@@ -2,9 +2,24 @@ import { X, ShoppingBag, Trash2, Plus, Minus } from 'lucide-react';
 import useCartStore from '../../store/cartStore';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 
 const CartDrawer = ({ isOpen, onClose }) => {
-    const { cart, updateItem, removeItem, loading } = useCartStore();
+    const { cart, updateItem, removeItem } = useCartStore();
+
+    const handleUpdateQuantity = (item, newQuantity) => {
+        if (newQuantity < 1) return;
+
+        // Check stock limit
+        if (item.variant && item.variant.stock_quantity !== undefined) {
+            if (newQuantity > item.variant.stock_quantity) {
+                toast.error(`عذراً، الكمية المتوفرة ${item.variant.stock_quantity} فقط`);
+                return;
+            }
+        }
+
+        updateItem(item.id, newQuantity);
+    };
 
     return (
         <AnimatePresence>
@@ -78,7 +93,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-3 bg-cream-50 dark:bg-dark-700 rounded-xl px-2 py-1 border border-gold-50 dark:border-dark-600 text-text-primary dark:text-cream-50">
                                                     <button
-                                                        onClick={() => updateItem(item.id, item.quantity - 1)}
+                                                        onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
                                                         disabled={item.quantity <= 1}
                                                         className="p-1 hover:text-gold-600 disabled:opacity-30 disabled:hover:text-inherit"
                                                     >
@@ -86,7 +101,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                                     </button>
                                                     <span className="font-bold text-sm min-w-[20px] text-center">{item.quantity}</span>
                                                     <button
-                                                        onClick={() => updateItem(item.id, item.quantity + 1)}
+                                                        onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
                                                         className="p-1 hover:text-gold-600"
                                                     >
                                                         <Plus size={14} />
@@ -111,7 +126,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                         {cart.total_amount} د.ل
                                     </span>
                                 </div>
-                                <p className="text-xs text-text-secondary text-center">شامل ضريبة القيمة المضافة (في حال انطباقها)</p>
+
                                 <Link
                                     to="/checkout"
                                     onClick={onClose}

@@ -7,7 +7,7 @@ import { ChevronLeft, Sparkles, TrendingUp, Package, ShieldCheck, Truck } from '
 import { motion } from 'framer-motion';
 
 const FeatureCard = ({ icon: Icon, title, desc }) => (
-    <div className="bg-white dark:bg-dark-700 p-10 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm hover:shadow-xl transition-all group">
+    <div className="bg-white dark:bg-dark-700 p-6 md:p-10 rounded-2xl md:rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm hover:shadow-xl transition-all group">
         <div className="w-16 h-16 bg-gold-50 dark:bg-dark-600 rounded-2xl flex items-center justify-center text-gold-500 mb-8 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-white transition-all">
             <Icon size={32} />
         </div>
@@ -30,8 +30,8 @@ const Home = () => {
                 ]);
                 setProducts(prodRes.data.results || prodRes.data || []);
                 setBanners(bannerRes.data.results || bannerRes.data || []);
-            } catch (err) {
-                console.error(err);
+            } catch (error) {
+                console.error(error);
             } finally {
                 setLoading(false);
             }
@@ -46,33 +46,41 @@ const Home = () => {
             {/* Features */}
             <section className="py-24 bg-cream-50 dark:bg-dark-800">
                 <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <FeatureCard
-                            icon={Sparkles}
-                            title="جودة استثنائية"
-                            desc="نستخدم أندر المكونات الطبيعية والزيوت العطرية النقية لضمان ثبات عالي وجاذبية لا تقاوم."
-                        />
-                        <FeatureCard
-                            icon={ShieldCheck}
-                            title="أصالة مضمونة"
-                            desc="كافة عطورنا أصلية 100% ومن مصادرها الرسمية، نهتم بكل تفصيلة لتصلك الجودة كما هي."
-                        />
-                        <FeatureCard
-                            icon={Truck}
-                            title="توصيل سريع"
-                            desc="خدمة شحن موثوقة تغطي كافة أنحاء ليبيا، مع تغليف فاخر يحمي منتجاتك ويجمل هديتك."
-                        />
-                        <FeatureCard
-                            icon={Package}
-                            title="عينات مجانية"
-                            desc="نرفق عينات مجانية مع كل طلب لتكتشف روائحنا الجديدة وتجد عطرك القادم بكل سهولة."
-                        />
+                    <div className="row g-4">
+                        <div className="col-12 col-md-6 col-lg-3">
+                            <FeatureCard
+                                icon={Sparkles}
+                                title="جودة استثنائية"
+                                desc="نستخدم أندر المكونات الطبيعية والزيوت العطرية النقية لضمان ثبات عالي وجاذبية لا تقاوم."
+                            />
+                        </div>
+                        <div className="col-12 col-md-6 col-lg-3">
+                            <FeatureCard
+                                icon={ShieldCheck}
+                                title="أصالة مضمونة"
+                                desc="كافة عطورنا أصلية 100% ومن مصادرها الرسمية، نهتم بكل تفصيلة لتصلك الجودة كما هي."
+                            />
+                        </div>
+                        <div className="col-12 col-md-6 col-lg-3">
+                            <FeatureCard
+                                icon={Truck}
+                                title="توصيل سريع"
+                                desc="خدمة شحن موثوقة تغطي كافة أنحاء ليبيا، مع تغليف فاخر يحمي منتجاتك ويجمل هديتك."
+                            />
+                        </div>
+                        <div className="col-12 col-md-6 col-lg-3">
+                            <FeatureCard
+                                icon={Package}
+                                title="عينات مجانية"
+                                desc="نرفق عينات مجانية مع كل طلب لتكتشف روائحنا الجديدة وتجد عطرك القادم بكل سهولة."
+                            />
+                        </div>
                     </div>
                 </div>
             </section>
 
             {/* Featured Products */}
-            <section className="py-32 dark:bg-dark-900">
+            <section className="py-16 md:py-32 dark:bg-dark-900">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-4">
                         <div>
@@ -80,7 +88,7 @@ const Home = () => {
                                 <TrendingUp size={20} />
                                 <span className="uppercase tracking-widest text-xs">Best Sellers</span>
                             </div>
-                            <h2 className="text-4xl md:text-5xl font-black text-text-primary dark:text-cream-50">العطور الأكثر طلباً</h2>
+                            <h2 className="text-2xl md:text-5xl font-black text-text-primary dark:text-cream-50">العطور الأكثر طلباً</h2>
                         </div>
                         <Link
                             to="/products"
@@ -92,13 +100,15 @@ const Home = () => {
                     </div>
 
                     {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                        <div className="row g-3 g-md-4">
                             {[1, 2, 3, 4].map(i => (
-                                <div key={i} className="aspect-[3/4] bg-cream-50 dark:bg-dark-700 animate-pulse rounded-[40px]"></div>
+                                <div key={i} className="col-6 col-lg-3">
+                                    <div className="aspect-[3/4] bg-cream-50 dark:bg-dark-700 animate-pulse rounded-2xl md:rounded-[40px]"></div>
+                                </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                        <div className="row g-3 g-md-4">
                             {products.map((product, idx) => (
                                 <motion.div
                                     key={product.id}
@@ -106,6 +116,7 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.1 }}
                                     viewport={{ once: true }}
+                                    className="col-6 col-lg-3"
                                 >
                                     <ProductCard product={product} />
                                 </motion.div>
@@ -119,7 +130,7 @@ const Home = () => {
             {banners.length > 0 && (
                 <section className="py-20 dark:bg-dark-800">
                     <div className="container mx-auto px-4">
-                        <div className="relative h-[500px] rounded-[60px] overflow-hidden group">
+                        <div className="relative h-[300px] md:h-[500px] rounded-3xl md:rounded-[60px] overflow-hidden group">
                             <img
                                 src={banners[0].image}
                                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
@@ -148,10 +159,10 @@ const Home = () => {
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] border-[100px] border-gold-500 rounded-full"></div>
                 </div>
                 <div className="container mx-auto px-4 relative z-10 text-center">
-                    <h2 className="text-5xl md:text-7xl font-black mb-12 italic opacity-20">Art of Perfumery</h2>
+                    <h2 className="text-3xl md:text-5xl lg:text-7xl font-black mb-12 italic opacity-20">Art of Perfumery</h2>
                     <div className="max-w-3xl mx-auto space-y-10">
-                        <p className="text-3xl md:text-5xl font-black leading-tight text-gold-400">
-                            "العطر هو اللغة التي لا تحتاج إلى كلمات لتخبر العالم من أنت."
+                        <p className="text-xl md:text-3xl lg:text-5xl font-black leading-tight text-gold-400">
+                            &quot;العطر هو اللغة التي لا تحتاج إلى كلمات لتخبر العالم من أنت.&quot;
                         </p>
                         <p className="text-xl text-gray-400 leading-loose">
                             في بوتيك المصطفى، نؤمن أن العطر ليس مجرد منتج، بل هو رحلة عبر الزمن والمكان، تجسد أرقى معاني الفخامة والجمال العربي الأصيل.

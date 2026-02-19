@@ -36,7 +36,7 @@ class ErrorBoundary extends React.Component {
 
                         <div className="flex flex-col gap-4">
                             <button
-                                onClick={handleReset}
+                                onClick={this.handleReset}
                                 className="w-full bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-gold-600/20"
                             >
                                 <RefreshCcw size={18} />
@@ -44,15 +44,15 @@ class ErrorBoundary extends React.Component {
                             </button>
 
                             <a
-                                href="/dashboard"
+                                href="/"
                                 className="w-full bg-gray-50 dark:bg-dark-600 hover:bg-gray-100 dark:hover:bg-dark-500 text-text-secondary dark:text-gold-400 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all"
                             >
                                 <Home size={18} />
-                                العودة للوحة التحكم
+                                العودة للرئيسية
                             </a>
                         </div>
 
-                        {process.env.NODE_ENV === 'development' && (
+                        {import.meta.env.DEV && (
                             <div className="mt-8 p-4 bg-gray-50 dark:bg-dark-800 rounded-xl text-left overflow-auto max-h-40">
                                 <pre className="text-[10px] text-red-500 font-poppins">
                                     {this.state.error?.toString()}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { productsApi, adminProductsApi } from '../../services/api';
 import {
     Plus,
@@ -22,12 +22,7 @@ const DashboardProducts = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-    useEffect(() => {
-        fetchProducts();
-        fetchCategories();
-    }, [currentPage]);
-
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         setLoading(true);
         try {
             const res = await adminProductsApi.getAll({
@@ -36,21 +31,32 @@ const DashboardProducts = () => {
                 page: currentPage,
                 page_size: 10
             });
-            setProducts(res.data.results || res.data);
+            setProducts(res.data.results || res.data || []);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('تعذر تحميل المنتجات');
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPage, searchTerm, filterCategory]);
 
-    const fetchCategories = async () => {
+    const fetchCategories = useCallback(async () => {
         try {
             const res = await productsApi.getCategories();
-            setCategories(res.data);
-        } catch (err) { }
-    };
+            setCategories(res.data.results || res.data);
+        } catch {
+            // Silently fail for categories
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
+
+    useEffect(() => {
+        fetchCategories();
+    }, [fetchCategories]);
 
     const handleDelete = async (id) => {
         if (!window.confirm('هل أنت متأكد من حذف هذا المنتج نهائياً؟')) return;
@@ -58,18 +64,12 @@ const DashboardProducts = () => {
             await adminProductsApi.delete(id);
             toast.success('تم حذف المنتج بنجاح');
             fetchProducts();
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('خطأ في الحذف');
         }
     };
 
-    useEffect(() => {
-        const delayDebounce = setTimeout(() => {
-            setCurrentPage(1);
-            fetchProducts();
-        }, 500);
-        return () => clearTimeout(delayDebounce);
-    }, [searchTerm, filterCategory]);
 
     return (
         <div className="space-y-8">
@@ -79,7 +79,7 @@ const DashboardProducts = () => {
                     <p className="text-text-secondary dark:text-gold-400 text-sm">إدارة الكتالوج، المخزون والأسعار.</p>
                 </div>
                 <Link
-                    to="/dashboard/products/new"
+                    to="/dashboard/product/new"
                     className="bg-gold-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-gold-700 transition-all shadow-lg shadow-gold-600/20"
                 >
                     <Plus size={20} />
@@ -118,6 +118,7 @@ const DashboardProducts = () => {
                                 <th className="px-8 py-5">المنتج</th>
                                 <th className="px-8 py-5">التصنيف</th>
                                 <th className="px-8 py-5">الماركة</th>
+                                <th className="px-8 py-5">الجنس</th>
                                 <th className="px-8 py-5">السعر (يبدأ من)</th>
                                 <th className="px-8 py-5">الحالة</th>
                                 <th className="px-8 py-5">إجراءات</th>
@@ -142,7 +143,7 @@ const DashboardProducts = () => {
                                     <tr key={product.id} className="hover:bg-gold-50/20 dark:hover:bg-dark-600 transition-colors">
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-14 h-14 bg-cream-50 dark:bg-dark-600 rounded-xl overflow-hidden border border-gold-50 dark:border-dark-600">
+                                                <div className="w-14 h-14 bg-cream-50 dark:bg-dark-600 rounded-xl overflow-hidden border border-gold-50 dark:border-600">
                                                     <img src={product.main_image} alt="" className="w-full h-full object-cover" />
                                                 </div>
                                                 <div>
@@ -158,6 +159,14 @@ const DashboardProducts = () => {
                                         </td>
                                         <td className="px-8 py-5 font-bold text-text-secondary dark:text-gold-400">
                                             {product.brand?.name_ar}
+                                        </td>
+                                        <td className="px-8 py-5">
+                                            <span className={`px-3 py-1 rounded-full text-[10px] font-black ${product.gender === 'men' ? 'bg-blue-50 text-blue-600' :
+                                                    product.gender === 'women' ? 'bg-rose-50 text-rose-600' :
+                                                        'bg-amber-50 text-amber-600'
+                                                }`}>
+                                                {product.gender === 'men' ? 'رجالي' : product.gender === 'women' ? 'نسائي' : 'للجنسين'}
+                                            </span>
                                         </td>
                                         <td className="px-8 py-5 font-bold font-poppins text-gold-700 dark:text-gold-400">
                                             {product.min_price} د.ل
@@ -178,7 +187,7 @@ const DashboardProducts = () => {
                                                     <ExternalLink size={18} />
                                                 </Link>
                                                 <Link
-                                                    to={`/dashboard/products/edit/${product.id}`}
+                                                    to={`/dashboard/product/edit/${product.id}`}
                                                     className="p-2 text-text-muted dark:text-gold-400 hover:text-blue-600 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
                                                 >
                                                     <Edit size={18} />

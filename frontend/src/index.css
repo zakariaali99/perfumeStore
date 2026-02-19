@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "bootstrap/dist/css/bootstrap-grid.min.css" layer(base);
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -49,6 +50,7 @@
   --input-bg: #12100C;
 }
 
+html,
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
@@ -56,6 +58,7 @@ body {
   direction: rtl;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
 }
 
 /* Dark mode utility classes */

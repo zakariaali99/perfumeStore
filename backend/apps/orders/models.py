@@ -67,7 +67,7 @@ class OrderItem(models.Model):
     
     # بيانات المنتج وقت الشراء
     product_name = models.CharField(max_length=200, verbose_name="اسم المنتج")
-    variant_size = models.PositiveIntegerField(verbose_name="الحجم (مل)")
+    variant_size = models.PositiveIntegerField(verbose_name="الحجم (مل)", null=True, blank=True)
     
     quantity = models.PositiveIntegerField(default=1, verbose_name="الكمية")
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="سعر الوحدة")

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { crmApi } from '../../services/api';
 import {
     Search,
@@ -33,11 +33,7 @@ const DashboardCustomers = () => {
         content: ''
     });
 
-    useEffect(() => {
-        fetchCustomers();
-    }, [currentPage]);
-
-    const fetchCustomers = async () => {
+    const fetchCustomers = useCallback(async () => {
         setLoading(true);
         try {
             const res = await crmApi.getProfiles({
@@ -48,19 +44,25 @@ const DashboardCustomers = () => {
             });
             setCustomers(res.data.results || res.data);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('تعذر تحميل العملاء');
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPage, searchTerm, filterSegment]);
+
+    useEffect(() => {
+        fetchCustomers();
+    }, [fetchCustomers]);
 
     const fetchCustomerDetail = async (id) => {
         setDetailLoading(true);
         try {
             const res = await crmApi.getProfileDetail(id);
             setCustomerDetail(res.data);
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('تعذر تحميل تفاصيل العميل');
             setSelectedCustomer(null);
         } finally {
@@ -68,13 +70,6 @@ const DashboardCustomers = () => {
         }
     };
 
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            setCurrentPage(1);
-            fetchCustomers();
-        }, 500);
-        return () => clearTimeout(timeoutId);
-    }, [searchTerm, filterSegment]);
 
     const handleViewCustomer = (customer) => {
         setSelectedCustomer(customer);
@@ -92,7 +87,8 @@ const DashboardCustomers = () => {
             toast.success('تم تسجيل التفاعل');
             setInteractionForm({ interaction_type: 'call', subject: '', content: '' });
             fetchCustomerDetail(selectedCustomer.id);
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('خطأ في التسجيل');
         }
     };
@@ -140,6 +136,7 @@ const DashboardCustomers = () => {
                                 <th className="px-8 py-5">الموقع</th>
                                 <th className="px-8 py-5">إجمالي الإنفاق</th>
                                 <th className="px-8 py-5">التصنيف</th>
+                                <th className="px-8 py-5">آخر طلب</th>
                                 <th className="px-8 py-5">إجراءات</th>
                             </tr>
                         </thead>
@@ -188,13 +185,30 @@ const DashboardCustomers = () => {
                                                 {customer.segment}
                                             </span>
                                         </td>
+                                        <td className="px-8 py-5 text-text-secondary dark:text-gold-400 font-bold text-xs">
+                                            {customer.last_order_date ? new Date(customer.last_order_date).toLocaleDateString('ar-LY') : 'لا يوجد'}
+                                        </td>
                                         <td className="px-8 py-5">
-                                            <button
-                                                onClick={() => handleViewCustomer(customer)}
-                                                className="bg-gold-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white p-2 rounded-xl transition-all text-gold-600"
-                                            >
-                                                <ChevronLeft size={20} />
-                                            </button>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => handleViewCustomer(customer)}
+                                                    className="bg-gold-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white p-2 rounded-xl transition-all text-gold-600"
+                                                    title="تفاصيل العميل"
+                                                >
+                                                    <ChevronLeft size={20} />
+                                                </button>
+                                                {customer.phone && (
+                                                    <a
+                                                        href={`https://wa.me/${customer.phone.replace(/\s+/g, '')}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="bg-green-50 dark:bg-dark-600 hover:bg-green-500 hover:text-white p-2 rounded-xl transition-all text-green-600"
+                                                        title="تواصل عبر واتساب"
+                                                    >
+                                                        <MessageSquare size={20} />
+                                                    </a>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -221,7 +235,12 @@ const DashboardCustomers = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-black text-text-primary dark:text-cream-50">{selectedCustomer.name}</h3>
-                                    <p className="text-sm text-text-secondary dark:text-gold-400 font-poppins">{selectedCustomer.phone}</p>
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-sm text-text-secondary dark:text-gold-400 font-poppins">{selectedCustomer.phone}</p>
+                                        <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${selectedCustomer.segment === 'vip' ? 'bg-purple-50 text-purple-600' : 'bg-green-50 text-green-600'}`}>
+                                            {selectedCustomer.segment}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             <button onClick={() => setSelectedCustomer(null)} className="p-2 hover:bg-gold-100 rounded-xl transition-all text-text-primary dark:text-cream-50">
@@ -245,6 +264,66 @@ const DashboardCustomers = () => {
                                         <div className="bg-blue-50 dark:bg-dark-800 p-6 rounded-[32px] border border-blue-100 dark:border-dark-600">
                                             <p className="text-[10px] font-black text-blue-600 dark:text-gold-400 uppercase mb-1">الطلبات</p>
                                             <p className="text-xl font-black font-poppins text-blue-700">{customerDetail.total_orders}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Personal Info */}
+                                    <div className="space-y-4">
+                                        <h4 className="font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
+                                            <User size={18} className="text-gold-500" />
+                                            المعلومات الشخصية
+                                        </h4>
+                                        <div className="bg-cream-50 dark:bg-dark-800 p-6 rounded-[32px] border border-gold-50 dark:border-dark-600 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">الهاتف</p>
+                                                <p className="text-sm font-bold text-text-primary dark:text-cream-50 font-poppins">{customerDetail.phone}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">البريد الإلكتروني</p>
+                                                <p className="text-sm font-bold text-text-primary dark:text-cream-50 font-poppins">{customerDetail.email || 'غير متوفر'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">تاريخ الميلاد</p>
+                                                <p className="text-sm font-bold text-text-primary dark:text-cream-50 font-poppins">
+                                                    {customerDetail.birth_day && customerDetail.birth_month ? `${customerDetail.birth_day}/${customerDetail.birth_month}/${customerDetail.birth_year || ''}` : 'غير متوفر'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">النوع المفضل</p>
+                                                <p className="text-sm font-bold text-text-primary dark:text-cream-50">
+                                                    {customerDetail.preferred_gender === 'M' ? 'رجالي' : customerDetail.preferred_gender === 'F' ? 'نسائي' : customerDetail.preferred_gender === 'U' ? 'للجنسين' : 'غير محدد'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Shipping Info */}
+                                    <div className="space-y-4">
+                                        <h4 className="font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
+                                            <MapPin size={18} className="text-gold-500" />
+                                            معلومات العنوان والشحن
+                                        </h4>
+                                        <div className="bg-cream-50 dark:bg-dark-800 p-6 rounded-[32px] border border-gold-50 dark:border-dark-600 space-y-4">
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">المدينة</p>
+                                                    <p className="text-sm font-bold text-text-primary dark:text-cream-50">{customerDetail.city}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">المنطقة</p>
+                                                    <p className="text-sm font-bold text-text-primary dark:text-cream-50">{customerDetail.area}</p>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">العنوان بالتفصيل</p>
+                                                <p className="text-sm font-bold text-text-primary dark:text-cream-50">{customerDetail.address}</p>
+                                            </div>
+                                            {customerDetail.location_details && (
+                                                <div>
+                                                    <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">أقرب علامة / تفاصيل إضافية</p>
+                                                    <p className="text-sm font-bold text-text-primary dark:text-cream-50">{customerDetail.location_details}</p>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 

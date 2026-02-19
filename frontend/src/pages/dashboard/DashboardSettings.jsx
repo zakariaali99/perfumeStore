@@ -9,7 +9,6 @@ import {
     Facebook,
     Instagram,
     Twitter,
-    Truck,
     Settings,
     ShieldCheck,
     Bell
@@ -26,7 +25,6 @@ const DashboardSettings = () => {
         facebook_link: '',
         instagram_link: '',
         tiktok_link: '',
-        shipping_cost: 25.0,
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -39,8 +37,9 @@ const DashboardSettings = () => {
         setLoading(true);
         try {
             const res = await cmsApi.getSettings();
-            setSettings(res.data);
-        } catch (err) {
+            setSettings(prev => ({ ...prev, ...(res.data || {}) }));
+        } catch (error) {
+            console.error(error);
             toast.error('تعذر تحميل الإعدادات');
         } finally {
             setLoading(false);
@@ -53,7 +52,8 @@ const DashboardSettings = () => {
         try {
             await cmsApi.updateSettings(settings.id, settings);
             toast.success('تم حفظ الإعدادات بنجاح');
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('خطأ في حفظ الإعدادات');
         } finally {
             setSaving(false);
@@ -78,7 +78,7 @@ const DashboardSettings = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-3xl font-black text-text-primary dark:text-cream-50 mb-1">إعدادات النظام</h2>
-                    <p className="text-text-secondary dark:text-gold-400 text-sm">تخصيص معلومات المتجر، قنوات التواصل، وتكاليف الشحن.</p>
+                    <p className="text-text-secondary dark:text-gold-400 text-sm">تخصيص معلومات المتجر وقنوات التواصل.</p>
                 </div>
                 <button
                     onClick={handleSave}
@@ -151,28 +151,6 @@ const DashboardSettings = () => {
                                         onChange={handleChange}
                                         className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 min-h-[100px] text-text-primary dark:text-cream-50"
                                     ></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
-                        <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
-                            <Truck size={22} className="text-gold-500" />
-                            الشحن والتسليم
-                        </h3>
-                        <div className="space-y-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">تكلفة الشحن الثابتة (د.ل)</label>
-                                <div className="relative">
-                                    <input
-                                        type="number"
-                                        name="shipping_cost"
-                                        value={settings.shipping_cost}
-                                        onChange={handleChange}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-black text-text-primary dark:text-cream-50"
-                                    />
-                                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xs font-bold text-gold-600">دينار ليبي</span>
                                 </div>
                             </div>
                         </div>
@@ -257,8 +235,8 @@ const DashboardSettings = () => {
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
+            </form >
+        </div >
     );
 };
 

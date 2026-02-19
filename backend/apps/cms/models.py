@@ -57,8 +57,6 @@ class StoreSettings(models.Model):
     instagram_link = models.URLField(blank=True, verbose_name="رابط انستغرام")
     tiktok_link = models.URLField(blank=True, verbose_name="رابط تيك توك")
     
-    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=25.0, verbose_name="تكلفة الشحن (ثابتة)")
-    
     class Meta:
         verbose_name = "إعدادات المتجر"
         verbose_name_plural = "إعدادات المتجر"

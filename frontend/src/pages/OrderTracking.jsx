@@ -27,7 +27,8 @@ const OrderTracking = () => {
         try {
             const res = await ordersApi.track(orderNumber, phone);
             setOrder(res.data);
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             setError('تعذر العثور على الطلب. يرجى التأكد من الرقم والمحاولة مرة أخرى.');
             setOrder(null);
         } finally {
@@ -56,7 +57,7 @@ const OrderTracking = () => {
                 </div>
 
                 {/* Search Form */}
-                <div className="bg-white dark:bg-dark-700 p-8 rounded-3xl border border-gold-100 dark:border-dark-600 shadow-sm mb-10">
+                <div className="bg-white dark:bg-dark-700 p-6 md:p-8 rounded-3xl border border-gold-100 dark:border-dark-600 shadow-sm mb-10">
                     <form onSubmit={handleTrack} className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 space-y-2">
                             <label className="text-xs font-bold text-text-secondary dark:text-gold-400 px-1 uppercase tracking-wider">رقم الطلب</label>

@@ -25,8 +25,9 @@ const DashboardLogin = () => {
             localStorage.setItem('user', JSON.stringify(res.data.user));
             toast.success('تم تسجيل الدخول بنجاح');
             navigate('/dashboard');
-        } catch (err) {
-            setError(err.response?.data?.error || 'بيانات الاعتماد غير صحيحة');
+        } catch (error) {
+            console.error(error);
+            setError(error.response?.data?.error || 'بيانات الاعتماد غير صحيحة');
             toast.error('خطأ في تسجيل الدخول');
         } finally {
             setLoading(false);
@@ -103,7 +104,7 @@ const DashboardLogin = () => {
                 </div>
 
                 <p className="text-center mt-10 text-xs text-text-muted dark:text-gold-500 font-bold uppercase tracking-widest">
-                    Almostafa's Admin v1.0.0
+                    Almostafa&apos;s Admin v1.0.0
                 </p>
             </div>
         </div>

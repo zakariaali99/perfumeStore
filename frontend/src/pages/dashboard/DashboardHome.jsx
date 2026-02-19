@@ -62,8 +62,12 @@ const DashboardHome = () => {
     if (loading) return (
         <div className="space-y-10 animate-pulse">
             <div className="h-10 w-48 bg-gray-200 dark:bg-dark-700 rounded-xl"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[1, 2, 3, 4].map(i => <div key={i} className="h-40 bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600"></div>)}
+            <div className="row g-4">
+                {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className="col-12 col-md-6 col-lg-3">
+                        <div className="h-40 bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600"></div>
+                    </div>
+                ))}
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 h-96 bg-white dark:bg-dark-700 rounded-[32px]"></div>
@@ -89,33 +93,51 @@ const DashboardHome = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard
-                    title="إجمالي المبيعات المحققة"
-                    value={`${summary.total_revenue?.toLocaleString() || 0} د.ل`}
-                    icon={TrendingUp}
-                    trend={summary.revenue_trend >= 0 ? 'up' : 'down'}
-                    trendValue={Math.abs(summary.revenue_trend || 0)}
-                    color="bg-green-600 text-green-600"
-                />
-                <StatCard
-                    title="الطلبات الكلية"
-                    value={summary.total_orders || 0}
-                    icon={ShoppingBag}
-                    color="bg-gold-600 text-gold-600"
-                />
-                <StatCard
-                    title="قاعدة العملاء"
-                    value={summary.total_customers || 0}
-                    icon={Users}
-                    color="bg-blue-600 text-blue-600"
-                />
-                <StatCard
-                    title="متوسط قيمة الطلب (AOV)"
-                    value={`${summary.aov?.toFixed(2) || 0} د.ل`}
-                    icon={TrendingUp}
-                    color="bg-purple-600 text-purple-600"
-                />
+            <div className="row g-4">
+                <div className="col-12 col-md-6 col-lg-3">
+                    <StatCard
+                        title="إجمالي المبيعات المحققة"
+                        value={`${summary.total_revenue?.toLocaleString() || 0} د.ل`}
+                        icon={TrendingUp}
+                        trend={summary.revenue_trend >= 0 ? 'up' : 'down'}
+                        trendValue={Math.abs(summary.revenue_trend || 0)}
+                        color="bg-green-600 text-green-600"
+                    />
+                </div>
+                <div className="col-12 col-md-6 col-lg-3">
+                    <StatCard
+                        title="الطلبات الكلية"
+                        value={summary.total_orders || 0}
+                        icon={ShoppingBag}
+                        color="bg-gold-600 text-gold-600"
+                    />
+                </div>
+                <div className="col-12 col-md-6 col-lg-3">
+                    <StatCard
+                        title="قاعدة العملاء"
+                        value={summary.total_customers || 0}
+                        icon={Users}
+                        color="bg-blue-600 text-blue-600"
+                    />
+                </div>
+                <div className="col-12 col-md-6 col-lg-3">
+                    <StatCard
+                        title="متوسط قيمة الطلب (AOV)"
+                        value={`${summary.aov?.toFixed(2) || 0} د.ل`}
+                        icon={TrendingUp}
+                        color="bg-purple-600 text-purple-600"
+                    />
+                </div>
+                <div className="col-12 col-md-6 col-lg-3">
+                    <StatCard
+                        title="إيراد الشهر الحالي (MRR)"
+                        value={`${summary.mrr?.toLocaleString() || 0} د.ل`}
+                        icon={TrendingUp}
+                        trend={summary.revenue_trend >= 0 ? 'up' : 'down'}
+                        trendValue={Math.abs(summary.revenue_trend || 0)}
+                        color="bg-amber-600 text-amber-600"
+                    />
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

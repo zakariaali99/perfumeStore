@@ -5,10 +5,10 @@ const Footer = () => {
     return (
         <footer className="bg-dark-800 text-white py-20 mt-20">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div className="row g-5 mb-16">
                     {/* Brand */}
-                    <div className="md:col-span-2">
-                        <h2 className="text-3xl font-black mb-4 text-gold-400 tracking-widest">ALMOSTAFAS</h2>
+                    <div className="col-12 col-md-6">
+                        <h2 className="text-3xl font-black mb-4 text-gold-400 tracking-tight">عطور مصطفى</h2>
                         <p className="text-gray-400 leading-relaxed max-w-md mb-8">
                             نحن نقدم أفخر العطور العربية والشرقية المختارة بعناية فائقة. نسعى لإيصال روائح الفخامة والأصالة لكل بيت ليبي.
                         </p>
@@ -26,7 +26,7 @@ const Footer = () => {
                     </div>
 
                     {/* Quick Links */}
-                    <div>
+                    <div className="col-6 col-md-3">
                         <h3 className="font-black text-lg mb-6 text-gold-400">روابط سريعة</h3>
                         <ul className="space-y-3 text-gray-400">
                             <li><Link to="/products" className="hover:text-gold-500 transition-colors">كل العطور</Link></li>
@@ -37,7 +37,7 @@ const Footer = () => {
                     </div>
 
                     {/* Contact */}
-                    <div>
+                    <div className="col-6 col-md-3">
                         <h3 className="font-black text-lg mb-6 text-gold-400">تواصل معنا</h3>
                         <ul className="space-y-4 text-gray-400">
                             <li className="flex items-center gap-3">
@@ -50,7 +50,7 @@ const Footer = () => {
                             </li>
                             <li className="flex items-center gap-3">
                                 <Mail size={16} className="text-gold-500" />
-                                info@almostafas.ly
+                                info@mostafastore.ly
                             </li>
                         </ul>
                     </div>
@@ -59,7 +59,7 @@ const Footer = () => {
                 {/* Bottom */}
                 <div className="pt-10 border-t border-dark-600 flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-sm text-gray-500">
-                        &copy; 2026 جميع الحقوق محفوظة لمتجر المصطفى للعطور
+                        &copy; 2026 جميع الحقوق محفوظة لمتجر عطور مصطفى
                     </p>
                     <div className="flex gap-6 text-xs text-gray-500">
                         <Link to="/terms" className="hover:text-gold-500 transition-colors">الشروط والأحكام</Link>

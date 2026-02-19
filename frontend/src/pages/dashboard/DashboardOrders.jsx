@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ordersApi } from '../../services/api';
 import {
     Search,
@@ -37,11 +37,7 @@ const DashboardOrders = () => {
         'returned': { label: 'مرتجع', color: 'text-gray-600', bg: 'bg-gray-50', icon: AlertCircle },
     };
 
-    useEffect(() => {
-        fetchOrders();
-    }, [currentPage]);
-
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         try {
             const res = await ordersApi.getAll({
@@ -52,30 +48,29 @@ const DashboardOrders = () => {
             });
             setOrders(res.data.results || res.data || []);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('تعذر تحميل الطلبات');
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPage, searchTerm, filterStatus]);
+
+    useEffect(() => {
+        fetchOrders();
+    }, [fetchOrders]);
 
     const handleUpdateStatus = async (orderId, newStatus) => {
         try {
             await ordersApi.updateStatus(orderId, { status: newStatus });
             toast.success('تم تحديث حالة الطلب');
             fetchOrders();
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('فشل تحديث الحالة');
         }
     };
 
-    useEffect(() => {
-        const delayDebounce = setTimeout(() => {
-            setCurrentPage(1);
-            fetchOrders();
-        }, 500);
-        return () => clearTimeout(delayDebounce);
-    }, [searchTerm, filterStatus]);
 
     return (
         <div className="space-y-8">
@@ -230,15 +225,24 @@ const DashboardOrders = () => {
                                             <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600"><User size={20} /></div>
                                             <div>
                                                 <p className="font-bold text-text-primary dark:text-cream-50">{selectedOrder.customer_name}</p>
-                                                <p className="text-xs text-text-secondary dark:text-gold-400 font-poppins">{selectedOrder.customer_phone}</p>
+                                                <div className="flex flex-col">
+                                                    <p className="text-xs text-text-secondary dark:text-gold-400 font-poppins">{selectedOrder.customer_phone}</p>
+                                                    {selectedOrder.customer_email && <p className="text-[10px] text-text-secondary dark:text-gold-400 font-poppins">{selectedOrder.customer_email}</p>}
+                                                    {(selectedOrder.birth_day && selectedOrder.birth_month) && (
+                                                        <p className="text-[10px] text-gold-600 dark:text-gold-400 font-bold mt-1">
+                                                            عيد ميلاد: {selectedOrder.birth_day}/{selectedOrder.birth_month}
+                                                        </p>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="flex items-start gap-3">
                                             <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600 shrink-0"><MapPin size={20} /></div>
-                                            <p className="text-sm text-text-primary dark:text-cream-50 leading-relaxed font-bold">
-                                                {selectedOrder.city}, {selectedOrder.area}<br />
-                                                {selectedOrder.address}
-                                            </p>
+                                            <div className="text-sm text-text-primary dark:text-cream-50 leading-relaxed font-bold">
+                                                <p>{selectedOrder.city}, {selectedOrder.area}</p>
+                                                <p className="text-xs opacity-80">{selectedOrder.address}</p>
+                                                {selectedOrder.location_details && <p className="text-xs text-text-secondary mt-1 border-t border-gold-50 pt-1">{selectedOrder.location_details}</p>}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -51,5 +51,5 @@ class CustomerProfileViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def segments_stats(self, request):
         from django.db.models import Count
-        stats = CustomerProfile.objects.values('segment').annotate(count=Count('id'))
+        stats = list(CustomerProfile.objects.values('segment').annotate(count=Count('id')))
         return Response(stats)

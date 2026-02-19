@@ -3,7 +3,10 @@ from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
+import logging
 from .models import Order, OrderStatusHistory
+
+logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=Order)
 def order_create_notification(sender, instance, created, **kwargs):
@@ -25,7 +28,7 @@ def order_create_notification(sender, instance, created, **kwargs):
                     fail_silently=True,
                 )
             except Exception as e:
-                print(f"Error sending email: {e}")
+                logger.error(f"Error sending email: {e}")
 
 @receiver(post_save, sender=OrderStatusHistory)
 def order_status_change_notification(sender, instance, created, **kwargs):
@@ -47,4 +50,4 @@ def order_status_change_notification(sender, instance, created, **kwargs):
                     fail_silently=True,
                 )
             except Exception as e:
-                print(f"Error sending status email: {e}")
+                logger.error(f"Error sending status email: {e}")

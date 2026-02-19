@@ -1,23 +1,45 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { productsApi } from '../services/api';
 import ProductCard from '../components/products/ProductCard';
+import Pagination from '../components/common/Pagination';
 import { Filter, ChevronDown, X, SlidersHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Products = () => {
+    const [searchParams] = useSearchParams();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+    // Pagination State
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
     // Filters state
     const [filters, setFilters] = useState({
-        category: '',
-        brand: '',
-        search: '',
+        category: searchParams.get('category') || '',
+        brand: searchParams.get('brand') || '',
+        search: searchParams.get('search') || '',
         ordering: '-created_at'
     });
+
+    // Sync with URL params
+    useEffect(() => {
+        const category = searchParams.get('category') || '';
+        const brand = searchParams.get('brand') || '';
+        const search = searchParams.get('search') || '';
+
+        setFilters(prev => ({
+            ...prev,
+            category,
+            brand,
+            search
+        }));
+        setPage(1);
+    }, [searchParams]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,8 +48,8 @@ const Products = () => {
                     productsApi.getCategories(),
                     productsApi.getBrands()
                 ]);
-                setCategories(catsRes.data);
-                setBrands(brandsRes.data);
+                setCategories(catsRes.data.results || catsRes.data);
+                setBrands(brandsRes.data.results || brandsRes.data);
             } catch (error) {
                 console.error("Error fetching filters", error);
             }
@@ -39,8 +61,26 @@ const Products = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const res = await productsApi.getAll(filters);
-                setProducts(res.data.results || res.data);
+                const params = {
+                    page,
+                    search: filters.search,
+                    ordering: filters.ordering,
+                    ...(filters.category && { category__slug: filters.category }),
+                    ...(filters.brand && { brand__slug: filters.brand })
+                };
+                const res = await productsApi.getAll(params);
+
+                // Handle different response structures (pagination vs flat)
+                if (res.data.results) {
+                    setProducts(res.data.results);
+                    // Calculate total pages if count is provided
+                    if (res.data.count) {
+                        setTotalPages(Math.ceil(res.data.count / 12)); // Assuming page size is 12
+                    }
+                } else {
+                    setProducts(res.data);
+                    setTotalPages(1);
+                }
             } catch (error) {
                 console.error("Error fetching products", error);
             } finally {
@@ -48,10 +88,11 @@ const Products = () => {
             }
         };
         fetchProducts();
-    }, [filters]);
+    }, [filters, page]);
 
     const handleFilterChange = (key, value) => {
         setFilters(prev => ({ ...prev, [key]: value }));
+        setPage(1); // Reset to first page on filter change
     };
 
     const FilterSection = () => (
@@ -103,17 +144,17 @@ const Products = () => {
     return (
         <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-24 pb-20 transition-colors duration-300">
             <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row gap-8">
+                <div className="row g-4">
 
                     {/* PC Sidebar */}
-                    <aside className="hidden md:block w-64 flex-shrink-0">
+                    <aside className="hidden md:block col-md-3">
                         <div className="bg-white dark:bg-dark-700 p-6 rounded-2xl border border-gold-100/50 dark:border-dark-600 sticky top-28 shadow-sm">
                             <FilterSection />
                         </div>
                     </aside>
 
                     {/* Main Content */}
-                    <main className="flex-1">
+                    <main className="col-12 col-md-9">
                         {/* Header & Sort */}
                         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
                             <div className="w-full sm:w-auto">
@@ -162,24 +203,34 @@ const Products = () => {
 
                         {/* Product Grid */}
                         {loading ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="row g-3 g-md-4">
                                 {[1, 2, 3, 4, 5, 6].map(i => (
-                                    <div key={i} className="bg-white dark:bg-dark-700 rounded-2xl h-[450px] animate-pulse border border-gold-100/50 dark:border-dark-600"></div>
+                                    <div key={i} className="col-6 col-lg-4">
+                                        <div className="bg-white dark:bg-dark-700 rounded-2xl h-[450px] animate-pulse border border-gold-100/50 dark:border-dark-600"></div>
+                                    </div>
                                 ))}
                             </div>
                         ) : products.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {products.map((product, idx) => (
-                                    <motion.div
-                                        key={product.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.1 }}
-                                    >
-                                        <ProductCard product={product} />
-                                    </motion.div>
-                                ))}
-                            </div>
+                            <>
+                                <div className="row g-3 g-md-4 mb-12">
+                                    {products.map((product, idx) => (
+                                        <motion.div
+                                            key={product.id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: idx * 0.1 }}
+                                            className="col-6 col-lg-4"
+                                        >
+                                            <ProductCard product={product} />
+                                        </motion.div>
+                                    ))}
+                                </div>
+                                <Pagination
+                                    currentPage={page}
+                                    totalPages={totalPages}
+                                    onPageChange={setPage}
+                                />
+                            </>
                         ) : (
                             <div className="bg-white dark:bg-dark-700 rounded-3xl p-20 text-center border border-gold-100 dark:border-dark-600 shadow-sm">
                                 <Filter size={48} className="mx-auto text-gold-200 dark:text-dark-600 mb-4" />
@@ -206,14 +257,14 @@ const Products = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowMobileFilters(false)}
-                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200]"
                         />
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 right-0 w-[80%] max-w-sm bg-white dark:bg-dark-800 z-50 p-6 shadow-2xl overflow-y-auto"
+                            className="fixed inset-y-0 right-0 w-[80%] max-w-sm bg-white dark:bg-dark-800 z-[200] p-6 shadow-2xl overflow-y-auto"
                         >
                             <div className="flex justify-between items-center mb-8">
                                 <h2 className="text-xl font-bold text-text-primary dark:text-cream-50">تصفية المنتجات</h2>

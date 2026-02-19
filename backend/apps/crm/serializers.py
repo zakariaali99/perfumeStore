@@ -13,6 +13,10 @@ class CustomerInteractionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerInteraction
         fields = '__all__'
+        extra_kwargs = {
+            'customer': {'read_only': True},
+            'created_by': {'read_only': True}
+        }
 
 class CustomerProfileSerializer(serializers.ModelSerializer):
     tags_display = CustomerTagSerializer(source='tags', many=True, read_only=True)

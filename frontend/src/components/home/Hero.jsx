@@ -1,12 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { cmsApi } from '../../services/api';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 const Hero = () => {
     const [slides, setSlides] = useState([]);
     const [current, setCurrent] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+
+    // Minimum swipe distance (in px)
+    const minSwipeDistance = 50;
 
     useEffect(() => {
         const fetchSlides = async () => {
@@ -36,9 +41,33 @@ const Hero = () => {
 
     useEffect(() => {
         if (slides.length < 2) return;
-        const timer = setInterval(next, 7000);
+        const timer = setInterval(next, 3000); // 3 seconds auto-slide
         return () => clearInterval(timer);
     }, [slides.length, next]);
+
+    // Swipe handlers
+    const onTouchStart = (e) => {
+        setTouchEnd(null); // Reset touch end
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe) {
+            next(); // Swipe left -> next slide (Arabic direction consideration: typically swipe left shows next in LTR, but in RTL swipe left (move finger left) means "pulling" the content from right? Actually standard is swipe left to go next)
+            // Let's assume standard behavior: Swipe Left = Next, Swipe Right = Prev
+        } else if (isRightSwipe) {
+            prev();
+        }
+    };
 
     if (loading || slides.length === 0) return (
         <section className="relative h-[85vh] bg-cream-50 dark:bg-dark-800 animate-pulse flex items-center justify-center">
@@ -52,7 +81,12 @@ const Hero = () => {
     const slide = slides[current];
 
     return (
-        <section className="relative h-[85vh] overflow-hidden bg-black font-tajawal">
+        <section
+            className="relative h-[85vh] overflow-hidden bg-black font-tajawal touch-pan-y"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+        >
             <AnimatePresence mode="wait">
                 <motion.div
                     key={current}
@@ -62,7 +96,7 @@ const Hero = () => {
                     transition={{ duration: 1 }}
                     className="absolute inset-0"
                 >
-                    <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/20 to-transparent z-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/50 to-black/30 z-10"></div>
                     {slide.image ? (
                         <img
                             src={slide.image}
@@ -75,70 +109,56 @@ const Hero = () => {
                 </motion.div>
             </AnimatePresence>
 
-            <div className="container mx-auto px-4 h-full relative z-20 flex items-center">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={current}
-                        initial={{ opacity: 0, x: 100 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -100 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="max-w-3xl"
-                    >
-                        <motion.span
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-gold-500 text-black px-4 py-1.5 rounded-lg text-xs font-black mb-6 inline-block uppercase tracking-[0.2em]"
-                        >
-                            {slide.subtitle}
-                        </motion.span>
-                        <h1 className="text-6xl md:text-8xl font-black text-white mb-8 leading-tight drop-shadow-2xl">
-                            {slide.title}
-                        </h1>
-                        <p className="text-xl text-gray-200 mb-12 max-w-xl leading-loose font-medium drop-shadow-lg">
-                            {slide.description_ar || 'اكتشف عبق الجوهر الشرقي في تشكيلتنا الفاخرة التي تحمل سحر التاريخ وروح العصر.'}
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-6">
-                            <a
-                                href={slide.button_link || '/products'}
-                                className="bg-gold-500 hover:bg-gold-600 text-black px-12 py-5 rounded-2xl transition-all duration-300 font-black shadow-2xl shadow-gold-500/20 text-center text-lg"
+            <div className="container h-100 relative z-20">
+                <div className="row h-100 align-items-center justify-content-end">
+                    <div className="col-12 col-md-8 col-lg-7">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={current}
+                                initial={{ opacity: 0, x: 100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                                transition={{ duration: 0.8, ease: "easeOut" }}
+                                className="w-full overflow-hidden"
                             >
-                                {slide.button_text || 'تسوق المجموعة'}
-                            </a>
-                        </div>
-                    </motion.div>
-                </AnimatePresence>
+                                <motion.span
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="bg-gold-500 text-black px-4 py-1.5 rounded-lg text-xs font-black mb-6 inline-block uppercase tracking-[0.2em]"
+                                >
+                                    {slide.subtitle}
+                                </motion.span>
+                                <h1 className="text-3xl sm:text-5xl md:text-8xl font-black text-white mb-8 leading-tight drop-shadow-2xl">
+                                    {slide.title}
+                                </h1>
+                                <p className="text-base md:text-xl text-gray-200 mb-12 leading-loose font-medium drop-shadow-lg">
+                                    {slide.description_ar || 'اكتشف عبق الجوهر الشرقي في تشكيلتنا الفاخرة التي تحمل سحر التاريخ وروح العصر.'}
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-6">
+                                    <Link
+                                        to={slide.button_link || '/products'}
+                                        className="bg-gold-500 hover:bg-gold-600 text-black px-8 py-4 md:px-12 md:py-5 rounded-2xl transition-all duration-300 font-black shadow-2xl shadow-gold-500/20 text-center text-lg inline-block"
+                                    >
+                                        {slide.button_text || 'تسوق المجموعة'}
+                                    </Link>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+                </div>
             </div>
 
-            {/* Navigation */}
+            {/* Navigation Indicators Only (Arrows Removed) */}
             {slides.length > 1 && (
-                <>
-                    <div className="absolute bottom-12 right-4 container mx-auto px-4 z-30 flex items-center gap-4">
+                <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 z-30 flex gap-2">
+                    {slides.map((_, idx) => (
                         <button
-                            onClick={prev}
-                            className="p-4 rounded-2xl bg-white/10 backdrop-blur-md text-white hover:bg-gold-500 hover:text-black transition-all border border-white/20"
-                        >
-                            <ChevronRight size={24} />
-                        </button>
-                        <button
-                            onClick={next}
-                            className="p-4 rounded-2xl bg-white/10 backdrop-blur-md text-white hover:bg-gold-500 hover:text-black transition-all border border-white/20"
-                        >
-                            <ChevronLeft size={24} />
-                        </button>
-                    </div>
-
-                    {/* Indicators */}
-                    <div className="absolute bottom-12 left-12 z-30 flex gap-2">
-                        {slides.map((_, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setCurrent(idx)}
-                                className={`h-1.5 transition-all rounded-full ${idx === current ? 'w-12 bg-gold-500' : 'w-4 bg-white/30'}`}
-                            />
-                        ))}
-                    </div>
-                </>
+                            key={idx}
+                            onClick={() => setCurrent(idx)}
+                            className={`h-1.5 transition-all rounded-full ${idx === current ? 'w-12 bg-gold-500' : 'w-4 bg-white/30'}`}
+                        />
+                    ))}
+                </div>
             )}
         </section>
     );

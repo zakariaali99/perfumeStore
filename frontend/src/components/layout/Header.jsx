@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
     ShoppingBag,
     Search,
@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useCartStore from '../../store/cartStore';
 import useThemeStore from '../../store/themeStore';
 import CartDrawer from '../cart/CartDrawer';
+import { productsApi } from '../../services/api';
 
 const Header = () => {
     const { cart } = useCartStore();
@@ -27,26 +28,29 @@ const Header = () => {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [categories, setCategories] = useState([]);
+
+    // Search State
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const searchInputRef = useRef(null);
+
     const location = useLocation();
+    const navigate = useNavigate();
 
-    const cartItemsCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
+    const cartItemsCount = cart.items ? cart.items.reduce((acc, item) => acc + item.quantity, 0) : 0;
 
-    const navLinks = [
-        { name: 'كل العطور', path: '/products' },
-        {
-            name: 'الأقسام',
-            path: '#',
-            dropdown: [
-                { name: 'عطور شرقية', path: '/products?category=oriental' },
-                { name: 'عطور عود', path: '/products?category=oud' },
-                { name: 'مسك ودهن عود', path: '/products?category=musk' },
-                { name: 'المجموعات الحصرية', path: '/products?exclusive=true' },
-            ]
-        },
-        { name: 'تتبع الطلب', path: '/track' },
-        { name: 'من نحن', path: '/about' },
-        { name: 'اتصل بنا', path: '/contact' },
-    ];
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await productsApi.getCategories();
+                setCategories(res.data.results || res.data || []);
+            } catch (error) {
+                console.error("Failed to fetch categories", error);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -54,17 +58,45 @@ const Header = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    useEffect(() => {
+        if (isSearchOpen && searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    }, [isSearchOpen]);
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+            setIsSearchOpen(false);
+            setSearchQuery('');
+        }
+    };
+
     const isActive = (path) => {
         if (path === '#') return false;
         return location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
     };
 
+    const navLinks = [
+        { name: 'كل العطور', path: '/products' },
+        {
+            name: 'الأقسام',
+            path: '#',
+            dropdown: categories.length > 0
+                ? categories.map(c => ({ name: c.name_ar, path: `/products?category=${c.slug}` }))
+                : [
+                    { name: 'عطور شرقية', path: '/products?category=oriental' }, // Fallback
+                    { name: 'عطور عود', path: '/products?category=oud' },
+                ]
+        },
+        { name: 'تتبع الطلب', path: '/track' },
+        { name: 'من نحن', path: '/about' },
+        { name: 'اتصل بنا', path: '/contact' },
+    ];
+
     return (
         <>
-            {/* Top Bar */}
-            {/* Top Bar Removed */}
-
-            {/* Main Header */}
             <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-20 shadow-xl' : 'bg-transparent h-24'}`}>
                 <div className="container mx-auto px-4 h-full flex items-center justify-between gap-8">
                     {/* Mobile Toggle */}
@@ -76,13 +108,18 @@ const Header = () => {
                     </button>
 
                     {/* Branding */}
-                    <Link to="/" className="flex flex-col items-center group">
-                        <span className="text-2xl md:text-3xl font-black text-gold-600 tracking-[0.2em] transition-all group-hover:scale-105">
-                            ALMOSTAFAS
-                        </span>
-                        <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.5em] text-text-secondary dark:text-gold-400 -mt-1 group-hover:text-gold-500 transition-colors">
-                            Luxury Perfumes
-                        </span>
+                    <Link to="/" className="flex items-center gap-3 group">
+                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105 transition-transform duration-500">
+                            <img src="/logo.png" alt="عطور مصطفى" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="hidden md:flex flex-col">
+                            <span className="text-xl md:text-2xl font-black text-gold-600 tracking-tight transition-all">
+                                عطور مصطفى
+                            </span>
+                            <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-[0.3em] text-text-secondary dark:text-gold-400 -mt-1 group-hover:text-gold-500 transition-colors">
+                                Luxury Perfumes
+                            </span>
+                        </div>
                     </Link>
 
                     {/* Desktop Nav */}
@@ -119,15 +156,38 @@ const Header = () => {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2 md:gap-4">
+                        {/* Search Bar - Desktop */}
+                        <div className={`hidden sm:flex items-center transition-all duration-300 ${isSearchOpen ? 'w-64 bg-gray-50 dark:bg-dark-700 px-3 py-1.5 rounded-2xl border border-gold-200 dark:border-dark-600' : 'w-12 bg-transparent justify-center'}`}>
+                            {isSearchOpen ? (
+                                <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center">
+                                    <input
+                                        ref={searchInputRef}
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="بحث..."
+                                        className="w-full bg-transparent border-none outline-none text-sm text-text-primary dark:text-cream-50 placeholder:text-text-muted"
+                                        onBlur={() => !searchQuery && setIsSearchOpen(false)}
+                                    />
+                                    <button type="submit" className="text-gold-500">
+                                        <Search size={16} />
+                                    </button>
+                                </form>
+                            ) : (
+                                <button
+                                    onClick={() => setIsSearchOpen(true)}
+                                    className="p-3 rounded-2xl bg-gray-50/50 dark:bg-dark-700/50 hover:bg-gold-50 dark:hover:bg-dark-600 text-text-primary dark:text-cream-50 transition-all shadow-sm"
+                                >
+                                    <Search size={20} />
+                                </button>
+                            )}
+                        </div>
+
                         <button
                             onClick={toggleTheme}
-                            className="p-3 rounded-2xl bg-gray-50/50 dark:bg-dark-700/50 hover:bg-gold-50 dark:hover:bg-dark-600 text-text-primary dark:text-gold-400 transition-all shadow-sm border border-transparent hover:border-gold-100 dark:hover:border-dark-500"
+                            className="hidden md:block p-3 rounded-2xl bg-gray-50/50 dark:bg-dark-700/50 hover:bg-gold-50 dark:hover:bg-dark-600 text-text-primary dark:text-gold-400 transition-all shadow-sm border border-transparent hover:border-gold-100 dark:hover:border-dark-500"
                         >
                             {isDark ? <Sun size={20} /> : <Moon size={20} />}
-                        </button>
-
-                        <button className="hidden sm:flex p-3 rounded-2xl bg-gray-50/50 dark:bg-dark-700/50 hover:bg-gold-50 dark:hover:bg-dark-600 text-text-primary dark:text-cream-50 transition-all shadow-sm">
-                            <Search size={20} />
                         </button>
 
                         <button
@@ -180,19 +240,41 @@ const Header = () => {
                             {/* Mobile Header */}
                             <div className="p-8 border-b border-gold-50 dark:border-dark-700 flex justify-between items-center bg-cream-50/30 dark:bg-dark-900/40">
                                 <div className="flex flex-col">
-                                    <span className="text-xl font-black text-gold-600">ALMOSTAFAS</span>
+                                    <span className="text-xl font-black text-gold-600">عطور مصطفى</span>
                                     <span className="text-[8px] font-black uppercase tracking-widest dark:text-gold-400">Luxury Perfumes</span>
                                 </div>
-                                <button
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="p-3 bg-white dark:bg-dark-700 rounded-2xl shadow-sm text-text-primary dark:text-cream-50"
-                                >
-                                    <X size={20} />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={toggleTheme}
+                                        className="p-3 bg-white dark:bg-dark-700 rounded-2xl shadow-sm text-text-primary dark:text-gold-400 border border-gold-50 dark:border-dark-600"
+                                    >
+                                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                                    </button>
+                                    <button
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="p-3 bg-white dark:bg-dark-700 rounded-2xl shadow-sm text-text-primary dark:text-cream-50"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Mobile Nav */}
                             <div className="flex-1 overflow-y-auto p-8 space-y-12">
+                                {/* Mobile Search */}
+                                <form onSubmit={handleSearchSubmit} className="relative">
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="ما الذي تبحث عنه؟"
+                                        className="w-full bg-gray-50 dark:bg-dark-700 px-4 py-4 rounded-2xl border-none outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                    />
+                                    <button type="submit" className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-500">
+                                        <Search size={20} />
+                                    </button>
+                                </form>
+
                                 <nav className="space-y-6">
                                     <p className="text-[10px] uppercase tracking-widest text-text-muted font-black border-r-2 border-gold-500 pr-3">القائمة الرئيسية</p>
                                     <div className="grid grid-cols-2 gap-4">
@@ -217,14 +299,14 @@ const Header = () => {
                                 <nav className="space-y-6">
                                     <p className="text-[10px] uppercase tracking-widest text-text-muted font-black border-r-2 border-gold-500 pr-3">تسوق حسب القسم</p>
                                     <div className="space-y-3">
-                                        {navLinks.find(l => l.dropdown).dropdown.map(item => (
+                                        {categories.map(item => (
                                             <Link
-                                                key={item.name}
-                                                to={item.path}
+                                                key={item.id}
+                                                to={`/products?category=${item.slug}`}
                                                 onClick={() => setIsMobileMenuOpen(false)}
                                                 className="flex items-center justify-between p-5 rounded-3xl bg-gray-50/50 dark:bg-dark-700/50 border border-gold-50 dark:border-dark-700 text-sm font-bold text-text-primary dark:text-cream-50 group hover:border-gold-500 hover:bg-gold-50 transition-all"
                                             >
-                                                {item.name}
+                                                {item.name_ar}
                                                 <ChevronDown size={14} className="-rotate-90 text-gold-500" />
                                             </Link>
                                         ))}

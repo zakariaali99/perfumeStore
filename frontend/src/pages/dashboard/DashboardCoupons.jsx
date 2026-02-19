@@ -29,7 +29,8 @@ const DashboardCoupons = () => {
         valid_from: new Date().toISOString().split('T')[0],
         valid_to: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         usage_limit: null,
-        is_active: true
+        is_active: true,
+        max_discount_amount: null
     });
 
     useEffect(() => {
@@ -41,7 +42,8 @@ const DashboardCoupons = () => {
         try {
             const res = await marketingApi.list();
             setCoupons(res.data.results || res.data || []);
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             toast.error('تعذر تحميل الكوبونات');
         } finally {
             setLoading(false);
@@ -59,7 +61,8 @@ const DashboardCoupons = () => {
                 valid_from: item.valid_from.split('T')[0],
                 valid_to: item.valid_to.split('T')[0],
                 usage_limit: item.usage_limit,
-                is_active: item.is_active
+                is_active: item.is_active,
+                max_discount_amount: item.max_discount_amount
             });
         } else {
             setEditingItem(null);
@@ -71,7 +74,8 @@ const DashboardCoupons = () => {
                 valid_from: new Date().toISOString().split('T')[0],
                 valid_to: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                 usage_limit: null,
-                is_active: true
+                is_active: true,
+                max_discount_amount: null
             });
         }
         setIsModalOpen(true);
@@ -88,13 +92,18 @@ const DashboardCoupons = () => {
     };
 
     const handleDelete = async (code) => {
-        if (!window.confirm('هل أنت متأكد من حذف هذا الكوبون؟')) return;
+        if (!window.confirm(`هل أنت متأكد من حذف الكوبون (${code})؟`)) return;
+        setLoading(true);
         try {
             await marketingApi.delete(code);
             toast.success('تم الحذف بنجاح');
             fetchCoupons();
-        } catch (err) {
-            toast.error('حدث خطأ أثناء الحذف');
+        } catch (error) {
+            console.error(error);
+            const errorMsg = error.response?.data?.detail || 'حدث خطأ أثناء الحذف';
+            toast.error(errorMsg);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -110,8 +119,9 @@ const DashboardCoupons = () => {
             }
             handleCloseModal();
             fetchCoupons();
-        } catch (err) {
-            toast.error(err.response?.data?.code?.[0] || 'حدث خطأ أثناء الحفظ');
+        } catch (error) {
+            console.error(error);
+            toast.error(error.response?.data?.code?.[0] || 'حدث خطأ أثناء الحفظ');
         }
     };
 
@@ -318,16 +328,27 @@ const DashboardCoupons = () => {
                                         placeholder="اتركه فارغاً للاستخدام غير المحدود"
                                     />
                                 </div>
-                                <div className="flex items-center gap-3 pt-8">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">أقصى قيمة للخصم</label>
                                     <input
-                                        type="checkbox"
-                                        id="active"
-                                        checked={formData.is_active}
-                                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                                        className="w-5 h-5 accent-gold-600"
+                                        type="number"
+                                        value={formData.max_discount_amount || ''}
+                                        onChange={(e) => setFormData({ ...formData, max_discount_amount: e.target.value ? parseFloat(e.target.value) : null })}
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                        placeholder="للنسب المئوية فقط"
                                     />
-                                    <label htmlFor="active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">تفعيل الكوبون الآن</label>
                                 </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 pt-8">
+                                <input
+                                    type="checkbox"
+                                    id="active"
+                                    checked={formData.is_active}
+                                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                    className="w-5 h-5 accent-gold-600"
+                                />
+                                <label htmlFor="active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">تفعيل الكوبون الآن</label>
                             </div>
 
                             <div className="pt-6 flex gap-4">

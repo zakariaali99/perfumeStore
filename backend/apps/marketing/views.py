@@ -17,18 +17,18 @@ class CouponViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def validate(self, request):
         code = request.data.get('code')
-        cart_total = request.data.get('cart_total', 0)
+        cart_total = float(request.data.get('cart_total', 0))
         
         try:
             coupon = Coupon.objects.get(code=code)
             if not coupon.is_valid:
-                return Response({'valid': False, 'message': 'الكوبون منتهي الصلاحية أو غير نشط'}, status=status.HTTP_200_OK)
+                return Response({'valid': False, 'message': 'الكوبون منتهي الصلاحية أو غير نشط'}, status=status.HTTP_400_BAD_REQUEST)
             
             if cart_total < coupon.min_order_amount:
                 return Response({
                     'valid': False, 
                     'message': f'الحد الأدنى للطلب لاستخدام هذا الكوبون هو {coupon.min_order_amount}'
-                }, status=status.HTTP_200_OK)
+                }, status=status.HTTP_400_BAD_REQUEST)
                 
             return Response({
                 'valid': True,
@@ -38,4 +38,4 @@ class CouponViewSet(viewsets.ModelViewSet):
             })
             
         except Coupon.DoesNotExist:
-            return Response({'valid': False, 'message': 'الكوبون غير صحيح'}, status=status.HTTP_200_OK)
+            return Response({'valid': False, 'message': 'الكوبون غير صحيح'}, status=status.HTTP_404_NOT_FOUND)

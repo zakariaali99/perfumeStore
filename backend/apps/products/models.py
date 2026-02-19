@@ -27,6 +27,7 @@ class Brand(models.Model):
     class Meta:
         verbose_name = "الماركة"
         verbose_name_plural = "الماركات"
+        ordering = ['name_ar']
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -61,16 +62,15 @@ class Product(models.Model):
     description = models.TextField(blank=True, default='', verbose_name="الوصف")
     story = models.TextField(blank=True, default='', help_text="القصة العطرية", verbose_name="القصة العطرية")
     
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="الفئة")
+    categories = models.ManyToManyField(Category, verbose_name="الفئات")
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name="الماركة")
     fragrance_families = models.ManyToManyField(FragranceFamily, blank=True, verbose_name="العائلات العطرية")
     
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, verbose_name="الجنس")
-    concentration = models.CharField(max_length=3, choices=CONCENTRATION, verbose_name="التركيز")
+    occasion = models.TextField(blank=True, verbose_name="مناسب لـ", help_text="ex: ليلي, حفلات, كلاسيكي")
+    vibe = models.TextField(blank=True, verbose_name="مزاج العطر", help_text="ex: قوي, دافئ, رجولي")
     
     main_image = models.ImageField(upload_to='products/', verbose_name="الصورة الرئيسية")
-    longevity_rating = models.PositiveIntegerField(default=5, verbose_name="تقييم الثبات") # 1-10
-    sillage_rating = models.PositiveIntegerField(default=5, verbose_name="تقييم الفوحان") # 1-10
     
     is_featured = models.BooleanField(default=False, verbose_name="مميز")
     is_bestseller = models.BooleanField(default=False, verbose_name="الأكثر مبيعاً")
@@ -86,13 +86,15 @@ class Product(models.Model):
     class Meta:
         verbose_name = "المنتج"
         verbose_name_plural = "المنتجات"
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.name_ar
 
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name='variants', on_delete=models.CASCADE)
-    size_ml = models.PositiveIntegerField(verbose_name="الحجم (مل)")
+    name = models.CharField(max_length=100, blank=True, verbose_name="اسم العبوة")
+    size_ml = models.PositiveIntegerField(verbose_name="الحجم (مل)", null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="السعر الأصلي")
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="سعر العرض")
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="للتقارير الداخلية", verbose_name="سعر التكلفة")
@@ -110,8 +112,17 @@ class ProductVariant(models.Model):
         verbose_name = "عبوة المنتج"
         verbose_name_plural = "عبوات المنتجات"
 
+    def save(self, *args, **kwargs):
+        # Ensure sale_price is None if 0
+        if self.sale_price == 0:
+            self.sale_price = None
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.product.name_ar} - {self.size_ml}ml"
+        if self.name:
+            return f"{self.product.name_ar} - {self.name}"
+        size_str = f"{self.size_ml}ml" if self.size_ml else "Standard"
+        return f"{self.product.name_ar} - {size_str}"
 
     @property
     def current_price(self):

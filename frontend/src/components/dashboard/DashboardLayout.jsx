@@ -15,7 +15,8 @@ import {
     ExternalLink,
     Sun,
     Moon,
-    TrendingUp
+    TrendingUp,
+    Tag
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useThemeStore from '../../store/themeStore';
@@ -41,6 +42,8 @@ const DashboardLayout = () => {
     const menuItems = [
         { to: '/dashboard', icon: LayoutDashboard, label: 'لوحة التحكم' },
         { to: '/dashboard/analytics', icon: TrendingUp, label: 'التقارير والتحليلات' },
+        { to: '/dashboard/categories', icon: Menu, label: 'الفئات' },
+        { to: '/dashboard/brands', icon: Tag, label: 'الماركات' },
         { to: '/dashboard/products', icon: Package, label: 'المنتجات' },
         { to: '/dashboard/orders', icon: ShoppingBag, label: 'الطلبات' },
         { to: '/dashboard/customers', icon: Users, label: 'العملاء (CRM)' },
@@ -53,7 +56,7 @@ const DashboardLayout = () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');
-        navigate('/');
+        navigate('/dashboard/login');
     };
 
     return (
@@ -103,7 +106,11 @@ const DashboardLayout = () => {
                             <Menu size={24} />
                         </button>
                         <h1 className="text-xl font-black text-text-primary dark:text-cream-50 hidden md:block">
-                            {menuItems.find(i => i.to === location.pathname)?.label || 'الإدارة'}
+                            {menuItems.find(i =>
+                                i.to === '/dashboard'
+                                    ? location.pathname === '/dashboard'
+                                    : location.pathname.startsWith(i.to)
+                            )?.label || 'الإدارة'}
                         </h1>
                     </div>
 

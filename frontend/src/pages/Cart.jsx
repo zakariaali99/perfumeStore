@@ -15,15 +15,22 @@ import { marketingApi } from '../services/api';
 import { toast } from 'react-hot-toast';
 
 const Cart = () => {
-    const { cart, loading, fetchCart, updateItem, removeItem } = useCartStore();
+    const { cart, updateItem, removeItem, loading, applyCoupon, coupon } = useCartStore();
     const [couponCode, setCouponCode] = useState('');
-    const [couponDiscount, setCouponDiscount] = useState(0);
     const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
+    // Store local UI discount for display in Cart page, but also sync with global store
+    const [localDiscount, setLocalDiscount] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchCart();
-    }, [fetchCart]);
+        // When the component mounts, if there's a coupon in the global store,
+        // initialize localDiscount with its calculated_discount.
+        if (coupon && coupon.calculated_discount) {
+            setLocalDiscount(coupon.calculated_discount);
+            setCouponCode(coupon.code);
+        }
+    }, [coupon]); // Depend on coupon from store to update local state if it changes externally
 
     const handleApplyCoupon = async () => {
         if (!couponCode) return;
@@ -41,12 +48,21 @@ const Cart = () => {
                 } else {
                     discount = res.data.discount_value;
                 }
-                setCouponDiscount(discount);
+                setLocalDiscount(discount);
+
+                // Save to global store for Checkout
+                applyCoupon({
+                    code: couponCode,
+                    discount_value: res.data.discount_value,
+                    discount_type: res.data.discount_type,
+                    calculated_discount: discount
+                });
             } else {
                 toast.error(res.data.message || 'كوبون غير صالح');
             }
         } catch (error) {
-            toast.error('خطأ في التحقق من الكوبون');
+            const msg = error.response?.data?.message || 'خطأ في التحقق من الكوبون';
+            toast.error(msg);
         } finally {
             setIsValidatingCoupon(false);
         }
@@ -79,18 +95,17 @@ const Cart = () => {
     );
 
     const subtotal = cart.total_amount;
-    const shipping = 25;
-    const total = subtotal + shipping - couponDiscount;
+    const total = subtotal - localDiscount;
 
     return (
         <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-24 pb-20 transition-colors duration-300">
             <div className="container mx-auto px-4">
                 <h1 className="text-3xl font-black mb-10 text-text-primary dark:text-cream-50">سلة التسوق</h1>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div className="row g-4">
 
                     {/* Items List */}
-                    <div className="lg:col-span-2 space-y-4">
+                    <div className="col-12 col-lg-8 space-y-4">
                         <AnimatePresence>
                             {cart.items.map((item) => (
                                 <motion.div
@@ -145,7 +160,7 @@ const Cart = () => {
                     </div>
 
                     {/* Summary Sidebar */}
-                    <div className="space-y-6">
+                    <div className="col-12 col-lg-4 space-y-6">
                         <div className="bg-white dark:bg-dark-700 p-8 rounded-3xl border border-gold-100 dark:border-dark-600 shadow-sm sticky top-28">
                             <h3 className="text-xl font-bold mb-6 text-text-primary dark:text-cream-50">ملخص الطلب</h3>
 
@@ -154,19 +169,15 @@ const Cart = () => {
                                     <span>المجموع الفرعي</span>
                                     <span className="font-poppins">{subtotal} د.ل</span>
                                 </div>
-                                <div className="flex justify-between text-text-secondary dark:text-gold-400">
-                                    <span>تكلفة التوصيل</span>
-                                    <span className="font-poppins">{shipping} د.ل</span>
-                                </div>
-                                {couponDiscount > 0 && (
+                                {localDiscount > 0 && (
                                     <div className="flex justify-between text-green-600 font-bold">
                                         <span>خصم الكوبون</span>
-                                        <span className="font-poppins">-{couponDiscount} د.ل</span>
+                                        <span className="font-poppins">-{localDiscount.toFixed(2)} د.ل</span>
                                     </div>
                                 )}
                                 <div className="pt-4 border-t border-gold-100 dark:border-dark-600 flex justify-between items-center text-xl font-black">
                                     <span className="text-text-primary dark:text-cream-50">الإجمالي</span>
-                                    <span className="text-gold-700 dark:text-gold-400 font-poppins">{total} د.ل</span>
+                                    <span className="text-gold-700 dark:text-gold-400 font-poppins">{total.toFixed(2)} د.ل</span>
                                 </div>
                             </div>
 
