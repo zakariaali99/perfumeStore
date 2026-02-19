@@ -18,6 +18,8 @@ env = environ.Env(
 # Read environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
+# Critical Django Settings (Must be early for cPanel stability)
+ROOT_URLCONF = "config.urls"
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-your-secret-key-goes-here-change-in-production')
 DEBUG = env('DEBUG', default=True)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '*'])
@@ -66,7 +68,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "config.urls"
+# ROOT_URLCONF defined at top
 
 TEMPLATES = [
     {
