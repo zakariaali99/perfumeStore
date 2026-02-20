@@ -121,11 +121,20 @@ const DashboardCMS = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const data = new FormData();
+
+        // Define which fields belong to which type to avoid sending extra data
+        const slideFields = ['title', 'subtitle', 'button_text', 'button_link', 'order', 'is_active', 'image'];
+        const bannerFields = ['title', 'link', 'position', 'is_active', 'image'];
+
+        const validFields = activeTab === 'slides' ? slideFields : bannerFields;
+
         Object.keys(formData).forEach(key => {
-            if (key === 'image') {
-                if (formData[key]) data.append(key, formData[key]);
-            } else {
-                data.append(key, formData[key]);
+            if (validFields.includes(key)) {
+                if (key === 'image') {
+                    if (formData[key]) data.append(key, formData[key]);
+                } else if (formData[key] !== null && formData[key] !== undefined) {
+                    data.append(key, formData[key]);
+                }
             }
         });
 
@@ -152,8 +161,11 @@ const DashboardCMS = () => {
             handleCloseModal();
             fetchCMSData();
         } catch (error) {
-            console.error(error);
-            toast.error('حدث خطأ أثناء حفظ البيانات');
+            console.error('CMS Submit Error:', error.response?.data || error.message);
+            const errorMsg = error.response?.data
+                ? Object.entries(error.response.data).map(([k, v]) => `${k}: ${v}`).join(', ')
+                : 'حدث خطأ أثناء حفظ البيانات';
+            toast.error(errorMsg);
         }
     };
 
