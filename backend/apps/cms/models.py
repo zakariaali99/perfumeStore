@@ -3,12 +3,12 @@ from products.models import Product
 
 class HeroSlide(models.Model):
     title = models.CharField(max_length=100, verbose_name="العنوان")
-    subtitle = models.TextField(max_length=200, verbose_name="العنوان الفرعي")
+    subtitle = models.TextField(max_length=200, blank=True, verbose_name="العنوان الفرعي")
     image = models.ImageField(upload_to='cms/slides/', verbose_name="صورة العرض")
     image_mobile = models.ImageField(upload_to='cms/slides/mobile/', blank=True, verbose_name="صورة الجوال (اختياري)")
     
-    button_text = models.CharField(max_length=50, verbose_name="نص الزر")
-    button_link = models.CharField(max_length=200, verbose_name="رابط الزر")
+    button_text = models.CharField(max_length=50, blank=True, verbose_name="نص الزر")
+    button_link = models.CharField(max_length=200, blank=True, verbose_name="رابط الزر")
     
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="ارتباط بمنتج")
     
