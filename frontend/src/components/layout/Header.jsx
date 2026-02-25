@@ -105,7 +105,7 @@ const Header = () => {
 
     return (
         <>
-            <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-20 shadow-xl' : 'bg-transparent h-24'}`}>
+            <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-20 shadow-xl' : 'bg-transparent h-28'}`}>
                 <div className="container mx-auto px-4 h-full flex items-center justify-between gap-8">
                     {/* Mobile Toggle */}
                     <button
@@ -117,14 +117,14 @@ const Header = () => {
 
                     {/* Branding */}
                     <Link to="/" className="flex items-center gap-3 group">
-                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105 transition-transform duration-500">
-                            <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-cover" />
+                        <div className={`transition-all duration-500 rounded-2xl overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105 ${scrolled ? 'w-14 h-14' : 'w-16 h-16 md:w-20 md:h-20'}`}>
+                            <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain" />
                         </div>
                         <div className="hidden md:flex flex-col">
-                            <span className="text-xl md:text-2xl font-black text-gold-600 tracking-tight transition-all">
+                            <span className={`font-black text-gold-600 tracking-tight transition-all duration-500 ${scrolled ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
                                 عطور مصطفى
                             </span>
-                            <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-[0.3em] text-text-secondary dark:text-gold-400 -mt-1 group-hover:text-gold-500 transition-colors">
+                            <span className={`font-bold uppercase tracking-[0.3em] text-text-secondary dark:text-gold-400 group-hover:text-gold-500 transition-all duration-500 ${scrolled ? 'text-[8px]' : 'text-[10px] md:text-xs'}`}>
                                 Luxury Perfumes
                             </span>
                         </div>

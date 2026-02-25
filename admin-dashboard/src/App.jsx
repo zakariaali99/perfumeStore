@@ -39,8 +39,8 @@ function App() {
         {/* Sidebar */}
         <aside className={`w-72 bg-white border-l border-gray-100 p-6 flex flex-col fixed h-full z-30 transition-transform duration-300 md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : 'translate-x-[100%]'}`}>
           <div className="mb-10 px-4 flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-              <img src="/logo.png" alt="عطور مصطفى" className="w-full h-full object-cover" />
+            <div className="w-16 h-16 rounded-2xl overflow-hidden border border-gray-100 shadow-lg mb-2">
+              <img src="/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900 leading-tight">عطور مصطفى</h1>
