@@ -10,13 +10,21 @@ import {
     ExternalLink,
     X,
     Save,
-    Upload
+    Upload,
+    Eye,
+    EyeOff,
+    CheckCircle2,
+    CircleDashed,
+    Settings2,
+    ChevronUp,
+    ChevronDown
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const DashboardCMS = () => {
     const [slides, setSlides] = useState([]);
     const [banners, setBanners] = useState([]);
+    const [hpc, setHpc] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('slides');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,6 +32,7 @@ const DashboardCMS = () => {
     const [formData, setFormData] = useState({
         title: '',
         subtitle: '',
+        description_ar: '',
         link: '',
         button_text: '',
         button_link: '',
@@ -41,12 +50,14 @@ const DashboardCMS = () => {
     const fetchCMSData = async () => {
         setLoading(true);
         try {
-            const [slidesRes, bannersRes] = await Promise.all([
+            const [slidesRes, bannersRes, hpcRes] = await Promise.all([
                 cmsApi.getSlides(),
-                cmsApi.getBanners()
+                cmsApi.getBanners(),
+                cmsApi.getHPC()
             ]);
             setSlides(slidesRes.data.results || slidesRes.data || []);
             setBanners(bannersRes.data.results || bannersRes.data || []);
+            setHpc(hpcRes.data.results || hpcRes.data || []);
         } catch (error) {
             console.error(error);
             toast.error('تعذر تحميل بيانات المحتوى');
@@ -61,13 +72,14 @@ const DashboardCMS = () => {
             setFormData({
                 title: item.title || '',
                 subtitle: item.subtitle || '',
+                description_ar: item.description_ar || '',
                 link: item.link || '',
                 button_text: item.button_text || '',
                 button_link: item.button_link || '',
                 position: item.position || 'home_top',
                 order: item.order || 0,
                 is_active: item.is_active,
-                image: null // For updates, only set image if uploading a new one
+                image: null
             });
             setImagePreview(item.image);
         } else {
@@ -75,6 +87,7 @@ const DashboardCMS = () => {
             setFormData({
                 title: '',
                 subtitle: '',
+                description_ar: '',
                 link: '',
                 button_text: '',
                 button_link: '',
@@ -118,14 +131,22 @@ const DashboardCMS = () => {
         }
     };
 
+    const toggleHPCStatus = async (id, currentStatus) => {
+        try {
+            await cmsApi.updateHPC(id, { is_active: !currentStatus });
+            toast.success('تم تحديث حالة القسم بنجاح');
+            fetchCMSData();
+        } catch (error) {
+            toast.error('فشل في تحديث القسم');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const data = new FormData();
 
-        // Define which fields belong to which type to avoid sending extra data
-        const slideFields = ['title', 'subtitle', 'button_text', 'button_link', 'order', 'is_active', 'image'];
+        const slideFields = ['title', 'subtitle', 'description_ar', 'button_text', 'button_link', 'order', 'is_active', 'image'];
         const bannerFields = ['title', 'link', 'position', 'is_active', 'image'];
-
         const validFields = activeTab === 'slides' ? slideFields : bannerFields;
 
         Object.keys(formData).forEach(key => {
@@ -169,24 +190,47 @@ const DashboardCMS = () => {
         }
     };
 
+    const handleMoveSection = async (section, direction) => {
+        const index = hpc.findIndex(s => s.id === section.id);
+        if (direction === 'up' && index === 0) return;
+        if (direction === 'down' && index === hpc.length - 1) return;
+
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        const targetSection = hpc[targetIndex];
+
+        try {
+            // Swap orders
+            await Promise.all([
+                cmsApi.updateHPC(section.id, { order: targetSection.order }),
+                cmsApi.updateHPC(targetSection.id, { order: section.order })
+            ]);
+            toast.success('تم تحديث الترتيب');
+            fetchCMSData();
+        } catch (error) {
+            toast.error('فشل في تحديث الترتيب');
+        }
+    };
+
     return (
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-3xl font-black text-text-primary dark:text-cream-50 mb-1">إدارة المحتوى (CMS)</h2>
-                    <p className="text-text-secondary dark:text-gold-400 text-sm">تخصيص السلايدر الرئيسي، البانرات الدعائية والمحتوى المرئي.</p>
+                    <p className="text-text-secondary dark:text-gold-400 text-sm">تخصيص السلايدر الرئيسي، البانرات الدعائية وإدارة أقسام الصفحة الرئيسية.</p>
                 </div>
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="bg-gold-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-gold-700 transition-all shadow-lg shadow-gold-600/20"
-                >
-                    <Plus size={20} />
-                    إضافة عنصر جديد
-                </button>
+                {activeTab !== 'hpc' && (
+                    <button
+                        onClick={() => handleOpenModal()}
+                        className="bg-gold-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-gold-700 transition-all shadow-lg shadow-gold-600/20"
+                    >
+                        <Plus size={20} />
+                        إضافة {activeTab === 'slides' ? 'سلايدر' : 'بانر'} جديد
+                    </button>
+                )}
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 p-1.5 bg-white dark:bg-dark-700 rounded-2xl border border-gold-100 dark:border-dark-600 w-fit">
+            <div className="flex flex-wrap gap-2 p-1.5 bg-white dark:bg-dark-700 rounded-2xl border border-gold-100 dark:border-dark-600 w-fit">
                 <button
                     onClick={() => setActiveTab('slides')}
                     className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'slides' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
@@ -201,60 +245,116 @@ const DashboardCMS = () => {
                     <Layers size={18} />
                     البانرات الإعلانية
                 </button>
+                <button
+                    onClick={() => setActiveTab('hpc')}
+                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'hpc' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
+                >
+                    <Settings2 size={18} />
+                    محتوى الصفحة الرئيسية (HPC)
+                </button>
             </div>
 
-            {/* List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-                {loading ? (
-                    [1, 2, 3, 4].map(i => <div key={i} className="h-64 bg-white dark:bg-dark-700 animate-pulse rounded-[32px] border border-gold-100 dark:border-dark-600"></div>)
-                ) : (
-                    (activeTab === 'slides' ? slides : banners).map((item) => (
-                        <div key={item.id} className="bg-white dark:bg-dark-700 rounded-[40px] border border-gold-100 dark:border-dark-600 overflow-hidden group hover:shadow-xl transition-all duration-500">
-                            <div className="aspect-[21/9] bg-cream-50 relative overflow-hidden">
-                                <img src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8">
-                                    <div className="text-white">
-                                        <h3 className="text-2xl font-bold mb-1">{item.title}</h3>
-                                        <p className="text-sm opacity-80">{item.subtitle}</p>
+            {/* HPC CONTENT */}
+            {activeTab === 'hpc' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                    {hpc.sort((a, b) => a.order - b.order).map((section, idx) => (
+                        <div key={section.id} className="bg-white dark:bg-dark-700 p-6 rounded-[32px] border border-gold-100 dark:border-dark-600 flex flex-col justify-between group hover:shadow-xl transition-all duration-500">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="flex gap-2">
+                                    <div className="w-12 h-12 bg-gold-50 dark:bg-dark-800 rounded-2xl flex items-center justify-center text-gold-500">
+                                        {section.is_active ? <CheckCircle2 size={24} /> : <CircleDashed size={24} className="opacity-40" />}
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <button
+                                            disabled={idx === 0}
+                                            onClick={() => handleMoveSection(section, 'up')}
+                                            className="p-1 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-lg text-gold-600 disabled:opacity-20"
+                                        >
+                                            <ChevronUp size={16} />
+                                        </button>
+                                        <button
+                                            disabled={idx === hpc.length - 1}
+                                            onClick={() => handleMoveSection(section, 'down')}
+                                            className="p-1 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-lg text-gold-600 disabled:opacity-20"
+                                        >
+                                            <ChevronDown size={16} />
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-black uppercase text-gold-700 border border-gold-100">
-                                    الترتيب: {item.order}
-                                </div>
+                                <button
+                                    onClick={() => toggleHPCStatus(section.id, section.is_active)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${section.is_active ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-red-50 text-red-500 hover:bg-red-100'}`}
+                                >
+                                    {section.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+                                    {section.is_active ? 'نشط' : 'مخفي'}
+                                </button>
                             </div>
-                            <div className="p-6 flex justify-between items-center">
-                                <div className="flex gap-2">
-                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black ${item.is_active ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
-                                        {item.is_active ? 'نشط' : 'مخفي'}
-                                    </span>
-                                    {item.link && (
-                                        <div className="flex items-center gap-1 text-[10px] text-text-secondary dark:text-gold-400 bg-gray-50 dark:bg-dark-600 px-3 py-1 rounded-full font-bold">
-                                            <ExternalLink size={10} />
-                                            {item.link}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleOpenModal(item)}
-                                        className="p-2.5 text-text-muted dark:text-gold-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
-                                    >
-                                        <Edit size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(item.id)}
-                                        className="p-2.5 text-text-muted dark:text-gold-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
+                            <div>
+                                <h3 className="text-xl font-black text-text-primary dark:text-cream-50 leading-tight mb-2">{section.section_display}</h3>
+                                <p className="text-sm text-text-secondary dark:text-gold-400/70 mb-4">{section.title_ar}</p>
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] font-black uppercase text-gold-600 bg-gold-50 dark:bg-dark-800 w-fit px-3 py-1 rounded-lg">
+                                ترتيب الظهور: {section.order}
                             </div>
                         </div>
-                    ))
-                )}
-            </div>
+                    ))}
+                </div>
+            )}
 
-            {/* Modal */}
+            {/* List for Slides/Banners */}
+            {activeTab !== 'hpc' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                    {loading ? (
+                        [1, 2, 3, 4].map(i => <div key={i} className="h-64 bg-white dark:bg-dark-700 animate-pulse rounded-[32px] border border-gold-100 dark:border-dark-600"></div>)
+                    ) : (
+                        (activeTab === 'slides' ? slides : banners).map((item) => (
+                            <div key={item.id} className="bg-white dark:bg-dark-700 rounded-[40px] border border-gold-100 dark:border-dark-600 overflow-hidden group hover:shadow-xl transition-all duration-500">
+                                <div className="aspect-[21/9] bg-cream-50 relative overflow-hidden">
+                                    <img src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8">
+                                        <div className="text-white">
+                                            <h3 className="text-2xl font-bold mb-1">{item.title}</h3>
+                                            <p className="text-sm opacity-80">{item.subtitle}</p>
+                                        </div>
+                                    </div>
+                                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-black uppercase text-gold-700 border border-gold-100">
+                                        الترتيب: {item.order}
+                                    </div>
+                                </div>
+                                <div className="p-6 flex justify-between items-center">
+                                    <div className="flex gap-2">
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-black ${item.is_active ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                                            {item.is_active ? 'نشط' : 'مخفي'}
+                                        </span>
+                                        {(item.link || item.button_link) && (
+                                            <div className="flex items-center gap-1 text-[10px] text-text-secondary dark:text-gold-400 bg-gray-50 dark:bg-dark-600 px-3 py-1 rounded-full font-bold">
+                                                <ExternalLink size={10} />
+                                                {item.link || item.button_link}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleOpenModal(item)}
+                                            className="p-2.5 text-text-muted dark:text-gold-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
+                                        >
+                                            <Edit size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(item.id)}
+                                            className="p-2.5 text-text-muted dark:text-gold-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
+
+            {/* Modal for Slides/Banners */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
@@ -323,6 +423,19 @@ const DashboardCMS = () => {
                                     />
                                 </div>
                             </div>
+
+                            {activeTab === 'slides' && (
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">وصف العرض</label>
+                                    <textarea
+                                        rows={3}
+                                        value={formData.description_ar}
+                                        onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 resize-none"
+                                        placeholder="اكتب وصفاً قصيراً يظهر تحت العنوان الرئيسي..."
+                                    />
+                                </div>
+                            )}
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">

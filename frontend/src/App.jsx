@@ -9,6 +9,7 @@ import useCartStore from './store/cartStore';
 // Components
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import ScrollToTop from './components/common/ScrollToTop';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 
@@ -80,6 +81,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Toaster
         position="top-center"
         toastOptions={{

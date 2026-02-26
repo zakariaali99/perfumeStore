@@ -1,9 +1,15 @@
 from rest_framework import serializers
-from .models import HeroSlide, Banner, StoreSettings
+from .models import HeroSlide, Banner, StoreSettings, HomePageSection
 
 class HeroSlideSerializer(serializers.ModelSerializer):
     class Meta:
         model = HeroSlide
+        fields = '__all__'
+
+class HomePageSectionSerializer(serializers.ModelSerializer):
+    section_display = serializers.CharField(source='get_key_display', read_only=True)
+    class Meta:
+        model = HomePageSection
         fields = '__all__'
 
 class BannerSerializer(serializers.ModelSerializer):

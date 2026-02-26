@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useCartStore from '../../store/cartStore';
 import useThemeStore from '../../store/themeStore';
 import CartDrawer from '../cart/CartDrawer';
+import RamadanBanner from '../common/RamadanBanner';
 import { productsApi } from '../../services/api';
 
 const Header = () => {
@@ -105,6 +106,7 @@ const Header = () => {
 
     return (
         <>
+            <RamadanBanner />
             <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-20 shadow-xl' : 'bg-transparent h-28'}`}>
                 <div className="container mx-auto px-4 h-full flex items-center justify-between gap-4 md:gap-8">
                     {/* Mobile Toggle */}
@@ -127,9 +129,20 @@ const Header = () => {
                             <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain scale-[1.35]" />
                         </div>
                         <div className="hidden md:flex flex-col">
-                            <span className={`font-black text-gold-600 tracking-tight transition-all duration-500 ${scrolled ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
-                                عطور مصطفى
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <span className={`font-black text-gold-600 tracking-tight transition-all duration-500 ${scrolled ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
+                                    عطور مصطفى
+                                </span>
+                                {!scrolled && (
+                                    <motion.span
+                                        animate={{ opacity: [0.3, 0.8, 0.3], scale: [0.9, 1.1, 0.9] }}
+                                        transition={{ duration: 3, repeat: Infinity }}
+                                        className="text-gold-500 text-sm mb-2"
+                                    >
+                                        🌙
+                                    </motion.span>
+                                )}
+                            </div>
                             <span className={`font-bold uppercase tracking-[0.3em] text-text-secondary dark:text-gold-400 group-hover:text-gold-500 transition-all duration-500 ${scrolled ? 'text-[8px]' : 'text-[10px] md:text-xs'}`}>
                                 Luxury Perfumes
                             </span>

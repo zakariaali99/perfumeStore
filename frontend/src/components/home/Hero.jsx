@@ -70,7 +70,7 @@ const Hero = () => {
     };
 
     if (loading || slides.length === 0) return (
-        <section className="relative h-[85vh] bg-cream-50 dark:bg-dark-800 animate-pulse flex items-center justify-center">
+        <section className="relative h-screen bg-cream-50 dark:bg-dark-800 animate-pulse flex items-center justify-center">
             <div className="text-center">
                 <div className="w-16 h-16 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
                 <p className="text-text-secondary dark:text-gold-400 font-bold">جاري تحميل العروض...</p>
@@ -82,7 +82,7 @@ const Hero = () => {
 
     return (
         <section
-            className="relative h-[85vh] overflow-hidden bg-black font-tajawal touch-pan-y"
+            className="relative h-screen overflow-hidden bg-black font-tajawal touch-pan-y"
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -100,7 +100,7 @@ const Hero = () => {
                     {slide.image ? (
                         <img
                             src={slide.image}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover object-center"
                             alt={slide.title}
                         />
                     ) : (
@@ -131,9 +131,11 @@ const Hero = () => {
                                 <h1 className="text-3xl sm:text-5xl md:text-8xl font-black text-white mb-8 leading-tight drop-shadow-2xl">
                                     {slide.title}
                                 </h1>
-                                <p className="text-base md:text-xl text-gray-200 mb-12 leading-loose font-medium drop-shadow-lg">
-                                    {slide.description_ar || 'اكتشف عبق الجوهر الشرقي في تشكيلتنا الفاخرة التي تحمل سحر التاريخ وروح العصر.'}
-                                </p>
+                                {slide.description_ar && (
+                                    <p className="text-base md:text-xl text-gray-200 mb-12 leading-loose font-medium drop-shadow-lg">
+                                        {slide.description_ar}
+                                    </p>
+                                )}
                                 <div className="flex flex-col sm:flex-row gap-6">
                                     <Link
                                         to={slide.button_link || '/products'}
