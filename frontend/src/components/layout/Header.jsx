@@ -105,7 +105,7 @@ const Header = () => {
 
     return (
         <>
-            <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-24 shadow-xl' : 'bg-transparent h-32'}`}>
+            <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-20 shadow-xl' : 'bg-transparent h-28'}`}>
                 <div className="container mx-auto px-4 h-full flex items-center justify-between gap-4 md:gap-8">
                     {/* Mobile Toggle */}
                     <button
@@ -120,8 +120,8 @@ const Header = () => {
                         <div
                             className="flex justify-center items-center shrink-0 transition-all duration-500 rounded-2xl bg-white overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105"
                             style={{
-                                width: scrolled ? '85px' : '115px',
-                                height: scrolled ? '85px' : '115px'
+                                width: scrolled ? '65px' : '85px',
+                                height: scrolled ? '65px' : '85px'
                             }}
                         >
                             <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain scale-[1.35]" />
