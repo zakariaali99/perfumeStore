@@ -105,8 +105,8 @@ const Header = () => {
 
     return (
         <>
-            <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-20 shadow-xl' : 'bg-transparent h-28'}`}>
-                <div className="container mx-auto px-4 h-full flex items-center justify-between gap-8">
+            <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-24 shadow-xl' : 'bg-transparent h-32'}`}>
+                <div className="container mx-auto px-4 h-full flex items-center justify-between gap-4 md:gap-8">
                     {/* Mobile Toggle */}
                     <button
                         onClick={() => setIsMobileMenuOpen(true)}
@@ -116,9 +116,15 @@ const Header = () => {
                     </button>
 
                     {/* Branding */}
-                    <Link to="/" className="flex items-center gap-3 group">
-                        <div className={`transition-all duration-500 rounded-2xl overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105 ${scrolled ? 'w-20 h-20 md:w-20 md:h-20' : 'w-32 h-32 md:w-32 md:h-32'}`}>
-                            <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain" />
+                    <Link to="/" className="flex items-center gap-3 group shrink-0">
+                        <div
+                            className="flex justify-center items-center shrink-0 transition-all duration-500 rounded-2xl bg-white overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105"
+                            style={{
+                                width: scrolled ? '85px' : '115px',
+                                height: scrolled ? '85px' : '115px'
+                            }}
+                        >
+                            <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain scale-[1.35]" />
                         </div>
                         <div className="hidden md:flex flex-col">
                             <span className={`font-black text-gold-600 tracking-tight transition-all duration-500 ${scrolled ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
