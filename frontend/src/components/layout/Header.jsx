@@ -117,7 +117,7 @@ const Header = () => {
 
                     {/* Branding */}
                     <Link to="/" className="flex items-center gap-3 group">
-                        <div className={`transition-all duration-500 rounded-2xl overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105 ${scrolled ? 'w-14 h-14' : 'w-16 h-16 md:w-20 md:h-20'}`}>
+                        <div className={`transition-all duration-500 rounded-2xl overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105 ${scrolled ? 'w-20 h-20 md:w-20 md:h-20' : 'w-32 h-32 md:w-32 md:h-32'}`}>
                             <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain" />
                         </div>
                         <div className="hidden md:flex flex-col">
