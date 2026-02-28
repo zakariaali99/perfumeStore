@@ -17,7 +17,12 @@ import {
     CircleDashed,
     Settings2,
     ChevronUp,
-    ChevronDown
+    ChevronDown,
+    GripVertical,
+    ToggleLeft,
+    ToggleRight,
+    RotateCcw,
+    Pencil
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -28,7 +33,10 @@ const DashboardCMS = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('slides');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isHpcModalOpen, setIsHpcModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const [editingHpcItem, setEditingHpcItem] = useState(null);
+    const [hpcFormData, setHpcFormData] = useState({ title_ar: '', order: 0, is_active: true });
     const [formData, setFormData] = useState({
         title: '',
         subtitle: '',
@@ -57,7 +65,8 @@ const DashboardCMS = () => {
             ]);
             setSlides(slidesRes.data.results || slidesRes.data || []);
             setBanners(bannersRes.data.results || bannersRes.data || []);
-            setHpc(hpcRes.data.results || hpcRes.data || []);
+            const sortedHpc = (hpcRes.data.results || hpcRes.data || []).sort((a, b) => a.order - b.order);
+            setHpc(sortedHpc);
         } catch (error) {
             console.error(error);
             toast.error('تعذر تحميل بيانات المحتوى');
@@ -190,16 +199,17 @@ const DashboardCMS = () => {
         }
     };
 
+    // ---- HPC CRUD Functions ----
     const handleMoveSection = async (section, direction) => {
-        const index = hpc.findIndex(s => s.id === section.id);
+        const sorted = [...hpc].sort((a, b) => a.order - b.order);
+        const index = sorted.findIndex(s => s.id === section.id);
         if (direction === 'up' && index === 0) return;
-        if (direction === 'down' && index === hpc.length - 1) return;
+        if (direction === 'down' && index === sorted.length - 1) return;
 
         const targetIndex = direction === 'up' ? index - 1 : index + 1;
-        const targetSection = hpc[targetIndex];
+        const targetSection = sorted[targetIndex];
 
         try {
-            // Swap orders
             await Promise.all([
                 cmsApi.updateHPC(section.id, { order: targetSection.order }),
                 cmsApi.updateHPC(targetSection.id, { order: section.order })
@@ -210,6 +220,58 @@ const DashboardCMS = () => {
             toast.error('فشل في تحديث الترتيب');
         }
     };
+
+    const handleOpenHpcModal = (section) => {
+        setEditingHpcItem(section);
+        setHpcFormData({
+            title_ar: section.title_ar || '',
+            order: section.order ?? 0,
+            is_active: section.is_active
+        });
+        setIsHpcModalOpen(true);
+    };
+
+    const handleCloseHpcModal = () => {
+        setIsHpcModalOpen(false);
+        setEditingHpcItem(null);
+    };
+
+    const handleHpcSubmit = async (e) => {
+        e.preventDefault();
+        if (!editingHpcItem) return;
+        try {
+            await cmsApi.updateHPC(editingHpcItem.id, hpcFormData);
+            toast.success('تم تحديث القسم بنجاح');
+            handleCloseHpcModal();
+            fetchCMSData();
+        } catch (error) {
+            toast.error('فشل في تحديث القسم');
+        }
+    };
+
+    const handleBulkToggleHPC = async (activate) => {
+        try {
+            await Promise.all(hpc.map(s => cmsApi.updateHPC(s.id, { is_active: activate })));
+            toast.success(activate ? 'تم تفعيل جميع الأقسام' : 'تم إخفاء جميع الأقسام');
+            fetchCMSData();
+        } catch (error) {
+            toast.error('فشل في تحديث الأقسام');
+        }
+    };
+
+    const handleResetOrder = async () => {
+        if (!window.confirm('هل تريد إعادة ترتيب جميع الأقسام إلى الترتيب الافتراضي؟')) return;
+        try {
+            const sorted = [...hpc].sort((a, b) => a.order - b.order);
+            await Promise.all(sorted.map((s, idx) => cmsApi.updateHPC(s.id, { order: idx })));
+            toast.success('تم إعادة الترتيب الافتراضي');
+            fetchCMSData();
+        } catch (error) {
+            toast.error('فشل في إعادة الترتيب');
+        }
+    };
+
+    const activeCount = hpc.filter(s => s.is_active).length;
 
     return (
         <div className="space-y-8">
@@ -254,50 +316,190 @@ const DashboardCMS = () => {
                 </button>
             </div>
 
-            {/* HPC CONTENT */}
+            {/* ==================== HPC SECTION ==================== */}
             {activeTab === 'hpc' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-                    {hpc.sort((a, b) => a.order - b.order).map((section, idx) => (
-                        <div key={section.id} className="bg-white dark:bg-dark-700 p-6 rounded-[32px] border border-gold-100 dark:border-dark-600 flex flex-col justify-between group hover:shadow-xl transition-all duration-500">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="flex gap-2">
-                                    <div className="w-12 h-12 bg-gold-50 dark:bg-dark-800 rounded-2xl flex items-center justify-center text-gold-500">
-                                        {section.is_active ? <CheckCircle2 size={24} /> : <CircleDashed size={24} className="opacity-40" />}
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                        <button
-                                            disabled={idx === 0}
-                                            onClick={() => handleMoveSection(section, 'up')}
-                                            className="p-1 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-lg text-gold-600 disabled:opacity-20"
-                                        >
-                                            <ChevronUp size={16} />
-                                        </button>
-                                        <button
-                                            disabled={idx === hpc.length - 1}
-                                            onClick={() => handleMoveSection(section, 'down')}
-                                            className="p-1 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-lg text-gold-600 disabled:opacity-20"
-                                        >
-                                            <ChevronDown size={16} />
-                                        </button>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => toggleHPCStatus(section.id, section.is_active)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${section.is_active ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-red-50 text-red-500 hover:bg-red-100'}`}
-                                >
-                                    {section.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
-                                    {section.is_active ? 'نشط' : 'مخفي'}
-                                </button>
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-black text-text-primary dark:text-cream-50 leading-tight mb-2">{section.section_display}</h3>
-                                <p className="text-sm text-text-secondary dark:text-gold-400/70 mb-4">{section.title_ar}</p>
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] font-black uppercase text-gold-600 bg-gold-50 dark:bg-dark-800 w-fit px-3 py-1 rounded-lg">
-                                ترتيب الظهور: {section.order}
+                <div className="space-y-6 animate-fade-in">
+                    {/* HPC Stats & Bulk Actions Bar */}
+                    <div className="bg-white dark:bg-dark-700 p-5 rounded-[28px] border border-gold-100 dark:border-dark-600 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 text-sm font-bold text-text-secondary dark:text-gold-400">
+                                <Settings2 size={18} className="text-gold-500" />
+                                <span>{hpc.length} أقسام</span>
+                                <span className="text-gold-500">•</span>
+                                <span className="text-green-600">{activeCount} نشط</span>
+                                <span className="text-gold-500">•</span>
+                                <span className="text-red-400">{hpc.length - activeCount} مخفي</span>
                             </div>
                         </div>
-                    ))}
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                onClick={() => handleBulkToggleHPC(true)}
+                                className="px-4 py-2 rounded-xl text-xs font-black bg-green-50 dark:bg-green-900/20 text-green-600 hover:bg-green-100 dark:hover:bg-green-900/30 transition-all flex items-center gap-1.5"
+                            >
+                                <ToggleRight size={14} />
+                                تفعيل الكل
+                            </button>
+                            <button
+                                onClick={() => handleBulkToggleHPC(false)}
+                                className="px-4 py-2 rounded-xl text-xs font-black bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all flex items-center gap-1.5"
+                            >
+                                <ToggleLeft size={14} />
+                                إخفاء الكل
+                            </button>
+                            <button
+                                onClick={handleResetOrder}
+                                className="px-4 py-2 rounded-xl text-xs font-black bg-gold-50 dark:bg-dark-600 text-gold-600 dark:text-gold-400 hover:bg-gold-100 dark:hover:bg-dark-500 transition-all flex items-center gap-1.5"
+                            >
+                                <RotateCcw size={14} />
+                                إعادة الترتيب
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* HPC Sortable List */}
+                    <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600 overflow-hidden">
+                        {hpc.sort((a, b) => a.order - b.order).map((section, idx) => (
+                            <div
+                                key={section.id}
+                                className={`flex items-center gap-4 px-6 py-5 transition-all hover:bg-cream-50 dark:hover:bg-dark-600/50 ${idx !== hpc.length - 1 ? 'border-b border-gold-50 dark:border-dark-600' : ''}`}
+                            >
+                                {/* Position Number & Handle */}
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                    <GripVertical size={18} className="text-gold-300 dark:text-dark-500" />
+                                    <div className="w-10 h-10 bg-gold-50 dark:bg-dark-800 rounded-xl flex items-center justify-center text-gold-600 dark:text-gold-400 font-black text-lg">
+                                        {idx + 1}
+                                    </div>
+                                </div>
+
+                                {/* Move Arrows */}
+                                <div className="flex flex-col gap-0.5 flex-shrink-0">
+                                    <button
+                                        disabled={idx === 0}
+                                        onClick={() => handleMoveSection(section, 'up')}
+                                        className="p-1 hover:bg-gold-50 dark:hover:bg-dark-800 rounded-lg text-gold-600 disabled:opacity-20 transition-all"
+                                    >
+                                        <ChevronUp size={16} />
+                                    </button>
+                                    <button
+                                        disabled={idx === hpc.length - 1}
+                                        onClick={() => handleMoveSection(section, 'down')}
+                                        className="p-1 hover:bg-gold-50 dark:hover:bg-dark-800 rounded-lg text-gold-600 disabled:opacity-20 transition-all"
+                                    >
+                                        <ChevronDown size={16} />
+                                    </button>
+                                </div>
+
+                                {/* Status Icon */}
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${section.is_active ? 'bg-green-50 dark:bg-green-900/20 text-green-500' : 'bg-red-50 dark:bg-red-900/20 text-red-400'}`}>
+                                    {section.is_active ? <CheckCircle2 size={20} /> : <CircleDashed size={20} />}
+                                </div>
+
+                                {/* Section Info */}
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-black text-text-primary dark:text-cream-50 truncate">{section.section_display}</h4>
+                                    <p className="text-xs text-text-secondary dark:text-gold-400/70 truncate">{section.title_ar}</p>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                    <button
+                                        onClick={() => toggleHPCStatus(section.id, section.is_active)}
+                                        className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all flex items-center gap-1.5 ${section.is_active ? 'bg-green-50 dark:bg-green-900/20 text-green-600 hover:bg-green-100' : 'bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100'}`}
+                                    >
+                                        {section.is_active ? <Eye size={13} /> : <EyeOff size={13} />}
+                                        {section.is_active ? 'نشط' : 'مخفي'}
+                                    </button>
+                                    <button
+                                        onClick={() => handleOpenHpcModal(section)}
+                                        className="p-2 text-text-muted dark:text-gold-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
+                                        title="تعديل القسم"
+                                    >
+                                        <Pencil size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* HPC Edit Modal */}
+            {isHpcModalOpen && editingHpcItem && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseHpcModal}></div>
+                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[40px] shadow-2xl relative z-10 overflow-hidden border border-gold-100 dark:border-dark-600">
+                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
+                            <div>
+                                <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">تعديل القسم</h3>
+                                <p className="text-sm text-text-secondary dark:text-gold-400">{editingHpcItem.section_display}</p>
+                            </div>
+                            <button onClick={handleCloseHpcModal} className="p-2 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-full transition-all">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleHpcSubmit} className="p-8 space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">اسم القسم (داخلي)</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={hpcFormData.title_ar}
+                                    onChange={(e) => setHpcFormData({ ...hpcFormData, title_ar: e.target.value })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                    placeholder="اسم القسم كما يظهر في لوحة التحكم..."
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">ترتيب الظهور</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        required
+                                        value={hpcFormData.order}
+                                        onChange={(e) => setHpcFormData({ ...hpcFormData, order: parseInt(e.target.value) || 0 })}
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الحالة</label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setHpcFormData({ ...hpcFormData, is_active: !hpcFormData.is_active })}
+                                        className={`w-full px-5 py-3.5 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 ${hpcFormData.is_active ? 'bg-green-50 dark:bg-green-900/20 text-green-600 border border-green-200 dark:border-green-900' : 'bg-red-50 dark:bg-red-900/20 text-red-500 border border-red-200 dark:border-red-900'}`}
+                                    >
+                                        {hpcFormData.is_active ? <Eye size={18} /> : <EyeOff size={18} />}
+                                        {hpcFormData.is_active ? 'نشط - ظاهر في الواجهة' : 'مخفي - لا يظهر'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="bg-cream-50 dark:bg-dark-800 p-4 rounded-2xl border border-gold-50 dark:border-dark-600">
+                                <p className="text-xs text-text-secondary dark:text-gold-400">
+                                    <span className="font-black">معرّف القسم:</span> <code className="bg-gold-50 dark:bg-dark-600 px-2 py-0.5 rounded-lg text-gold-700 dark:text-gold-400">{editingHpcItem.key}</code>
+                                </p>
+                            </div>
+
+                            <div className="pt-4 flex gap-4">
+                                <button
+                                    type="submit"
+                                    className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-gold-600/20 transition-all"
+                                >
+                                    <Save size={20} />
+                                    حفظ التغييرات
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleCloseHpcModal}
+                                    className="px-8 py-4 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-500 transition-all"
+                                >
+                                    إلغاء
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
 

@@ -42,6 +42,7 @@ class HomePageSection(models.Model):
     title_ar = models.CharField(max_length=100, verbose_name="عنوان القسم (داخلي)")
     is_active = models.BooleanField(default=True, verbose_name="ظهور القسم")
     order = models.PositiveIntegerField(default=0, verbose_name="الترتيب")
+    content = models.JSONField(default=dict, blank=True, verbose_name="محتوى القسم")
 
     class Meta:
         verbose_name = "محتوى الصفحة الرئيسية (HPC)"
