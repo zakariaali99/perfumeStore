@@ -1,17 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { cmsApi } from '../../services/api';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, EffectFade, Pagination } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/pagination';
 
 const Hero = () => {
     const [slides, setSlides] = useState([]);
-    const [current, setCurrent] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [touchStart, setTouchStart] = useState(null);
-    const [touchEnd, setTouchEnd] = useState(null);
-
-    // Minimum swipe distance (in px)
-    const minSwipeDistance = 50;
 
     useEffect(() => {
         const fetchSlides = async () => {
@@ -27,48 +28,6 @@ const Hero = () => {
         fetchSlides();
     }, []);
 
-    const next = useCallback(() => {
-        if (slides.length > 0) {
-            setCurrent((prev) => (prev + 1) % slides.length);
-        }
-    }, [slides.length]);
-
-    const prev = useCallback(() => {
-        if (slides.length > 0) {
-            setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-        }
-    }, [slides.length]);
-
-    useEffect(() => {
-        if (slides.length < 2) return;
-        const timer = setInterval(next, 3000); // 3 seconds auto-slide
-        return () => clearInterval(timer);
-    }, [slides.length, next]);
-
-    // Swipe handlers
-    const onTouchStart = (e) => {
-        setTouchEnd(null); // Reset touch end
-        setTouchStart(e.targetTouches[0].clientX);
-    };
-
-    const onTouchMove = (e) => {
-        setTouchEnd(e.targetTouches[0].clientX);
-    };
-
-    const onTouchEnd = () => {
-        if (!touchStart || !touchEnd) return;
-        const distance = touchStart - touchEnd;
-        const isLeftSwipe = distance > minSwipeDistance;
-        const isRightSwipe = distance < -minSwipeDistance;
-
-        if (isLeftSwipe) {
-            next(); // Swipe left -> next slide (Arabic direction consideration: typically swipe left shows next in LTR, but in RTL swipe left (move finger left) means "pulling" the content from right? Actually standard is swipe left to go next)
-            // Let's assume standard behavior: Swipe Left = Next, Swipe Right = Prev
-        } else if (isRightSwipe) {
-            prev();
-        }
-    };
-
     if (loading || slides.length === 0) return (
         <section className="relative h-screen bg-cream-50 dark:bg-dark-800 animate-pulse flex items-center justify-center">
             <div className="text-center">
@@ -78,90 +37,111 @@ const Hero = () => {
         </section>
     );
 
-    const slide = slides[current];
-
     return (
-        <section
-            className="relative h-screen overflow-hidden bg-black font-tajawal touch-pan-y"
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-        >
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={current}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1 }}
-                    className="absolute inset-0"
-                >
-                    <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/50 to-black/30 z-10"></div>
-                    {slide.image ? (
-                        <img
-                            src={slide.image}
-                            className="w-full h-full object-cover object-center"
-                            alt={slide.title}
-                        />
-                    ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-dark-700 via-dark-800 to-dark-900" />
-                    )}
-                </motion.div>
-            </AnimatePresence>
+        <section className="relative h-[100svh] overflow-hidden bg-black font-tajawal">
+            <Swiper
+                modules={[Autoplay, EffectFade, Pagination]}
+                effect="fade"
+                autoplay={{ delay: 5000, disableOnInteraction: false }}
+                pagination={{
+                    clickable: true,
+                    renderBullet: (index, className) => {
+                        return `<span class="${className} !h-1 transition-all !rounded-full !bg-white/30 active:!bg-gold-500 !w-6 hover:!w-12"></span>`;
+                    }
+                }}
+                loop={true}
+                className="h-full w-full"
+            >
+                {slides.map((slide, index) => (
+                    <SwiperSlide key={slide.id || index} className="relative overflow-hidden">
+                        {({ isActive }) => (
+                            <>
+                                {/* Background Images (Two for One logic) */}
+                                <div className="absolute inset-0">
+                                    <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/40 to-transparent z-10"></div>
+                                    <div className="absolute inset-0 bg-black/20 z-10"></div>
 
-            <div className="container h-100 relative z-20">
-                <div className="row h-100 align-items-center justify-content-end">
-                    <div className="col-12 col-md-8 col-lg-7">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={current}
-                                initial={{ opacity: 0, x: 100 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -100 }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
-                                className="w-full overflow-hidden"
-                            >
-                                <motion.span
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="bg-gold-500 text-black px-4 py-1.5 rounded-lg text-xs font-black mb-6 inline-block uppercase tracking-[0.2em]"
-                                >
-                                    {slide.subtitle}
-                                </motion.span>
-                                <h1 className="text-3xl sm:text-5xl md:text-8xl font-black text-white mb-8 leading-tight drop-shadow-2xl">
-                                    {slide.title}
-                                </h1>
-                                {slide.description_ar && (
-                                    <p className="text-base md:text-xl text-gray-200 mb-12 leading-loose font-medium drop-shadow-lg">
-                                        {slide.description_ar}
-                                    </p>
-                                )}
-                                <div className="flex flex-col sm:flex-row gap-6">
-                                    <Link
-                                        to={slide.button_link || '/products'}
-                                        className="bg-gold-500 hover:bg-gold-600 text-black px-8 py-4 md:px-12 md:py-5 rounded-2xl transition-all duration-300 font-black shadow-2xl shadow-gold-500/20 text-center text-lg inline-block"
-                                    >
-                                        {slide.button_text || 'تسوق المجموعة'}
-                                    </Link>
+                                    {/* Desktop Image */}
+                                    <img
+                                        src={slide.image}
+                                        className="hidden md:block w-full h-full object-cover object-center"
+                                        alt={slide.title}
+                                    />
+
+                                    {/* Mobile Image (Fallback to Desktop) */}
+                                    <img
+                                        src={slide.image_mobile || slide.image}
+                                        className="md:hidden w-full h-full object-cover object-center"
+                                        alt={slide.title}
+                                    />
                                 </div>
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-                </div>
-            </div>
 
-            {/* Navigation Indicators Only (Arrows Removed) */}
-            {slides.length > 1 && (
-                <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 z-30 flex gap-2">
-                    {slides.map((_, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => setCurrent(idx)}
-                            className={`h-1.5 transition-all rounded-full ${idx === current ? 'w-12 bg-gold-500' : 'w-4 bg-white/30'}`}
-                        />
-                    ))}
-                </div>
-            )}
+                                {/* Content Overlay */}
+                                <div className="container h-full relative z-20">
+                                    <div className="flex h-full items-center justify-end">
+                                        <div className="w-full max-w-3xl text-right">
+                                            <AnimatePresence>
+                                                {isActive && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, x: 50 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                                    >
+                                                        <motion.span
+                                                            initial={{ opacity: 0, y: 10 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ delay: 0.2 }}
+                                                            className="bg-gold-500 text-black px-4 py-1.5 rounded-lg text-xs font-black mb-6 inline-block uppercase tracking-[0.2em]"
+                                                        >
+                                                            {slide.subtitle}
+                                                        </motion.span>
+
+                                                        <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-white mb-6 leading-[1.1] drop-shadow-2xl">
+                                                            {slide.title}
+                                                        </h1>
+
+                                                        {slide.description_ar && (
+                                                            <p className="text-lg md:text-2xl text-gray-200 mb-10 leading-loose font-medium max-w-2xl ml-auto drop-shadow-lg">
+                                                                {slide.description_ar}
+                                                            </p>
+                                                        )}
+
+                                                        <motion.div
+                                                            initial={{ opacity: 0, scale: 0.9 }}
+                                                            animate={{ opacity: 1, scale: 1 }}
+                                                            transition={{ delay: 0.4 }}
+                                                            className="flex flex-wrap items-center justify-end gap-6"
+                                                        >
+                                                            <Link
+                                                                to={slide.button_link || '/products'}
+                                                                className="group relative bg-gold-500 hover:bg-gold-600 text-black px-8 py-4 md:px-12 md:py-5 rounded-2xl transition-all duration-300 font-black shadow-2xl shadow-gold-500/20 text-center text-lg inline-block overflow-hidden"
+                                                            >
+                                                                <span className="relative z-10">{slide.button_text || 'تسوق المجموعة'}</span>
+                                                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                                            </Link>
+                                                        </motion.div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </SwiperSlide>
+                ))}
+            </Swiper>
+
+            {/* Pagination Style Overrides */}
+            <style jsx>{`
+                .swiper-pagination-bullet {
+                    margin-bottom: 2rem !important;
+                }
+                .swiper-pagination-bullet-active {
+                    background: #d4af37 !important;
+                    width: 3rem !important;
+                }
+            `}</style>
         </section>
     );
 };

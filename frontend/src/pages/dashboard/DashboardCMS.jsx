@@ -47,9 +47,11 @@ const DashboardCMS = () => {
         position: 'home_top',
         order: 0,
         is_active: true,
-        image: null
+        image: null,
+        image_mobile: null
     });
     const [imagePreview, setImagePreview] = useState(null);
+    const [imageMobilePreview, setImageMobilePreview] = useState(null);
 
     useEffect(() => {
         fetchCMSData();
@@ -88,9 +90,11 @@ const DashboardCMS = () => {
                 position: item.position || 'home_top',
                 order: item.order || 0,
                 is_active: item.is_active,
-                image: null
+                image: null,
+                image_mobile: null
             });
             setImagePreview(item.image);
+            setImageMobilePreview(item.image_mobile);
         } else {
             setEditingItem(null);
             setFormData({
@@ -103,17 +107,27 @@ const DashboardCMS = () => {
                 position: 'home_top',
                 order: 0,
                 is_active: true,
-                image: null
+                image: null,
+                image_mobile: null
             });
             setImagePreview(null);
+            setImageMobilePreview(null);
         }
         setIsModalOpen(true);
     };
-
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setEditingItem(null);
         setImagePreview(null);
+        setImageMobilePreview(null);
+    };
+
+    const handleImageMobileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData({ ...formData, image_mobile: file });
+            setImageMobilePreview(URL.createObjectURL(file));
+        }
     };
 
     const handleImageChange = (e) => {
@@ -154,13 +168,13 @@ const DashboardCMS = () => {
         e.preventDefault();
         const data = new FormData();
 
-        const slideFields = ['title', 'subtitle', 'description_ar', 'button_text', 'button_link', 'order', 'is_active', 'image'];
+        const slideFields = ['title', 'subtitle', 'description_ar', 'button_text', 'button_link', 'order', 'is_active', 'image', 'image_mobile'];
         const bannerFields = ['title', 'link', 'position', 'is_active', 'image'];
         const validFields = activeTab === 'slides' ? slideFields : bannerFields;
 
         Object.keys(formData).forEach(key => {
             if (validFields.includes(key)) {
-                if (key === 'image') {
+                if (key === 'image' || key === 'image_mobile') {
                     if (formData[key]) data.append(key, formData[key]);
                 } else if (formData[key] !== null && formData[key] !== undefined) {
                     data.append(key, formData[key]);
@@ -707,31 +721,61 @@ const DashboardCMS = () => {
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-                            {/* Image Upload Area */}
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400">صورة العنصر</label>
-                                <div className="relative group aspect-[21/9] rounded-3xl overflow-hidden bg-cream-50 dark:bg-dark-800 border-2 border-dashed border-gold-200 dark:border-dark-600 flex flex-col items-center justify-center transition-all hover:border-gold-400">
-                                    {imagePreview ? (
-                                        <>
-                                            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
-                                                <div className="bg-white p-3 rounded-full text-gold-600 shadow-xl">
-                                                    <Upload size={24} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Desktop Image Upload */}
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400">صورة العرض (للكمبيوتر)</label>
+                                    <div className="relative group aspect-[21/9] rounded-3xl overflow-hidden bg-cream-50 dark:bg-dark-800 border-2 border-dashed border-gold-200 dark:border-dark-600 flex flex-col items-center justify-center transition-all hover:border-gold-400">
+                                        {imagePreview ? (
+                                            <>
+                                                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                                                    <div className="bg-white p-3 rounded-full text-gold-600 shadow-xl">
+                                                        <Upload size={24} />
+                                                    </div>
                                                 </div>
+                                            </>
+                                        ) : (
+                                            <div className="text-center">
+                                                <ImageIcon size={48} className="mx-auto text-gold-300 mb-2" />
+                                                <p className="text-xs font-bold text-text-muted">انقر لاختيار صورة</p>
                                             </div>
-                                        </>
-                                    ) : (
-                                        <div className="text-center">
-                                            <ImageIcon size={48} className="mx-auto text-gold-300 mb-2" />
-                                            <p className="text-xs font-bold text-text-muted">انقر لاختيار صورة</p>
-                                        </div>
-                                    )}
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        className="absolute inset-0 opacity-0 cursor-pointer"
-                                    />
+                                        )}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Mobile Image Upload */}
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400">صورة الجوال (اختياري)</label>
+                                    <div className="relative group aspect-[9/16] max-h-[160px] md:max-h-full rounded-2xl overflow-hidden bg-cream-50 dark:bg-dark-800 border-2 border-dashed border-gold-200 dark:border-dark-600 flex flex-col items-center justify-center transition-all hover:border-gold-400 mx-auto w-1/2 md:w-full">
+                                        {imageMobilePreview ? (
+                                            <>
+                                                <img src={imageMobilePreview} alt="Mobile Preview" className="w-full h-full object-cover" />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                                                    <div className="bg-white p-3 rounded-full text-gold-600 shadow-xl">
+                                                        <Upload size={20} />
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="text-center">
+                                                <ImageIcon size={32} className="mx-auto text-gold-300 mb-2" />
+                                                <p className="text-[10px] font-bold text-text-muted">جوال (Portrait)</p>
+                                            </div>
+                                        )}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageMobileChange}
+                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 

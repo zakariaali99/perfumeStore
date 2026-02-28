@@ -95,7 +95,7 @@ const DashboardLayout = () => {
             </aside>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
                 {/* Header */}
                 <header className="h-20 bg-white dark:bg-dark-800 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between px-6 sticky top-0 z-30 transition-colors duration-300">
                     <div className="flex items-center gap-4">
