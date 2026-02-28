@@ -75,14 +75,61 @@ class HomePageSectionViewSet(viewsets.ModelViewSet):
         return super().get_authenticators()
     
     def list(self, request, *args, **kwargs):
+        # Default content mapping for each section type
+        DEFAULT_CONTENTS = {
+            'ramadan': {
+                'heading': 'رمضان كريم',
+                'subtitle': 'أجواء رمضانية فاخرة مع أرقى العطور الشرقية',
+                'button_text': 'اكتشف عطور رمضان',
+                'button_link': '/products'
+            },
+            'features': [
+                {'title': 'جودة استثنائية', 'desc': 'نستخدم أندر المكونات الطبيعية والزيوت العطرية النقية لضمان ثبات عالي وجاذبية لا تقاوم.'},
+                {'title': 'أصالة مضمونة', 'desc': 'كافة عطورنا أصلية 100% ومن مصادرها الرسمية، نهتم بكل تفصيلة لتصلك الجودة كما هي.'},
+                {'title': 'توصيل سريع', 'desc': 'خدمة شحن موثوقة تغطي كافة أنحاء ليبيا، مع تغليف فاخر يحمي منتجاتك ويجمل هديتك.'},
+                {'title': 'تغليف فاخر', 'desc': 'نغلف كل طلب بعناية فائقة بتغليف أنيق يليق بقيمة العطر، مثالي كهدية مميزة لمن تحب.'}
+            ],
+            'categories': {
+                'heading': 'تسوق حسب الفئات',
+                'subtitle': 'اكتشف مجموعاتنا الحصرية المصنفة بعناية لتناسب ذوقك الرفيع.'
+            },
+            'best_sellers': {
+                'heading': 'الأكثر مبيعاً',
+                'button_text': 'إكتشف الكل'
+            },
+            'featured_products': {
+                'heading': 'عطور مختارة لك',
+                'subtitle': 'Best Sellers'
+            },
+            'stats': [
+                {'value': '15K+', 'label': 'عميل سعيد'},
+                {'value': '500+', 'label': 'عطر حصري'},
+                {'value': '10+', 'label': 'سنوات خبرة'},
+                {'value': '24/7', 'label': 'خدمة عملاء'}
+            ],
+            'vision': {
+                'quote': 'العطر هو اللغة التي لا تحتاج إلى كلمات لتخبر العالم من أنت.',
+                'description': 'في بوتيك المصطفى، نؤمن أن العطر ليس مجرد منتج، بل هو رحلة عبر الزمن والمكان، تجسد أرقى معاني الفخامة والجمال العربي الأصيل.',
+                'cities': ['طرابلس', 'بنغازي', 'مصراتة', 'سبها', 'الزاوية']
+            }
+        }
+
         # Initialize sections if they don't exist
         for idx, (key, display) in enumerate(HomePageSection.SECTION_KEYS):
+            section_content = DEFAULT_CONTENTS.get(key, {})
             section, created = HomePageSection.objects.get_or_create(
                 key=key, 
-                defaults={'title_ar': display, 'is_active': True, 'order': idx}
+                defaults={
+                    'title_ar': display, 
+                    'is_active': True, 
+                    'order': idx,
+                    'content': section_content
+                }
             )
-            # If it already exists but order is 0 (except first one), we might want to update it
-            # But let's keep it simple for now: if created, it gets idx.
+            # If the section exists but content is empty, initialize it
+            if not section.content and section_content:
+                section.content = section_content
+                section.save()
         
         return super().list(request, *args, **kwargs)
 

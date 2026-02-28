@@ -54,7 +54,7 @@ const Home = () => {
     }, []);
 
     const sectionRenderers = {
-        ramadan: () => (
+        ramadan: (section) => (
             <section key="ramadan" className="py-20 relative overflow-hidden bg-gradient-to-b from-dark-900 via-indigo-950/20 to-white dark:to-dark-900 transition-colors duration-500">
                 <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #c5a572 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
                 <div className="container mx-auto px-4 relative z-10">
@@ -77,42 +77,62 @@ const Home = () => {
                                     </svg>
                                 </motion.div>
                             </div>
-                            <h2 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-gold-400 to-gold-700 mb-6 font-tajawal">رمضان كريم</h2>
-                            <p className="text-lg md:text-2xl text-text-secondary dark:text-gold-400 font-bold tracking-wide">أجواء رمضانية فاخرة مع أرقى العطور الشرقية</p>
+                            <h2 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-gold-400 to-gold-700 mb-6 font-tajawal">
+                                {section.content?.heading || 'رمضان كريم'}
+                            </h2>
+                            <p className="text-lg md:text-2xl text-text-secondary dark:text-gold-400 font-bold tracking-wide">
+                                {section.content?.subtitle || 'أجواء رمضانية فاخرة مع أرقى العطور الشرقية'}
+                            </p>
                         </motion.div>
                         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.5 }} viewport={{ once: true }}>
-                            <Link to="/products" className="bg-dark-900 dark:bg-gold-500 text-gold-500 dark:text-black px-10 py-4 rounded-2xl font-black hover:scale-105 transition-all shadow-xl shadow-gold-500/10">اكتشف عطور رمضان</Link>
+                            <Link
+                                to={section.content?.button_link || '/products'}
+                                className="bg-dark-900 dark:bg-gold-500 text-gold-500 dark:text-black px-10 py-4 rounded-2xl font-black hover:scale-105 transition-all shadow-xl shadow-gold-500/10"
+                            >
+                                {section.content?.button_text || 'اكتشف عطور رمضان'}
+                            </Link>
                         </motion.div>
                     </div>
                 </div>
             </section>
         ),
-        features: () => (
-            <section key="features" className="py-24 bg-cream-50 dark:bg-dark-800">
-                <div className="container mx-auto px-4">
-                    <div className="row g-4">
-                        <div className="col-12 col-md-6 col-lg-3">
-                            <FeatureCard icon={Sparkles} title="جودة استثنائية" desc="نستخدم أندر المكونات الطبيعية والزيوت العطرية النقية لضمان ثبات عالي وجاذبية لا تقاوم." />
-                        </div>
-                        <div className="col-12 col-md-6 col-lg-3">
-                            <FeatureCard icon={ShieldCheck} title="أصالة مضمونة" desc="كافة عطورنا أصلية 100% ومن مصادرها الرسمية، نهتم بكل تفصيلة لتصلك الجودة كما هي." />
-                        </div>
-                        <div className="col-12 col-md-6 col-lg-3">
-                            <FeatureCard icon={Truck} title="توصيل سريع" desc="خدمة شحن موثوقة تغطي كافة أنحاء ليبيا، مع تغليف فاخر يحمي منتجاتك ويجمل هديتك." />
-                        </div>
-                        <div className="col-12 col-md-6 col-lg-3">
-                            <FeatureCard icon={Gift} title="تغليف فاخر" desc="نغلف كل طلب بعناية فائقة بتغليف أنيق يليق بقيمة العطر، مثالي كهدية مميزة لمن تحب." />
+        features: (section) => {
+            const features = section.content || [
+                { title: 'جودة استثنائية', desc: 'نستخدم أندر المكونات الطبيعية والزيوت العطرية النقية لضمان ثبات عالي وجاذبية لا تقاوم.' },
+                { title: 'أصالة مضمونة', desc: 'كافة عطورنا أصلية 100% ومن مصادرها الرسمية، نهتم بكل تفصيلة لتصلك الجودة كما هي.' },
+                { title: 'توصيل سريع', desc: 'خدمة شحن موثوقة تغطي كافة أنحاء ليبيا، مع تغليف فاخر يحمي منتجاتك ويجمل هديتك.' },
+                { title: 'تغليف فاخر', desc: 'نغلف كل طلب بعناية فائقة بتغليف أنيق يليق بقيمة العطر، مثالي كهدية مميزة لمن تحب.' }
+            ];
+            const icons = [Sparkles, ShieldCheck, Truck, Gift];
+
+            return (
+                <section key="features" className="py-24 bg-cream-50 dark:bg-dark-800">
+                    <div className="container mx-auto px-4">
+                        <div className="row g-4">
+                            {features.map((feature, idx) => (
+                                <div key={idx} className="col-12 col-md-6 col-lg-3">
+                                    <FeatureCard
+                                        icon={icons[idx] || Sparkles}
+                                        title={feature.title}
+                                        desc={feature.desc}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     </div>
-                </div>
-            </section>
-        ),
-        categories: () => categories.length > 0 && (
+                </section>
+            );
+        },
+        categories: (section) => categories.length > 0 && (
             <section key="categories" className="py-24 bg-white dark:bg-dark-900 border-t border-gold-50 dark:border-dark-800 overflow-hidden">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-16">
-                        <h2 className="text-4xl md:text-6xl font-black text-text-primary dark:text-cream-50 mb-4">تسوق حسب الفئات</h2>
-                        <p className="text-text-secondary dark:text-gold-400 text-lg">اكتشف مجموعاتنا الحصرية المصنفة بعناية لتناسب ذوقك الرفيع.</p>
+                        <h2 className="text-4xl md:text-6xl font-black text-text-primary dark:text-cream-50 mb-4">
+                            {section.content?.heading || 'تسوق حسب الفئات'}
+                        </h2>
+                        <p className="text-text-secondary dark:text-gold-400 text-lg">
+                            {section.content?.subtitle || 'اكتشف مجموعاتنا الحصرية المصنفة بعناية لتناسب ذوقك الرفيع.'}
+                        </p>
                     </div>
                     <div className="row g-4 justify-center">
                         {categories.map((cat, idx) => (
@@ -136,7 +156,7 @@ const Home = () => {
                 </div>
             </section>
         ),
-        best_sellers: () => products.filter(p => p.is_featured).length > 0 && (
+        best_sellers: (section) => products.filter(p => p.is_featured).length > 0 && (
             <section key="best_sellers" className="py-24 bg-cream-50 dark:bg-dark-800 overflow-hidden">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
@@ -145,9 +165,13 @@ const Home = () => {
                                 <Award size={24} />
                                 <span className="uppercase tracking-widest text-sm">Top Rated</span>
                             </div>
-                            <h2 className="text-4xl md:text-6xl font-black text-text-primary dark:text-cream-50">الأكثر مبيعاً</h2>
+                            <h2 className="text-4xl md:text-6xl font-black text-text-primary dark:text-cream-50">
+                                {section.content?.heading || 'الأكثر مبيعاً'}
+                            </h2>
                         </div>
-                        <Link to="/products" className="bg-white dark:bg-dark-700 text-gold-600 dark:text-gold-400 px-8 py-3 rounded-2xl font-black flex items-center gap-2 border border-gold-100 dark:border-dark-600 hover:bg-gold-500 hover:text-white transition-all shadow-lg">إكتشف الكل</Link>
+                        <Link to="/products" className="bg-white dark:bg-dark-700 text-gold-600 dark:text-gold-400 px-8 py-3 rounded-2xl font-black flex items-center gap-2 border border-gold-100 dark:border-dark-600 hover:bg-gold-500 hover:text-white transition-all shadow-lg">
+                            {section.content?.button_text || 'إكتشف الكل'}
+                        </Link>
                     </div>
 
                     <Swiper
@@ -170,16 +194,20 @@ const Home = () => {
                 </div>
             </section>
         ),
-        featured_products: () => (
+        featured_products: (section) => (
             <section key="featured_products" className="py-24 md:py-32 dark:bg-dark-900 bg-white">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-4 border-b border-gold-100 dark:border-dark-700 pb-8">
                         <div>
                             <div className="flex items-center gap-2 text-gold-600 dark:text-gold-400 font-black mb-4">
                                 <TrendingUp size={20} />
-                                <span className="uppercase tracking-widest text-xs">Best Sellers</span>
+                                <span className="uppercase tracking-widest text-xs">
+                                    {section.content?.subtitle || 'Best Sellers'}
+                                </span>
                             </div>
-                            <h2 className="text-3xl md:text-5xl font-black text-text-primary dark:text-cream-50">عطور مختارة لك</h2>
+                            <h2 className="text-3xl md:text-5xl font-black text-text-primary dark:text-cream-50">
+                                {section.content?.heading || 'عطور مختارة لك'}
+                            </h2>
                         </div>
                         <Link to="/products" className="text-gold-600 dark:text-gold-400 font-black flex items-center gap-2 group hover:-translate-x-2 transition-all">تصفح الكل <ChevronLeft size={20} /></Link>
                     </div>
@@ -213,44 +241,38 @@ const Home = () => {
                 </div>
             </section>
         ),
-        stats: () => (
-            <section key="stats" className="py-24 bg-dark-900 text-white overflow-hidden relative">
-                <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #c5a572 1px, transparent 0)', backgroundSize: '60px 60px' }}></div>
-                <div className="container mx-auto px-4 relative z-10">
-                    <div className="row g-5 text-center">
-                        <div className="col-6 col-md-3">
-                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                                <Users className="mx-auto text-gold-500 mb-6" size={48} />
-                                <h4 className="text-4xl md:text-6xl font-black text-gold-400 mb-2">15K+</h4>
-                                <p className="text-gray-400 font-bold">عميل سعيد</p>
-                            </motion.div>
-                        </div>
-                        <div className="col-6 col-md-3">
-                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-                                <Package className="mx-auto text-gold-500 mb-6" size={48} />
-                                <h4 className="text-4xl md:text-6xl font-black text-gold-400 mb-2">500+</h4>
-                                <p className="text-gray-400 font-bold">عطر حصري</p>
-                            </motion.div>
-                        </div>
-                        <div className="col-6 col-md-3">
-                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
-                                <Award className="mx-auto text-gold-500 mb-6" size={48} />
-                                <h4 className="text-4xl md:text-6xl font-black text-gold-400 mb-2">10+</h4>
-                                <p className="text-gray-400 font-bold">سنوات خبرة</p>
-                            </motion.div>
-                        </div>
-                        <div className="col-6 col-md-3">
-                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
-                                <Clock className="mx-auto text-gold-500 mb-6" size={48} />
-                                <h4 className="text-4xl md:text-6xl font-black text-gold-400 mb-2">24/7</h4>
-                                <p className="text-gray-400 font-bold">خدمة عملاء</p>
-                            </motion.div>
+        stats: (section) => {
+            const stats = section.content || [
+                { value: '15K+', label: 'عميل سعيد' },
+                { value: '500+', label: 'عطر حصري' },
+                { value: '10+', label: 'سنوات خبرة' },
+                { value: '24/7', label: 'خدمة عملاء' }
+            ];
+            const icons = [Users, Package, Award, Clock];
+
+            return (
+                <section key="stats" className="py-24 bg-dark-900 text-white overflow-hidden relative">
+                    <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #c5a572 1px, transparent 0)', backgroundSize: '60px 60px' }}></div>
+                    <div className="container mx-auto px-4 relative z-10">
+                        <div className="row g-5 text-center">
+                            {stats.map((stat, idx) => {
+                                const Icon = icons[idx] || Users;
+                                return (
+                                    <div key={idx} className="col-6 col-md-3">
+                                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}>
+                                            <Icon className="mx-auto text-gold-500 mb-6" size={48} />
+                                            <h4 className="text-4xl md:text-6xl font-black text-gold-400 mb-2">{stat.value}</h4>
+                                            <p className="text-gray-400 font-bold">{stat.label}</p>
+                                        </motion.div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
-                </div>
-            </section>
-        ),
-        vision: () => (
+                </section>
+            );
+        },
+        vision: (section) => (
             <section key="vision" className="py-32 bg-dark-800 text-white overflow-hidden relative border-t border-white/5">
                 <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] border-[100px] border-gold-500 rounded-full"></div>
@@ -258,11 +280,15 @@ const Home = () => {
                 <div className="container mx-auto px-4 relative z-10 text-center">
                     <h2 className="text-3xl md:text-5xl lg:text-7xl font-black mb-12 italic opacity-10">Art of Perfumery</h2>
                     <div className="max-w-3xl mx-auto space-y-10">
-                        <p className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight text-gold-400">&quot;العطر هو اللغة التي لا تحتاج إلى كلمات لتخبر العالم من أنت.&quot;</p>
-                        <p className="text-xl text-gray-400 leading-loose">في بوتيك المصطفى، نؤمن أن العطر ليس مجرد منتج، بل هو رحلة عبر الزمن والمكان، تجسد أرقى معاني الفخامة والجمال العربي الأصيل.</p>
+                        <p className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight text-gold-400">
+                            &quot;{section.content?.quote || 'العطر هو اللغة التي لا تحتاج إلى كلمات لتخبر العالم من أنت.'}&quot;
+                        </p>
+                        <p className="text-xl text-gray-400 leading-loose">
+                            {section.content?.description || 'في بوتيك المصطفى، نؤمن أن العطر ليس مجرد منتج، بل هو رحلة عبر الزمن والمكان، تجسد أرقى معاني الفخامة والجمال العربي الأصيل.'}
+                        </p>
                         <div className="pt-10 flex flex-wrap justify-center gap-12 border-t border-white/10 opacity-60">
-                            {['طرابلس', 'بنغازي', 'مصراتة', 'سبها', 'الزاوية'].map(city => (
-                                <span key={city} className="text-sm font-black tracking-[0.3em] uppercase">{city}</span>
+                            {(section.content?.cities || ['طرابلس', 'بنغازي', 'مصراتة', 'سبها', 'الزاوية']).map((city, idx) => (
+                                <span key={idx} className="text-sm font-black tracking-[0.3em] uppercase">{city}</span>
                             ))}
                         </div>
                     </div>
@@ -278,7 +304,7 @@ const Home = () => {
             {hpcSections.map(section => {
                 if (!section.is_active) return null;
                 const renderer = sectionRenderers[section.key];
-                return renderer ? renderer() : null;
+                return renderer ? renderer(section) : null;
             })}
         </div>
     );

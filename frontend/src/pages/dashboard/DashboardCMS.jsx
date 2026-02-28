@@ -36,7 +36,7 @@ const DashboardCMS = () => {
     const [isHpcModalOpen, setIsHpcModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [editingHpcItem, setEditingHpcItem] = useState(null);
-    const [hpcFormData, setHpcFormData] = useState({ title_ar: '', order: 0, is_active: true });
+    const [hpcFormData, setHpcFormData] = useState({ title_ar: '', order: 0, is_active: true, content: {} });
     const [formData, setFormData] = useState({
         title: '',
         subtitle: '',
@@ -226,7 +226,8 @@ const DashboardCMS = () => {
         setHpcFormData({
             title_ar: section.title_ar || '',
             order: section.order ?? 0,
-            is_active: section.is_active
+            is_active: section.is_active,
+            content: section.content || {}
         });
         setIsHpcModalOpen(true);
     };
@@ -438,7 +439,7 @@ const DashboardCMS = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={handleHpcSubmit} className="p-8 space-y-6">
+                        <form onSubmit={handleHpcSubmit} className="p-8 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
                             <div className="space-y-2">
                                 <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">اسم القسم (داخلي)</label>
                                 <input
@@ -451,7 +452,7 @@ const DashboardCMS = () => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-2 gap-6 pb-6 border-b border-gold-50 dark:border-dark-600">
                                 <div className="space-y-2">
                                     <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">ترتيب الظهور</label>
                                     <input
@@ -471,9 +472,139 @@ const DashboardCMS = () => {
                                         className={`w-full px-5 py-3.5 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 ${hpcFormData.is_active ? 'bg-green-50 dark:bg-green-900/20 text-green-600 border border-green-200 dark:border-green-900' : 'bg-red-50 dark:bg-red-900/20 text-red-500 border border-red-200 dark:border-red-900'}`}
                                     >
                                         {hpcFormData.is_active ? <Eye size={18} /> : <EyeOff size={18} />}
-                                        {hpcFormData.is_active ? 'نشط - ظاهر في الواجهة' : 'مخفي - لا يظهر'}
+                                        {hpcFormData.is_active ? 'نشط - ظاهر' : 'مخفي'}
                                     </button>
                                 </div>
+                            </div>
+
+                            {/* Dynamic Content Fields */}
+                            <div className="space-y-6 pt-2">
+                                <h4 className="text-lg font-black text-gold-600 dark:text-gold-400 flex items-center gap-2">
+                                    <Layers size={18} />
+                                    محتوى القسم
+                                </h4>
+
+                                {editingHpcItem.key === 'ramadan' && (
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-text-secondary">العنوان الرئيسي</label>
+                                                <input type="text" value={hpcFormData.content.heading || ''}
+                                                    onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, heading: e.target.value } })}
+                                                    className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-gold-500/20" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-text-secondary">العنوان الفرعي</label>
+                                                <textarea value={hpcFormData.content.subtitle || ''}
+                                                    onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, subtitle: e.target.value } })}
+                                                    className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-gold-500/20 resize-none" rows={2} />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-bold text-text-secondary">نص الزر</label>
+                                                    <input type="text" value={hpcFormData.content.button_text || ''}
+                                                        onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, button_text: e.target.value } })}
+                                                        className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl" />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-bold text-text-secondary">رابط الزر</label>
+                                                    <input type="text" value={hpcFormData.content.button_link || ''}
+                                                        onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, button_link: e.target.value } })}
+                                                        className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {(editingHpcItem.key === 'features' || editingHpcItem.key === 'stats') && (
+                                    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {(hpcFormData.content || []).map((item, idx) => (
+                                            <div key={idx} className="p-4 bg-gray-50 dark:bg-dark-800 rounded-2xl border border-gold-100 dark:border-dark-600 space-y-3">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <span className="text-[10px] font-black uppercase text-gold-500 tracking-widest">
+                                                        {editingHpcItem.key === 'features' ? `ميزة ${idx + 1}` : `إحصائية ${idx + 1}`}
+                                                    </span>
+                                                </div>
+                                                <div className="grid grid-cols-1 gap-3">
+                                                    <input
+                                                        type="text"
+                                                        placeholder={editingHpcItem.key === 'features' ? "العنوان" : "القيمة (مثال: 15K+)"}
+                                                        value={editingHpcItem.key === 'features' ? item.title : item.value}
+                                                        onChange={e => {
+                                                            const newContent = [...hpcFormData.content];
+                                                            if (editingHpcItem.key === 'features') newContent[idx].title = e.target.value;
+                                                            else newContent[idx].value = e.target.value;
+                                                            setHpcFormData({ ...hpcFormData, content: newContent });
+                                                        }}
+                                                        className="w-full bg-white dark:bg-dark-700 border border-gold-50 dark:border-dark-600 px-4 py-2.5 rounded-xl text-sm"
+                                                    />
+                                                    <textarea
+                                                        placeholder={editingHpcItem.key === 'features' ? "الوصف" : "التسمية (مثال: عميل سعيد)"}
+                                                        value={editingHpcItem.key === 'features' ? item.desc : item.label}
+                                                        onChange={e => {
+                                                            const newContent = [...hpcFormData.content];
+                                                            if (editingHpcItem.key === 'features') newContent[idx].desc = e.target.value;
+                                                            else newContent[idx].label = e.target.value;
+                                                            setHpcFormData({ ...hpcFormData, content: newContent });
+                                                        }}
+                                                        className="w-full bg-white dark:bg-dark-700 border border-gold-50 dark:border-dark-600 px-4 py-2.5 rounded-xl text-sm resize-none" rows={2}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {editingHpcItem.key === 'vision' && (
+                                    <div className="space-y-4">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-text-secondary">المقولة (Quote)</label>
+                                            <textarea value={hpcFormData.content.quote || ''}
+                                                onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, quote: e.target.value } })}
+                                                className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl" rows={2} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-text-secondary">الوصف التفصيلي</label>
+                                            <textarea value={hpcFormData.content.description || ''}
+                                                onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, description: e.target.value } })}
+                                                className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl" rows={3} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-text-secondary">المدن (مفصولة بفاصلة)</label>
+                                            <input type="text" value={(hpcFormData.content.cities || []).join(', ')}
+                                                onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, cities: e.target.value.split(',').map(c => c.trim()) } })}
+                                                className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl" placeholder="طرابلس, بنغازي..." />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {(editingHpcItem.key === 'categories' || editingHpcItem.key === 'best_sellers' || editingHpcItem.key === 'featured_products') && (
+                                    <div className="space-y-4">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-text-secondary">عنوان القسم</label>
+                                            <input type="text" value={hpcFormData.content.heading || ''}
+                                                onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, heading: e.target.value } })}
+                                                className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl" />
+                                        </div>
+                                        {(editingHpcItem.key === 'categories' || editingHpcItem.key === 'featured_products') && (
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-text-secondary">العنوان الفرعي</label>
+                                                <input type="text" value={hpcFormData.content.subtitle || ''}
+                                                    onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, subtitle: e.target.value } })}
+                                                    className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl" />
+                                            </div>
+                                        )}
+                                        {editingHpcItem.key === 'best_sellers' && (
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-text-secondary">نص الزر</label>
+                                                <input type="text" value={hpcFormData.content.button_text || ''}
+                                                    onChange={e => setHpcFormData({ ...hpcFormData, content: { ...hpcFormData.content, button_text: e.target.value } })}
+                                                    className="w-full bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl" />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="bg-cream-50 dark:bg-dark-800 p-4 rounded-2xl border border-gold-50 dark:border-dark-600">
