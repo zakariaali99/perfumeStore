@@ -93,73 +93,63 @@ const DashboardHome = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="row g-4">
-                <div className="col-12 col-md-6 col-lg-3">
-                    <StatCard
-                        title="إجمالي المبيعات المحققة"
-                        value={`${summary.total_revenue?.toLocaleString() || 0} د.ل`}
-                        icon={TrendingUp}
-                        trend={summary.revenue_trend >= 0 ? 'up' : 'down'}
-                        trendValue={Math.abs(summary.revenue_trend || 0)}
-                        color="bg-green-600 text-green-600"
-                    />
-                </div>
-                <div className="col-12 col-md-6 col-lg-3">
-                    <StatCard
-                        title="الطلبات الكلية"
-                        value={summary.total_orders || 0}
-                        icon={ShoppingBag}
-                        color="bg-gold-600 text-gold-600"
-                    />
-                </div>
-                <div className="col-12 col-md-6 col-lg-3">
-                    <StatCard
-                        title="قاعدة العملاء"
-                        value={summary.total_customers || 0}
-                        icon={Users}
-                        color="bg-blue-600 text-blue-600"
-                    />
-                </div>
-                <div className="col-12 col-md-6 col-lg-3">
-                    <StatCard
-                        title="متوسط قيمة الطلب (AOV)"
-                        value={`${summary.aov?.toFixed(2) || 0} د.ل`}
-                        icon={TrendingUp}
-                        color="bg-purple-600 text-purple-600"
-                    />
-                </div>
-                <div className="col-12 col-md-6 col-lg-3">
-                    <StatCard
-                        title="إيراد الشهر الحالي (MRR)"
-                        value={`${summary.mrr?.toLocaleString() || 0} د.ل`}
-                        icon={TrendingUp}
-                        trend={summary.revenue_trend >= 0 ? 'up' : 'down'}
-                        trendValue={Math.abs(summary.revenue_trend || 0)}
-                        color="bg-amber-600 text-amber-600"
-                    />
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
+                <StatCard
+                    title="إجمالي المبيعات المحققة"
+                    value={`${summary.total_revenue?.toLocaleString() || 0} د.ل`}
+                    icon={TrendingUp}
+                    trend={summary.revenue_trend >= 0 ? 'up' : 'down'}
+                    trendValue={Math.abs(summary.revenue_trend || 0)}
+                    color="bg-green-600 text-green-600"
+                />
+                <StatCard
+                    title="الطلبات الكلية"
+                    value={summary.total_orders || 0}
+                    icon={ShoppingBag}
+                    color="bg-gold-600 text-gold-600"
+                />
+                <StatCard
+                    title="قاعدة العملاء"
+                    value={summary.total_customers || 0}
+                    icon={Users}
+                    color="bg-blue-600 text-blue-600"
+                />
+                <StatCard
+                    title="متوسط قيمة الطلب (AOV)"
+                    value={`${summary.aov?.toFixed(2) || 0} د.ل`}
+                    icon={TrendingUp}
+                    color="bg-purple-600 text-purple-600"
+                />
+                <StatCard
+                    title="إيراد الشهر الحالي (MRR)"
+                    value={`${summary.mrr?.toLocaleString() || 0} د.ل`}
+                    icon={TrendingUp}
+                    trend={summary.revenue_trend >= 0 ? 'up' : 'down'}
+                    trendValue={Math.abs(summary.revenue_trend || 0)}
+                    color="bg-amber-600 text-amber-600"
+                />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
                 {/* Recent Orders */}
-                <div className="lg:col-span-2 bg-white dark:bg-dark-700 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm overflow-hidden flex flex-col">
-                    <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50/30 dark:bg-dark-800/50">
-                        <h3 className="text-xl font-black flex items-center gap-3 text-text-primary dark:text-cream-50">
-                            <Clock size={22} className="text-gold-500" />
+                <div className="lg:col-span-2 bg-white dark:bg-dark-700 rounded-3xl md:rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm overflow-hidden flex flex-col">
+                    <div className="p-5 md:p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50/30 dark:bg-dark-800/50">
+                        <h3 className="text-lg md:text-xl font-black flex items-center gap-3 text-text-primary dark:text-cream-50">
+                            <Clock size={20} className="text-gold-500 md:w-5 md:h-5" />
                             أحدث الطلبيات
                         </h3>
-                        <Link to="/dashboard/orders" className="text-xs font-black text-gold-600 dark:text-gold-400 hover:text-gold-700 flex items-center gap-1 transition-all">
+                        <Link to="/dashboard/orders" className="text-[10px] md:text-xs font-black text-gold-600 dark:text-gold-400 hover:text-gold-700 flex items-center gap-1 transition-all">
                             عرض كافة الطلبات
                             <ChevronLeft size={14} />
                         </Link>
                     </div>
                     <div className="overflow-x-auto flex-1">
-                        <table className="w-full text-right">
+                        <table className="w-full text-right min-w-[500px] md:min-w-0">
                             <thead className="bg-[#FAF9F6] dark:bg-dark-800 text-text-secondary dark:text-gold-400 text-[10px] uppercase font-black">
                                 <tr>
                                     <th className="px-4 md:px-8 py-5">المعرف</th>
                                     <th className="px-4 md:px-8 py-5">العميل</th>
-                                    <th className="px-4 md:px-8 py-5 hidden sm:table-cell">المدينة</th>
+                                    <th className="px-4 md:px-8 py-5 hidden md:table-cell">المدينة</th>
                                     <th className="px-4 md:px-8 py-5">المبلغ</th>
                                     <th className="px-4 md:px-8 py-5 text-left">الحالة</th>
                                 </tr>
@@ -171,9 +161,11 @@ const DashboardHome = () => {
                                         <tr key={order.id} className="hover:bg-gold-50/30 dark:hover:bg-dark-600 transition-colors cursor-pointer group">
                                             <td className="px-4 md:px-8 py-5 font-black font-poppins text-gold-600">#{order.order_number}</td>
                                             <td className="px-4 md:px-8 py-5 font-bold">{order.customer_name}</td>
-                                            <td className="px-4 md:px-8 py-5 hidden sm:table-cell">
-                                                <MapPin size={14} className="text-gold-500" />
-                                                {order.city}
+                                            <td className="px-4 md:px-8 py-5 hidden md:table-cell">
+                                                <div className="flex items-center gap-1">
+                                                    <MapPin size={14} className="text-gold-500" />
+                                                    {order.city}
+                                                </div>
                                             </td>
                                             <td className="px-4 md:px-8 py-5 font-black font-poppins">{order.total} د.ل</td>
                                             <td className="px-4 md:px-8 py-5 text-left">
@@ -190,33 +182,33 @@ const DashboardHome = () => {
                 </div>
 
                 {/* Top Products */}
-                <div className="bg-white dark:bg-dark-700 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm p-8 flex flex-col">
-                    <div className="mb-8">
-                        <h3 className="text-xl font-black flex items-center gap-3 text-text-primary dark:text-cream-50 mb-1">
-                            <TrendingUp size={22} className="text-gold-500" />
+                <div className="bg-white dark:bg-dark-700 rounded-3xl md:rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm p-6 md:p-8 flex flex-col">
+                    <div className="mb-6 md:mb-8">
+                        <h3 className="text-lg md:text-xl font-black flex items-center gap-3 text-text-primary dark:text-cream-50 mb-1">
+                            <TrendingUp size={20} className="text-gold-500 md:w-5 md:h-5" />
                             الأكثر رواجاً
                         </h3>
                         <p className="text-[10px] text-text-muted font-bold">المنتجات الأكثر مبيعاً خلال هذا الشهر</p>
                     </div>
-                    <div className="space-y-5 flex-1 overflow-y-auto custom-scrollbar">
+                    <div className="space-y-4 md:space-y-5 flex-1 overflow-y-auto custom-scrollbar">
                         {stats?.top_products?.map((product, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-4 rounded-3xl bg-cream-50/50 dark:bg-dark-800/40 border border-transparent hover:border-gold-100 dark:hover:border-dark-600 transition-all group">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-white dark:bg-dark-700 rounded-2xl flex items-center justify-center font-black text-gold-600 shadow-sm border border-gold-50 dark:border-dark-600 group-hover:bg-gold-600 group-hover:text-white transition-all font-poppins">
+                            <div key={idx} className="flex items-center justify-between p-3 md:p-4 rounded-2xl bg-cream-50/50 dark:bg-dark-800/40 border border-transparent hover:border-gold-100 dark:hover:border-dark-600 transition-all group gap-3">
+                                <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                                    <div className="w-8 h-8 md:w-10 md:h-10 shrink-0 bg-white dark:bg-dark-700 rounded-xl md:rounded-2xl flex items-center justify-center font-black text-gold-600 shadow-sm border border-gold-50 dark:border-dark-600 group-hover:bg-gold-600 group-hover:text-white transition-all font-poppins text-xs md:text-sm">
                                         {idx + 1}
                                     </div>
-                                    <div>
-                                        <p className="font-black text-xs text-text-primary dark:text-cream-50 line-clamp-1">{product.product_name}</p>
-                                        <p className="text-[10px] text-text-muted font-bold">{product.total_sold} مبيعات</p>
+                                    <div className="overflow-hidden">
+                                        <p className="font-black text-[11px] md:text-xs text-text-primary dark:text-cream-50 truncate">{product.product_name}</p>
+                                        <p className="text-[9px] md:text-[10px] text-text-muted font-bold">{product.total_sold} مبيعات</p>
                                     </div>
                                 </div>
                                 <div className="text-left shrink-0">
-                                    <p className="font-black text-sm font-poppins text-gold-700 dark:text-gold-400">{product.revenue.toFixed(2)} د.ل</p>
+                                    <p className="font-black text-xs md:text-sm font-poppins text-gold-700 dark:text-gold-400">{product.revenue.toFixed(2)} د.ل</p>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <Link to="/dashboard/analytics" className="mt-8 py-4 bg-gold-50 dark:bg-dark-600 text-center rounded-2xl text-xs font-black text-gold-600 dark:text-gold-400 hover:bg-gold-500 hover:text-white transition-all">
+                    <Link to="/dashboard/analytics" className="mt-8 py-3.5 md:py-4 bg-gold-50 dark:bg-dark-600 text-center rounded-2xl text-[10px] md:text-xs font-black text-gold-600 dark:text-gold-400 hover:bg-gold-500 hover:text-white transition-all">
                         تحليل البيانات المفصل
                     </Link>
                 </div>

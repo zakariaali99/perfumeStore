@@ -204,16 +204,17 @@ const DashboardCoupons = () => {
                                 <div className="flex gap-2 mt-8">
                                     <button
                                         onClick={() => handleOpenModal(coupon)}
-                                        className="flex-1 py-3 bg-gray-50 dark:bg-dark-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-text-secondary dark:text-gold-400 hover:text-blue-600 rounded-2xl transition-all font-bold text-xs flex items-center justify-center gap-2"
+                                        className="flex-1 py-3 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-500 hover:text-white text-blue-600 dark:text-blue-400 rounded-2xl transition-all font-bold text-xs flex items-center justify-center gap-2 border border-blue-100 dark:border-blue-900/30"
                                     >
                                         <Edit size={14} />
                                         تعديل
                                     </button>
                                     <button
                                         onClick={() => handleDelete(coupon.code)}
-                                        className="p-3 bg-gray-50 dark:bg-dark-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-text-secondary dark:text-gold-400 hover:text-red-600 rounded-2xl transition-all"
+                                        className="flex-1 py-3 bg-red-50/50 dark:bg-red-900/10 hover:bg-red-500 hover:text-white text-red-600 dark:text-red-400 rounded-2xl transition-all font-bold text-xs flex items-center justify-center gap-2 border border-red-100 dark:border-red-900/30"
                                     >
-                                        <Trash2 size={16} />
+                                        <Trash2 size={14} />
+                                        حذف
                                     </button>
                                 </div>
                             </div>
@@ -224,7 +225,7 @@ const DashboardCoupons = () => {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
                     <div className="bg-white dark:bg-dark-700 w-full max-w-xl rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-100 dark:border-dark-600">
                         <div className="p-5 md:p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">

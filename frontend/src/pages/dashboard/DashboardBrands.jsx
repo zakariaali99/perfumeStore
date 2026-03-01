@@ -149,9 +149,9 @@ const DashboardBrands = () => {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm overflow-hidden text-right">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-right min-w-[500px] md:min-w-0">
+                    <table className="w-full min-w-0">
                         <thead className="bg-cream-50 dark:bg-dark-800 border-b border-gold-50 dark:border-dark-600">
                             <tr>
                                 <th className="px-4 md:px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الشعار</th>

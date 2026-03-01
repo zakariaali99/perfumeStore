@@ -97,8 +97,8 @@ const DashboardLayout = () => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
                 {/* Header */}
-                <header className="h-20 bg-white dark:bg-dark-800 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between px-6 sticky top-0 z-30 transition-colors duration-300">
-                    <div className="flex items-center gap-4">
+                <header className="h-20 bg-white dark:bg-dark-800 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 transition-colors duration-300">
+                    <div className="flex items-center gap-2 md:gap-4">
                         <button
                             onClick={() => setIsSidebarOpen(true)}
                             className="lg:hidden p-2 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-lg text-text-primary dark:text-cream-50"
@@ -114,16 +114,16 @@ const DashboardLayout = () => {
                         </h1>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 md:gap-4">
                         <button
                             onClick={toggleTheme}
                             className="p-2.5 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 rounded-xl hover:bg-gold-50 dark:hover:bg-dark-700 transition-all"
                         >
                             {isDark ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
-                        <Link to="/" className="flex items-center gap-2 text-text-secondary dark:text-gold-400 hover:text-gold-600 text-sm font-bold bg-gold-50 dark:bg-dark-600 px-4 py-2 rounded-xl border border-gold-100 dark:border-dark-600 transition-all">
+                        <Link to="/" className="flex items-center gap-2 text-text-secondary dark:text-gold-400 hover:text-gold-600 text-sm font-bold bg-gold-50 dark:bg-dark-600 px-3 md:px-4 py-2 rounded-xl border border-gold-100 dark:border-dark-600 transition-all">
                             <ExternalLink size={16} />
-                            عرض المتجر
+                            <span className="hidden sm:inline">عرض المتجر</span>
                         </Link>
                         <button className="p-2.5 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 rounded-xl hover:bg-gold-50 dark:hover:bg-dark-700 transition-all relative">
                             <Bell size={20} />
@@ -136,7 +136,7 @@ const DashboardLayout = () => {
                 </header>
 
                 {/* Page Content */}
-                <main className="p-6 md:p-10">
+                <main className="p-4 md:p-6 lg:p-10">
                     <ErrorBoundary>
                         <Outlet />
                     </ErrorBoundary>

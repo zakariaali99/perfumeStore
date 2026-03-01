@@ -298,7 +298,7 @@ const DashboardCMS = () => {
                 {activeTab !== 'hpc' && (
                     <button
                         onClick={() => handleOpenModal()}
-                        className="bg-gold-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-gold-700 transition-all shadow-lg shadow-gold-600/20"
+                        className="w-full md:w-auto bg-gold-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-gold-700 transition-all shadow-lg shadow-gold-600/20"
                     >
                         <Plus size={20} />
                         إضافة {activeTab === 'slides' ? 'سلايدر' : 'بانر'} جديد
@@ -307,27 +307,27 @@ const DashboardCMS = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex flex-wrap gap-2 p-1.5 bg-white dark:bg-dark-700 rounded-2xl border border-gold-100 dark:border-dark-600 w-fit">
+            <div className="flex flex-wrap md:flex-nowrap gap-2 p-1.5 bg-white dark:bg-dark-700 rounded-2xl border border-gold-100 dark:border-dark-600 w-full md:w-fit">
                 <button
                     onClick={() => setActiveTab('slides')}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'slides' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
+                    className={`flex-1 md:flex-none px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 ${activeTab === 'slides' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
                 >
                     <Layout size={18} />
-                    السلايدر الرئيسي
+                    <span>السلايدر</span>
                 </button>
                 <button
                     onClick={() => setActiveTab('banners')}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'banners' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
+                    className={`flex-1 md:flex-none px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 ${activeTab === 'banners' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
                 >
                     <Layers size={18} />
-                    البانرات الإعلانية
+                    <span>البانرات</span>
                 </button>
                 <button
                     onClick={() => setActiveTab('hpc')}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'hpc' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
+                    className={`flex-1 md:flex-none px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 ${activeTab === 'hpc' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
                 >
                     <Settings2 size={18} />
-                    محتوى الصفحة الرئيسية (HPC)
+                    <span>الأقسام (HPC)</span>
                 </button>
             </div>
 
@@ -335,9 +335,9 @@ const DashboardCMS = () => {
             {activeTab === 'hpc' && (
                 <div className="space-y-6 animate-fade-in">
                     {/* HPC Stats & Bulk Actions Bar */}
-                    <div className="bg-white dark:bg-dark-700 p-5 rounded-[28px] border border-gold-100 dark:border-dark-600 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 text-sm font-bold text-text-secondary dark:text-gold-400">
+                    <div className="bg-white dark:bg-dark-700 p-4 md:p-5 rounded-[28px] border border-gold-100 dark:border-dark-600 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div className="flex items-center justify-between w-full md:w-auto gap-4">
+                            <div className="flex items-center gap-2 text-xs md:text-sm font-bold text-text-secondary dark:text-gold-400">
                                 <Settings2 size={18} className="text-gold-500" />
                                 <span>{hpc.length} أقسام</span>
                                 <span className="text-gold-500">•</span>
@@ -346,27 +346,27 @@ const DashboardCMS = () => {
                                 <span className="text-red-400">{hpc.length - activeCount} مخفي</span>
                             </div>
                         </div>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap md:flex-nowrap gap-2 w-full md:w-auto">
                             <button
                                 onClick={() => handleBulkToggleHPC(true)}
-                                className="px-4 py-2 rounded-xl text-xs font-black bg-green-50 dark:bg-green-900/20 text-green-600 hover:bg-green-100 dark:hover:bg-green-900/30 transition-all flex items-center gap-1.5"
+                                className="flex-1 md:flex-none px-4 py-2.5 rounded-xl text-[10px] md:text-xs font-black bg-green-50 dark:bg-green-900/20 text-green-600 hover:bg-green-100 dark:hover:bg-green-900/30 transition-all flex items-center justify-center gap-1.5 border border-green-100 dark:border-green-900/10"
                             >
                                 <ToggleRight size={14} />
-                                تفعيل الكل
+                                <span>تفعيل الكل</span>
                             </button>
                             <button
                                 onClick={() => handleBulkToggleHPC(false)}
-                                className="px-4 py-2 rounded-xl text-xs font-black bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all flex items-center gap-1.5"
+                                className="flex-1 md:flex-none px-4 py-2.5 rounded-xl text-[10px] md:text-xs font-black bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all flex items-center justify-center gap-1.5 border border-red-100 dark:border-red-900/10"
                             >
                                 <ToggleLeft size={14} />
-                                إخفاء الكل
+                                <span>إخفاء الكل</span>
                             </button>
                             <button
                                 onClick={handleResetOrder}
-                                className="px-4 py-2 rounded-xl text-xs font-black bg-gold-50 dark:bg-dark-600 text-gold-600 dark:text-gold-400 hover:bg-gold-100 dark:hover:bg-dark-500 transition-all flex items-center gap-1.5"
+                                className="flex-1 md:flex-none px-4 py-2.5 rounded-xl text-[10px] md:text-xs font-black bg-gold-50 dark:bg-dark-600 text-gold-600 dark:text-gold-400 hover:bg-gold-100 dark:hover:bg-dark-500 transition-all flex items-center justify-center gap-1.5 border border-gold-100 dark:border-dark-500/20"
                             >
                                 <RotateCcw size={14} />
-                                إعادة الترتيب
+                                <span>إعادة الترتيب</span>
                             </button>
                         </div>
                     </div>
@@ -440,7 +440,7 @@ const DashboardCMS = () => {
 
             {/* HPC Edit Modal */}
             {isHpcModalOpen && editingHpcItem && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseHpcModal}></div>
                     <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[40px] shadow-2xl relative z-10 overflow-hidden border border-gold-100 dark:border-dark-600">
                         <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
@@ -703,7 +703,7 @@ const DashboardCMS = () => {
 
             {/* Modal for Slides/Banners */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
                     <div className="bg-white dark:bg-dark-700 w-full max-w-2xl rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-100 dark:border-dark-600">
                         <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">

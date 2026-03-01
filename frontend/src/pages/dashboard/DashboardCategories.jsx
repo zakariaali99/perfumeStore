@@ -128,9 +128,9 @@ const DashboardCategories = () => {
                 </button>
             </div>
 
-            <div className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-100 dark:border-dark-600 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-100 dark:border-dark-600 shadow-sm overflow-hidden text-right">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-right min-w-[600px] md:min-w-0">
+                    <table className="w-full min-w-0">
                         <thead className="bg-gray-50 dark:bg-dark-700 border-b border-gray-100 dark:border-dark-600">
                             <tr>
                                 <th className="px-4 md:px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الصورة</th>
