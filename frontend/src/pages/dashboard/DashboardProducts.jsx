@@ -115,13 +115,13 @@ const DashboardProducts = () => {
                     <table className="w-full text-right">
                         <thead className="bg-cream-50 dark:bg-dark-800 text-text-secondary dark:text-gold-400 text-xs uppercase font-bold">
                             <tr>
-                                <th className="px-8 py-5">المنتج</th>
-                                <th className="px-8 py-5">التصنيف</th>
-                                <th className="px-8 py-5">الماركة</th>
-                                <th className="px-8 py-5">الجنس</th>
-                                <th className="px-8 py-5">السعر (يبدأ من)</th>
-                                <th className="px-8 py-5">الحالة</th>
-                                <th className="px-8 py-5">إجراءات</th>
+                                <th className="px-4 md:px-8 py-5">المنتج</th>
+                                <th className="px-4 md:px-8 py-5 hidden md:table-cell">التصنيف</th>
+                                <th className="px-4 md:px-8 py-5 hidden md:table-cell">الماركة</th>
+                                <th className="px-4 md:px-8 py-5 hidden lg:table-cell">الجنس</th>
+                                <th className="px-4 md:px-8 py-5">السعر (يبدأ من)</th>
+                                <th className="px-4 md:px-8 py-5">الحالة</th>
+                                <th className="px-4 md:px-8 py-5">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gold-50 dark:divide-dark-600 text-sm">
@@ -141,7 +141,7 @@ const DashboardProducts = () => {
                             ) : (
                                 products.map((product) => (
                                     <tr key={product.id} className="hover:bg-gold-50/20 dark:hover:bg-dark-600 transition-colors">
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-5">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-14 h-14 bg-cream-50 dark:bg-dark-600 rounded-xl overflow-hidden border border-gold-50 dark:border-600">
                                                     <img src={product.main_image} alt="" className="w-full h-full object-cover" />
@@ -152,15 +152,15 @@ const DashboardProducts = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-5 hidden md:table-cell">
                                             <span className="bg-gold-50 dark:bg-dark-600 text-gold-700 dark:text-gold-400 px-3 py-1 rounded-lg text-xs font-bold">
                                                 {product.category?.name_ar}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-5 font-bold text-text-secondary dark:text-gold-400">
+                                        <td className="px-4 md:px-8 py-5 hidden md:table-cell font-bold text-text-secondary dark:text-gold-400">
                                             {product.brand?.name_ar}
                                         </td>
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-5 hidden lg:table-cell">
                                             <span className={`px-3 py-1 rounded-full text-[10px] font-black ${product.gender === 'men' ? 'bg-blue-50 text-blue-600' :
                                                     product.gender === 'women' ? 'bg-rose-50 text-rose-600' :
                                                         'bg-amber-50 text-amber-600'
@@ -168,16 +168,16 @@ const DashboardProducts = () => {
                                                 {product.gender === 'men' ? 'رجالي' : product.gender === 'women' ? 'نسائي' : 'للجنسين'}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-5 font-bold font-poppins text-gold-700 dark:text-gold-400">
+                                        <td className="px-4 md:px-8 py-5 font-bold font-poppins text-gold-700 dark:text-gold-400">
                                             {product.min_price} د.ل
                                         </td>
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-5">
                                             <span className={`flex items-center gap-1.5 font-bold ${product.is_active ? 'text-green-600' : 'text-red-500'}`}>
                                                 <div className={`w-2 h-2 rounded-full ${product.is_active ? 'bg-green-600' : 'bg-red-500'}`}></div>
                                                 {product.is_active ? 'نشط' : 'غير نشط'}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-5">
                                             <div className="flex items-center gap-2">
                                                 <Link
                                                     to={`/product/${product.slug}`}

@@ -99,7 +99,7 @@ const DashboardSettings = () => {
             <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 {/* General Settings */}
                 <div className="space-y-8">
-                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                    <div className="bg-white dark:bg-dark-700 p-6 md:p-10 rounded-3xl md:rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
                         <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
                             <Settings size={22} className="text-gold-500" />
                             المعلومات الأساسية
@@ -190,7 +190,7 @@ const DashboardSettings = () => {
 
                 {/* Social Networks */}
                 <div className="space-y-8">
-                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm h-full">
+                    <div className="bg-white dark:bg-dark-700 p-6 md:p-10 rounded-3xl md:rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm h-full">
                         <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
                             <Globe size={22} className="text-gold-500" />
                             قنوات التواصل الاجتماعي

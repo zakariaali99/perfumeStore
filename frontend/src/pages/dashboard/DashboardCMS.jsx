@@ -376,7 +376,7 @@ const DashboardCMS = () => {
                         {hpc.sort((a, b) => a.order - b.order).map((section, idx) => (
                             <div
                                 key={section.id}
-                                className={`flex items-center gap-4 px-6 py-5 transition-all hover:bg-cream-50 dark:hover:bg-dark-600/50 ${idx !== hpc.length - 1 ? 'border-b border-gold-50 dark:border-dark-600' : ''}`}
+                                className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 px-4 sm:px-6 py-5 transition-all hover:bg-cream-50 dark:hover:bg-dark-600/50 ${idx !== hpc.length - 1 ? 'border-b border-gold-50 dark:border-dark-600' : ''}`}
                             >
                                 {/* Position Number & Handle */}
                                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -387,20 +387,20 @@ const DashboardCMS = () => {
                                 </div>
 
                                 {/* Move Arrows */}
-                                <div className="flex flex-col gap-0.5 flex-shrink-0">
+                                <div className="flex flex-row sm:flex-col gap-1 items-center flex-shrink-0">
                                     <button
                                         disabled={idx === 0}
                                         onClick={() => handleMoveSection(section, 'up')}
                                         className="p-1 hover:bg-gold-50 dark:hover:bg-dark-800 rounded-lg text-gold-600 disabled:opacity-20 transition-all"
                                     >
-                                        <ChevronUp size={16} />
+                                        <ChevronUp size={16} className="sm:rotate-0 rotate-[270deg]" />
                                     </button>
                                     <button
                                         disabled={idx === hpc.length - 1}
                                         onClick={() => handleMoveSection(section, 'down')}
                                         className="p-1 hover:bg-gold-50 dark:hover:bg-dark-800 rounded-lg text-gold-600 disabled:opacity-20 transition-all"
                                     >
-                                        <ChevronDown size={16} />
+                                        <ChevronDown size={16} className="sm:rotate-0 rotate-[270deg]" />
                                     </button>
                                 </div>
 
@@ -416,10 +416,10 @@ const DashboardCMS = () => {
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="flex items-center gap-2 flex-shrink-0">
+                                <div className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto justify-end border-t sm:border-t-0 border-gold-50 pt-3 sm:pt-0 mt-1 sm:mt-0">
                                     <button
                                         onClick={() => toggleHPCStatus(section.id, section.is_active)}
-                                        className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all flex items-center gap-1.5 ${section.is_active ? 'bg-green-50 dark:bg-green-900/20 text-green-600 hover:bg-green-100' : 'bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100'}`}
+                                        className={`flex-1 sm:flex-none px-3 py-2 rounded-xl text-[11px] font-black transition-all flex items-center justify-center gap-1.5 ${section.is_active ? 'bg-green-50 dark:bg-green-900/20 text-green-600 hover:bg-green-100' : 'bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100'}`}
                                     >
                                         {section.is_active ? <Eye size={13} /> : <EyeOff size={13} />}
                                         {section.is_active ? 'نشط' : 'مخفي'}

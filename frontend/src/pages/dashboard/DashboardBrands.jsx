@@ -121,14 +121,14 @@ const DashboardBrands = () => {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-text-primary dark:text-cream-50">إدارة الماركات</h1>
                     <p className="text-sm text-text-secondary dark:text-gold-400 mt-1">إدارة العلامات التجارية والشركاء</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-gold-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-gold-700 transition-all shadow-lg shadow-gold-600/20"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gold-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-gold-700 transition-all shadow-lg shadow-gold-600/20"
                 >
                     <Plus size={20} />
                     <span>إضافة ماركة جديدة</span>
@@ -150,66 +150,68 @@ const DashboardBrands = () => {
             </div>
 
             <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm overflow-hidden">
-                <table className="w-full text-right">
-                    <thead className="bg-cream-50 dark:bg-dark-800 border-b border-gold-50 dark:border-dark-600">
-                        <tr>
-                            <th className="px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الشعار</th>
-                            <th className="px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الاسم</th>
-                            <th className="px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الرابط (Slug)</th>
-                            <th className="px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الحالة</th>
-                            <th className="px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gold-50 dark:divide-dark-600">
-                        {filteredBrands.length === 0 ? (
+                <div className="overflow-x-auto">
+                    <table className="w-full text-right min-w-[500px] md:min-w-0">
+                        <thead className="bg-cream-50 dark:bg-dark-800 border-b border-gold-50 dark:border-dark-600">
                             <tr>
-                                <td colSpan="5" className="px-8 py-12 text-center text-text-muted dark:text-gold-400">
-                                    لا توجد ماركات حالياً
-                                </td>
+                                <th className="px-4 md:px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الشعار</th>
+                                <th className="px-4 md:px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الاسم</th>
+                                <th className="px-4 md:px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase hidden md:table-cell">الرابط (Slug)</th>
+                                <th className="px-4 md:px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الحالة</th>
+                                <th className="px-4 md:px-8 py-5 text-xs font-bold text-text-secondary dark:text-gold-400 uppercase">الإجراءات</th>
                             </tr>
-                        ) : (
-                            filteredBrands.map((brand) => (
-                                <tr key={brand.id} className="hover:bg-gold-50/20 dark:hover:bg-dark-600 transition-colors">
-                                    <td className="px-8 py-5">
-                                        <div className="w-16 h-16 rounded-xl overflow-hidden border border-gold-100 dark:border-dark-600 bg-white dark:bg-dark-800 p-2 flex items-center justify-center">
-                                            {brand.logo ? (
-                                                <img src={brand.logo} alt={brand.name_ar} className="max-w-full max-h-full object-contain" />
-                                            ) : (
-                                                <span className="text-xs text-gray-400">لا يوجد</span>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td className="px-8 py-5 font-bold text-text-primary dark:text-cream-50">{brand.name_ar}</td>
-                                    <td className="px-8 py-5 text-sm text-text-secondary dark:text-gold-400 font-poppins">{brand.slug}</td>
-                                    <td className="px-8 py-5">
-                                        <span className={`flex items-center gap-1.5 w-fit px-3 py-1 rounded-lg text-xs font-bold ${brand.is_active ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400' : 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'}`}>
-                                            <div className={`w-1.5 h-1.5 rounded-full ${brand.is_active ? 'bg-green-600' : 'bg-red-600'}`}></div>
-                                            {brand.is_active ? 'نشط' : 'غير نشط'}
-                                        </span>
-                                    </td>
-                                    <td className="px-8 py-5">
-                                        <div className="flex items-center gap-2">
-                                            <button
-                                                onClick={() => handleOpenModal(brand)}
-                                                className="p-2 text-text-muted dark:text-gold-400 hover:text-blue-600 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
-                                                title="تعديل"
-                                            >
-                                                <Edit2 size={18} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(brand.id)}
-                                                className="p-2 text-text-muted dark:text-gold-400 hover:text-red-600 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
-                                                title="حذف"
-                                            >
-                                                <Trash2 size={18} />
-                                            </button>
-                                        </div>
+                        </thead>
+                        <tbody className="divide-y divide-gold-50 dark:divide-dark-600">
+                            {filteredBrands.length === 0 ? (
+                                <tr>
+                                    <td colSpan="5" className="px-8 py-12 text-center text-text-muted dark:text-gold-400">
+                                        لا توجد ماركات حالياً
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ) : (
+                                filteredBrands.map((brand) => (
+                                    <tr key={brand.id} className="hover:bg-gold-50/20 dark:hover:bg-dark-600 transition-colors">
+                                        <td className="px-4 md:px-8 py-5">
+                                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl overflow-hidden border border-gold-100 dark:border-dark-600 bg-white dark:bg-dark-800 p-1 md:p-2 flex items-center justify-center">
+                                                {brand.logo ? (
+                                                    <img src={brand.logo} alt={brand.name_ar} className="max-w-full max-h-full object-contain" />
+                                                ) : (
+                                                    <span className="text-[10px] text-gray-400">لا يوجد</span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-4 md:px-8 py-5 font-bold text-text-primary dark:text-cream-50 text-sm md:text-base">{brand.name_ar}</td>
+                                        <td className="px-4 md:px-8 py-5 text-sm text-text-secondary dark:text-gold-400 font-poppins hidden md:table-cell">{brand.slug}</td>
+                                        <td className="px-4 md:px-8 py-5">
+                                            <span className={`flex items-center gap-1.5 w-fit px-2 md:px-3 py-1 rounded-lg text-[10px] md:text-xs font-bold ${brand.is_active ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400' : 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'}`}>
+                                                <div className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full ${brand.is_active ? 'bg-green-600' : 'bg-red-600'}`}></div>
+                                                {brand.is_active ? 'نشط' : 'غير نشط'}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 md:px-8 py-5">
+                                            <div className="flex items-center gap-1 md:gap-2">
+                                                <button
+                                                    onClick={() => handleOpenModal(brand)}
+                                                    className="p-2 text-text-muted dark:text-gold-400 hover:text-blue-600 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
+                                                    title="تعديل"
+                                                >
+                                                    <Edit2 size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(brand.id)}
+                                                    className="p-2 text-text-muted dark:text-gold-400 hover:text-red-600 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
+                                                    title="حذف"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Modal */}

@@ -142,7 +142,7 @@ const DashboardCoupons = () => {
             </div>
 
             {/* Coupons List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:p-8">
                 {loading ? (
                     [1, 2, 3].map(i => <div key={i} className="h-64 bg-white dark:bg-dark-700 animate-pulse rounded-[40px] border border-gold-100 dark:border-dark-600"></div>)
                 ) : coupons.length === 0 ? (
@@ -157,7 +157,7 @@ const DashboardCoupons = () => {
                             {/* Card Background Decoration */}
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gold-50 dark:bg-dark-800 rounded-bl-[100px] -z-10 opacity-50 group-hover:bg-gold-100 dark:group-hover:bg-dark-600 transition-colors"></div>
 
-                            <div className="p-8">
+                            <div className="p-5 md:p-8">
                                 <div className="flex justify-between items-start mb-6">
                                     <div
                                         onClick={() => copyToClipboard(coupon.code)}
@@ -227,7 +227,7 @@ const DashboardCoupons = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
                     <div className="bg-white dark:bg-dark-700 w-full max-w-xl rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-100 dark:border-dark-600">
-                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
+                        <div className="p-5 md:p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
                             <div>
                                 <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">
                                     {editingItem ? 'تعديل الكوبون' : 'إنشاء كوبون جديد'}
@@ -239,7 +239,7 @@ const DashboardCoupons = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+                        <form onSubmit={handleSubmit} className="p-5 md:p-8 space-y-6 max-h-[70vh] overflow-y-auto">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">كود الخصم</label>

@@ -114,14 +114,14 @@ const DashboardCategories = () => {
 
     return (
         <div className="space-y-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-cream-50">إدارة الفئات</h1>
                     <p className="text-sm text-gray-500 dark:text-gold-400 mt-1">إضافة وتعديل تصنيفات المنتجات في المتجر</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-gold-600 text-white px-6 py-3 rounded-xl hover:bg-gold-700 transition-colors shadow-lg shadow-gold-600/20"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gold-600 text-white px-6 py-3 rounded-xl hover:bg-gold-700 transition-colors shadow-lg shadow-gold-600/20"
                 >
                     <Plus size={20} />
                     <span>إضافة فئة جديدة</span>
@@ -129,53 +129,55 @@ const DashboardCategories = () => {
             </div>
 
             <div className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-100 dark:border-dark-600 shadow-sm overflow-hidden">
-                <table className="w-full text-right">
-                    <thead className="bg-gray-50 dark:bg-dark-700 border-b border-gray-100 dark:border-dark-600">
-                        <tr>
-                            <th className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الصورة</th>
-                            <th className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الاسم</th>
-                            <th className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الرابط (Slug)</th>
-                            <th className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الترتيب</th>
-                            <th className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الحالة</th>
-                            <th className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-dark-600">
-                        {categories.map((cat) => (
-                            <tr key={cat.id} className="hover:bg-gray-50/50 dark:hover:bg-dark-700/50 transition-colors">
-                                <td className="px-6 py-4">
-                                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-100 dark:border-dark-600">
-                                        <img src={cat.image} alt={cat.name_ar} className="w-full h-full object-cover" />
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 font-bold text-gray-900 dark:text-cream-50">{cat.name_ar}</td>
-                                <td className="px-6 py-4 text-sm text-gray-500 dark:text-gold-400 font-poppins">{cat.slug}</td>
-                                <td className="px-6 py-4 text-sm text-gray-500 dark:text-gold-400">{cat.order}</td>
-                                <td className="px-6 py-4">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${cat.is_active ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400' : 'bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400'}`}>
-                                        {cat.is_active ? 'نشط' : 'غير نشط'}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={() => handleOpenModal(cat)}
-                                            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                                        >
-                                            <Edit2 size={18} />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(cat.id)}
-                                            className="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-colors"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </div>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-right min-w-[600px] md:min-w-0">
+                        <thead className="bg-gray-50 dark:bg-dark-700 border-b border-gray-100 dark:border-dark-600">
+                            <tr>
+                                <th className="px-4 md:px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الصورة</th>
+                                <th className="px-4 md:px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الاسم</th>
+                                <th className="px-4 md:px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50 hidden md:table-cell">الرابط (Slug)</th>
+                                <th className="px-4 md:px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50 hidden md:table-cell">الترتيب</th>
+                                <th className="px-4 md:px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الحالة</th>
+                                <th className="px-4 md:px-6 py-4 text-sm font-bold text-gray-900 dark:text-cream-50">الإجراءات</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 dark:divide-dark-600">
+                            {categories.map((cat) => (
+                                <tr key={cat.id} className="hover:bg-gray-50/50 dark:hover:bg-dark-700/50 transition-colors">
+                                    <td className="px-4 md:px-6 py-4">
+                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg overflow-hidden border border-gray-100 dark:border-dark-600">
+                                            <img src={cat.image} alt={cat.name_ar} className="w-full h-full object-cover" />
+                                        </div>
+                                    </td>
+                                    <td className="px-4 md:px-6 py-4 font-bold text-gray-900 dark:text-cream-50 text-sm md:text-base">{cat.name_ar}</td>
+                                    <td className="px-4 md:px-6 py-4 text-sm text-gray-500 dark:text-gold-400 font-poppins hidden md:table-cell">{cat.slug}</td>
+                                    <td className="px-4 md:px-6 py-4 text-sm text-gray-500 dark:text-gold-400 hidden md:table-cell">{cat.order}</td>
+                                    <td className="px-4 md:px-6 py-4">
+                                        <span className={`px-2 md:px-3 py-1 rounded-full text-[10px] md:text-xs font-bold ${cat.is_active ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400' : 'bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400'}`}>
+                                            {cat.is_active ? 'نشط' : 'غير نشط'}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 md:px-6 py-4">
+                                        <div className="flex items-center gap-1 md:gap-2">
+                                            <button
+                                                onClick={() => handleOpenModal(cat)}
+                                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                            >
+                                                <Edit2 size={18} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(cat.id)}
+                                                className="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-colors"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Modal */}

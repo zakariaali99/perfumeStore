@@ -104,7 +104,7 @@ const DashboardCustomers = () => {
 
             {/* Filters */}
             <div className="bg-white dark:bg-dark-700 p-4 rounded-3xl border border-gold-100 dark:border-dark-600 flex flex-wrap gap-4 items-center">
-                <div className="flex-1 relative min-w-[280px]">
+                <div className="flex-1 relative min-w-0 w-full md:min-w-[280px]">
                     <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted dark:text-gold-400" size={18} />
                     <input
                         type="text"
@@ -132,12 +132,12 @@ const DashboardCustomers = () => {
                     <table className="w-full text-right">
                         <thead className="bg-cream-50 dark:bg-dark-800 text-text-secondary dark:text-gold-400 text-xs uppercase font-bold">
                             <tr>
-                                <th className="px-8 py-5">العميل</th>
-                                <th className="px-8 py-5">الموقع</th>
-                                <th className="px-8 py-5">إجمالي الإنفاق</th>
-                                <th className="px-8 py-5">التصنيف</th>
-                                <th className="px-8 py-5">آخر طلب</th>
-                                <th className="px-8 py-5">إجراءات</th>
+                                <th className="px-4 md:px-8 py-5">العميل</th>
+                                <th className="px-4 md:px-8 py-5 hidden md:table-cell">الموقع</th>
+                                <th className="px-4 md:px-8 py-5">إجمالي الإنفاق</th>
+                                <th className="px-4 md:px-8 py-5">التصنيف</th>
+                                <th className="px-4 md:px-8 py-5 hidden lg:table-cell">آخر طلب</th>
+                                <th className="px-4 md:px-8 py-5">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gold-50 dark:divide-dark-600 text-sm">
@@ -157,7 +157,7 @@ const DashboardCustomers = () => {
                             ) : (
                                 customers.map((customer) => (
                                     <tr key={customer.id} className="hover:bg-gold-50/20 dark:hover:bg-dark-600 transition-colors">
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-5">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600 font-bold font-poppins">
                                                     {customer.name.charAt(0)}
@@ -168,16 +168,16 @@ const DashboardCustomers = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-5 text-text-secondary dark:text-gold-400">
+                                        <td className="px-4 md:px-8 py-5 hidden md:table-cell text-text-secondary dark:text-gold-400">
                                             <div className="flex items-center gap-1 font-bold">
                                                 <MapPin size={14} />
                                                 {customer.city}
                                             </div>
                                         </td>
-                                        <td className="px-8 py-5 font-black font-poppins text-gold-700 dark:text-gold-400">
+                                        <td className="px-4 md:px-8 py-5 font-black font-poppins text-gold-700 dark:text-gold-400">
                                             {parseFloat(customer.total_spent).toFixed(2)} د.ل
                                         </td>
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-5">
                                             <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${customer.segment === 'vip' ? 'bg-purple-50 text-purple-600' :
                                                 customer.segment === 'regular' ? 'bg-blue-50 text-blue-600' :
                                                     'bg-green-50 text-green-600'
@@ -185,10 +185,10 @@ const DashboardCustomers = () => {
                                                 {customer.segment}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-5 text-text-secondary dark:text-gold-400 font-bold text-xs">
+                                        <td className="px-4 md:px-8 py-5 hidden lg:table-cell text-text-secondary dark:text-gold-400 font-bold text-xs">
                                             {customer.last_order_date ? new Date(customer.last_order_date).toLocaleDateString('ar-LY') : 'لا يوجد'}
                                         </td>
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-5">
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => handleViewCustomer(customer)}
