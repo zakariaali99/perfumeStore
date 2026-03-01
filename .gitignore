@@ -21,8 +21,9 @@ node_modules/
 **/.env.production.local
 
 # Django
-db.sqlite3
+**/db.sqlite3
 media/
+**/seed_data.py
 
 # IDE
 .vscode/
