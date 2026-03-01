@@ -15,6 +15,7 @@ urlpatterns = [
     path("api/analytics/", include("analytics.urls")),
     path("api/cms/", include("cms.urls")),
     path("api/marketing/", include("marketing.urls")),
+    path("api/recommendations/", include("recommendations.urls")),
     path("dashboard/", TemplateView.as_view(template_name="admin/index.html")),
 ]
 

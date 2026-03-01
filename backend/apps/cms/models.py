@@ -83,6 +83,10 @@ class StoreSettings(models.Model):
     instagram_link = models.URLField(blank=True, verbose_name="رابط انستغرام")
     tiktok_link = models.URLField(blank=True, verbose_name="رابط تيك توك")
     
+    # Top Banner Settings
+    top_banner_text = models.CharField(max_length=255, blank=True, verbose_name="نص البانر العلوي")
+    top_banner_is_active = models.BooleanField(default=True, verbose_name="تفعيل البانر العلوي")
+    
     class Meta:
         verbose_name = "إعدادات المتجر"
         verbose_name_plural = "إعدادات المتجر"

@@ -25,6 +25,8 @@ const DashboardSettings = () => {
         facebook_link: '',
         instagram_link: '',
         tiktok_link: '',
+        top_banner_text: '',
+        top_banner_is_active: true,
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -112,6 +114,35 @@ const DashboardSettings = () => {
                                     onChange={handleChange}
                                     className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 font-bold"
                                 />
+                            </div>
+
+                            <div className="p-6 bg-gold-50 dark:bg-dark-600/50 rounded-3xl border border-gold-100 dark:border-dark-600 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Bell size={20} className="text-gold-600" />
+                                        <h4 className="font-black text-text-primary dark:text-cream-50 text-sm">البانر العلوي (الإعلاني)</h4>
+                                    </div>
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={settings.top_banner_is_active}
+                                            onChange={(e) => setSettings({ ...settings, top_banner_is_active: e.target.checked })}
+                                            className="sr-only peer"
+                                        />
+                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-dark-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gold-500"></div>
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase font-black text-gold-600 dark:text-gold-400 pr-1 tracking-widest">نص البانر</label>
+                                    <input
+                                        type="text"
+                                        name="top_banner_text"
+                                        value={settings.top_banner_text}
+                                        onChange={handleChange}
+                                        className="w-full bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-xs text-text-primary dark:text-cream-50 font-bold"
+                                        placeholder="مثال: خصومات رمضان ✦ تسوق الآن"
+                                    />
+                                </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
