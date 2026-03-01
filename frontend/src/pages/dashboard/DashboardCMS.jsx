@@ -159,7 +159,7 @@ const DashboardCMS = () => {
             await cmsApi.updateHPC(id, { is_active: !currentStatus });
             toast.success('تم تحديث حالة القسم بنجاح');
             fetchCMSData();
-        } catch (error) {
+        } catch {
             toast.error('فشل في تحديث القسم');
         }
     };
@@ -230,7 +230,7 @@ const DashboardCMS = () => {
             ]);
             toast.success('تم تحديث الترتيب');
             fetchCMSData();
-        } catch (error) {
+        } catch {
             toast.error('فشل في تحديث الترتيب');
         }
     };
@@ -259,7 +259,7 @@ const DashboardCMS = () => {
             toast.success('تم تحديث القسم بنجاح');
             handleCloseHpcModal();
             fetchCMSData();
-        } catch (error) {
+        } catch {
             toast.error('فشل في تحديث القسم');
         }
     };
@@ -269,7 +269,7 @@ const DashboardCMS = () => {
             await Promise.all(hpc.map(s => cmsApi.updateHPC(s.id, { is_active: activate })));
             toast.success(activate ? 'تم تفعيل جميع الأقسام' : 'تم إخفاء جميع الأقسام');
             fetchCMSData();
-        } catch (error) {
+        } catch {
             toast.error('فشل في تحديث الأقسام');
         }
     };
@@ -281,7 +281,7 @@ const DashboardCMS = () => {
             await Promise.all(sorted.map((s, idx) => cmsApi.updateHPC(s.id, { order: idx })));
             toast.success('تم إعادة الترتيب الافتراضي');
             fetchCMSData();
-        } catch (error) {
+        } catch {
             toast.error('فشل في إعادة الترتيب');
         }
     };

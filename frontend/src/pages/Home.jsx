@@ -46,33 +46,33 @@ const Home = () => {
 
     const sectionRenderers = {
         ramadan: (section) => (
-            <section key="ramadan" className="py-14 md:py-20 relative overflow-hidden bg-gradient-to-b from-dark-900 via-indigo-950/20 to-white dark:to-dark-900 transition-colors duration-500">
+            <section key="ramadan" className="py-12 md:py-20 relative overflow-hidden bg-gradient-to-b from-dark-900 via-indigo-950/20 to-white dark:to-dark-900 transition-colors duration-500">
                 <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #c5a572 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-                        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative mb-8">
-                            <div className="flex justify-center gap-6 md:gap-12 text-gold-500/40 mb-6">
-                                <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 4, repeat: Infinity }}>
-                                    <svg width="28" height="48" viewBox="0 0 40 64" fill="currentColor"><path d="M20 0l4 8h-8l4-8zm0 8c-8 0-12 6-12 14s4 14 12 14 12-6 12-14-4-14-12-14zm0 24c-4 0-6-4-6-10s2-10 6-10 6 4 6 10-2 10-6 10zm0 12l-4 8h8l-4-8zm0 8l-6 12h12l-6-12z" /></svg>
+                        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative mb-6">
+                            <div className="flex justify-center gap-6 md:gap-12 text-gold-500/40 mb-4 md:mb-6">
+                                <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 4, repeat: Infinity }}>
+                                    <svg width="24" height="40" className="md:w-[28px] md:h-[48px]" viewBox="0 0 40 64" fill="currentColor"><path d="M20 0l4 8h-8l4-8zm0 8c-8 0-12 6-12 14s4 14 12 14 12-6 12-14-4-14-12-14zm0 24c-4 0-6-4-6-10s2-10 6-10 6 4 6 10-2 10-6 10zm0 12l-4 8h8l-4-8zm0 8l-6 12h12l-6-12z" /></svg>
                                 </motion.div>
                                 <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 3, repeat: Infinity }} className="text-gold-600">
-                                    <svg width="56" height="56" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c5.523 0 10 4.477 10 10 0 2.21-.717 4.25-1.933 5.908-.948-3.957-4.505-6.908-8.734-6.908-1.554 0-3.003.397-4.266 1.092C7.545 10.993 11 8 11 8s-1.5 2.5-3 3c-.5.167-1 .333-1.5.5C4.851 12.015 4 13.91 4 16c0 4.418 3.582 8 8 8 5.523 0 10-4.477 10-10S17.523 2 12 2z" transform="rotate(-15 12 12)" /></svg>
+                                    <svg width="48" height="48" className="md:w-[56px] md:h-[56px]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c5.523 0 10 4.477 10 10 0 2.21-.717 4.25-1.933 5.908-.948-3.957-4.505-6.908-8.734-6.908-1.554 0-3.003.397-4.266 1.092C7.545 10.993 11 8 11 8s-1.5 2.5-3 3c-.5.167-1 .333-1.5.5C4.851 12.015 4 13.91 4 16c0 4.418 3.582 8 8 8 5.523 0 10-4.477 10-10S17.523 2 12 2z" transform="rotate(-15 12 12)" /></svg>
                                 </motion.div>
-                                <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 4, repeat: Infinity, delay: 1 }}>
-                                    <svg width="28" height="48" viewBox="0 0 40 64" fill="currentColor"><path d="M20 0l4 8h-8l4-8zm0 8c-8 0-12 6-12 14s4 14 12 14 12-6 12-14-4-14-12-14zm0 24c-4 0-6-4-6-10s2-10 6-10 6 4 6 10-2 10-6 10zm0 12l-4 8h8l-4-8zm0 8l-6 12h12l-6-12z" /></svg>
+                                <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 4, repeat: Infinity, delay: 1 }}>
+                                    <svg width="24" height="40" className="md:w-[28px] md:h-[48px]" viewBox="0 0 40 64" fill="currentColor"><path d="M20 0l4 8h-8l4-8zm0 8c-8 0-12 6-12 14s4 14 12 14 12-6 12-14-4-14-12-14zm0 24c-4 0-6-4-6-10s2-10 6-10 6 4 6 10-2 10-6 10zm0 12l-4 8h8l-4-8zm0 8l-6 12h12l-6-12z" /></svg>
                                 </motion.div>
                             </div>
-                            <h2 className="text-4xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-gold-400 to-gold-700 mb-4 font-tajawal">
+                            <h2 className="text-3xl sm:text-4xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-gold-400 to-gold-700 mb-3 md:mb-4 font-tajawal">
                                 {section.content?.heading || 'رمضان كريم'}
                             </h2>
-                            <p className="text-base md:text-2xl text-text-secondary dark:text-gold-400 font-bold tracking-wide px-4">
+                            <p className="text-sm sm:text-base md:text-2xl text-text-secondary dark:text-gold-400 font-bold tracking-wide px-4 leading-relaxed">
                                 {section.content?.subtitle || 'أجواء رمضانية فاخرة مع أرقى العطور الشرقية'}
                             </p>
                         </motion.div>
                         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.5 }} viewport={{ once: true }}>
                             <Link
                                 to={section.content?.button_link || '/products'}
-                                className="bg-dark-900 dark:bg-gold-500 text-gold-500 dark:text-black px-8 py-3 md:px-10 md:py-4 rounded-2xl font-black hover:scale-105 transition-all shadow-xl shadow-gold-500/10 text-sm md:text-base"
+                                className="bg-dark-900 dark:bg-gold-500 text-gold-500 dark:text-black px-8 py-3.5 md:px-10 md:py-4 rounded-2xl font-black hover:scale-105 transition-all shadow-xl shadow-gold-500/10 text-xs sm:text-sm md:text-base"
                             >
                                 {section.content?.button_text || 'اكتشف عطور رمضان'}
                             </Link>
@@ -103,14 +103,16 @@ const Home = () => {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.1 }}
                                         viewport={{ once: true }}
-                                        className="bg-white dark:bg-dark-700 p-5 md:p-8 rounded-2xl md:rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm hover:shadow-xl transition-all group text-right"
+                                        className="bg-white dark:bg-dark-700 p-4 sm:p-5 md:p-8 rounded-2xl md:rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm hover:shadow-xl transition-all group text-right"
                                     >
-                                        <div className="w-10 h-10 md:w-14 md:h-14 bg-gold-50 dark:bg-dark-600 rounded-xl md:rounded-2xl flex items-center justify-center text-gold-500 mb-4 md:mb-6 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-white transition-all">
-                                            <Icon size={20} className="md:hidden" />
+                                        <div className="w-10 h-10 md:w-14 md:h-14 bg-gold-50 dark:bg-dark-600 rounded-xl md:rounded-2xl flex items-center justify-center text-gold-500 mb-3 md:mb-6 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-white transition-all">
+                                            <Icon size={18} className="md:hidden" />
                                             <Icon size={28} className="hidden md:block" />
                                         </div>
-                                        <h3 className="text-sm md:text-xl font-black mb-2 md:mb-3 text-text-primary dark:text-cream-50">{feature.title}</h3>
-                                        <p className="text-[11px] md:text-base text-text-secondary dark:text-gold-400/70 leading-relaxed hidden md:block">{feature.desc}</p>
+                                        <h3 className="text-xs sm:text-sm md:text-xl font-black mb-1.5 md:mb-3 text-text-primary dark:text-cream-50">{feature.title}</h3>
+                                        <p className="text-[10px] sm:text-[11px] md:text-base text-text-secondary dark:text-gold-400/70 leading-relaxed md:block">
+                                            {feature.desc}
+                                        </p>
                                     </motion.div>
                                 );
                             })}
@@ -191,28 +193,30 @@ const Home = () => {
             </section>
         ),
         featured_products: (section) => (
-            <section key="featured_products" className="py-24 md:py-32 dark:bg-dark-900 bg-white">
+            <section key="featured_products" className="py-12 md:py-32 dark:bg-dark-900 bg-white">
                 <div className="container mx-auto px-4">
-                    <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-4 border-b border-gold-100 dark:border-dark-700 pb-8">
+                    <div className="flex flex-row items-center justify-between mb-8 md:mb-16 gap-4 border-b border-gold-100 dark:border-dark-700 pb-4 md:pb-8">
                         <div>
-                            <div className="flex items-center gap-2 text-gold-600 dark:text-gold-400 font-black mb-4">
-                                <TrendingUp size={20} />
-                                <span className="uppercase tracking-widest text-xs">
+                            <div className="flex items-center gap-2 text-gold-600 dark:text-gold-400 font-black mb-1 md:mb-4">
+                                <TrendingUp size={16} className="md:w-5 md:h-5" />
+                                <span className="uppercase tracking-widest text-[10px] md:text-xs">
                                     {section.content?.subtitle || 'Best Sellers'}
                                 </span>
                             </div>
-                            <h2 className="text-3xl md:text-5xl font-black text-text-primary dark:text-cream-50">
+                            <h2 className="text-2xl md:text-5xl font-black text-text-primary dark:text-cream-50">
                                 {section.content?.heading || 'عطور مختارة لك'}
                             </h2>
                         </div>
-                        <Link to="/products" className="text-gold-600 dark:text-gold-400 font-black flex items-center gap-2 group hover:-translate-x-2 transition-all">تصفح الكل <ChevronLeft size={20} /></Link>
+                        <Link to="/products" className="text-gold-600 dark:text-gold-400 font-black flex items-center gap-1.5 md:gap-2 group hover:-translate-x-2 transition-all text-xs md:text-base whitespace-nowrap">
+                            تصفح الكل <ChevronLeft size={16} className="md:w-5 md:h-5" />
+                        </Link>
                     </div>
-                    <div className="row g-3 g-md-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                         {loading ? (
-                            [1, 2, 3, 4].map(i => <div key={i} className="col-6 col-lg-3"><div className="aspect-[3/4] bg-cream-50 dark:bg-dark-700 animate-pulse rounded-2xl md:rounded-[40px]"></div></div>)
+                            [1, 2, 3, 4].map(i => <div key={i} className="aspect-[3/4] bg-cream-50 dark:bg-dark-700 animate-pulse rounded-2xl md:rounded-[40px]"></div>)
                         ) : (
                             products.slice(0, 8).map((product, idx) => (
-                                <motion.div key={product.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} viewport={{ once: true }} className="col-6 col-lg-3">
+                                <motion.div key={product.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} viewport={{ once: true }}>
                                     <ProductCard product={product} />
                                 </motion.div>
                             ))

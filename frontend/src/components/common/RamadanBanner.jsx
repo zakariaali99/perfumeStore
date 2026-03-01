@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles } from 'lucide-react';
 
-const RamadanBanner = () => {
-    const [isVisible, setIsVisible] = useState(true);
+const STAR_POSITIONS = [...Array(6)].map(() => ({
+    top: `${Math.random() * 100}%`,
+    left: `${Math.random() * 100}%`
+}));
 
-    useEffect(() => {
-        const dismissed = sessionStorage.getItem('ramadan_banner_dismissed');
-        if (dismissed) setIsVisible(false);
-    }, []);
+const RamadanBanner = () => {
+    const [isVisible, setIsVisible] = useState(() => {
+        return !sessionStorage.getItem('ramadan_banner_dismissed');
+    });
 
     const dismissBanner = () => {
         setIsVisible(false);
@@ -26,15 +28,15 @@ const RamadanBanner = () => {
                 >
                     {/* Decorative stars background */}
                     <div className="absolute inset-0 pointer-events-none opacity-30">
-                        {[...Array(6)].map((_, i) => (
+                        {STAR_POSITIONS.map((pos, i) => (
                             <motion.div
                                 key={i}
                                 animate={{ opacity: [0.2, 0.8, 0.2] }}
                                 transition={{ duration: 2 + i, repeat: Infinity, delay: i }}
                                 className="absolute text-gold-400"
                                 style={{
-                                    top: `${Math.random() * 100}%`,
-                                    left: `${Math.random() * 100}%`,
+                                    top: pos.top,
+                                    left: pos.left,
                                     fontSize: '8px'
                                 }}
                             >

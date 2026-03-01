@@ -133,7 +133,7 @@ const Hero = () => {
             </Swiper>
 
             {/* Pagination Style Overrides */}
-            <style jsx>{`
+            <style>{`
                 .swiper-pagination-bullet {
                     margin-bottom: 2rem !important;
                 }
