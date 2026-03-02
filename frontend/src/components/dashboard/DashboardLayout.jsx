@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -39,9 +39,23 @@ const DashboardLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState([]);
+    const notifRef = useRef(null);
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggleTheme } = useThemeStore();
+
+    // Close notifications on click outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (notifRef.current && !notifRef.current.contains(e.target)) {
+                setShowNotifications(false);
+            }
+        };
+        if (showNotifications) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showNotifications]);
 
     useEffect(() => {
         const fetchAlerts = async () => {
@@ -171,7 +185,7 @@ const DashboardLayout = () => {
                             <ExternalLink size={16} />
                             <span className="hidden sm:inline">عرض المتجر</span>
                         </Link>
-                        <div className="relative">
+                        <div className="relative" ref={notifRef}>
                             <button
                                 onClick={() => setShowNotifications(!showNotifications)}
                                 className={`p-2.5 rounded-xl transition-all relative ${showNotifications ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-700'}`}
