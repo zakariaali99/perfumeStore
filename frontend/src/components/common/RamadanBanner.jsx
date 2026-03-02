@@ -9,9 +9,11 @@ const STAR_POSITIONS = [...Array(6)].map(() => ({
 }));
 
 const RamadanBanner = () => {
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(() => {
+        return !sessionStorage.getItem('ramadan_banner_dismissed');
+    });
     const [bannerText, setBannerText] = useState('');
-    const [isRamadanMode, setIsRamadanMode] = useState(false);
+    const [isRamadanMode, setIsRamadanMode] = useState(true);
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -22,11 +24,14 @@ const RamadanBanner = () => {
                 const res = await cmsApi.getSettings();
                 const settings = res.data;
 
-                if (settings.top_banner_is_active) {
+                // If explicitly disabled, hide it
+                if (settings && settings.top_banner_is_active === false) {
+                    setIsVisible(false);
+                } else {
                     setIsVisible(true);
-                    setBannerText(settings.top_banner_text);
-                    // Simple heuristic to keep the Ramadan theme if relevant
-                    const text = (settings.top_banner_text || '').toLowerCase();
+                    setBannerText(settings?.top_banner_text || '');
+
+                    const text = (settings?.top_banner_text || 'رمضان').toLowerCase();
                     if (text.includes('رمضان') || text.includes('ramadan') || text.includes('عيد') || text.includes('eid')) {
                         setIsRamadanMode(true);
                     } else {
@@ -35,6 +40,8 @@ const RamadanBanner = () => {
                 }
             } catch (error) {
                 console.error("Failed to fetch banner settings", error);
+                setIsVisible(true);
+                setIsRamadanMode(true);
             }
         };
 
@@ -89,7 +96,9 @@ const RamadanBanner = () => {
                             </motion.span>
                         )}
                         <p className="text-[11px] md:text-sm font-black text-cream-50 tracking-wide">
-                            {bannerText}
+                            {bannerText ? bannerText : (
+                                <>رمضان كريم <span className="text-gold-500 mx-1">✦</span> خصومات خاصة بمناسبة الشهر الفضيل</>
+                            )}
                         </p>
                         {isRamadanMode && (
                             <motion.div
