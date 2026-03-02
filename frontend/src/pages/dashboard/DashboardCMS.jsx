@@ -376,60 +376,69 @@ const DashboardCMS = () => {
                         {hpc.sort((a, b) => a.order - b.order).map((section, idx) => (
                             <div
                                 key={section.id}
-                                className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 px-4 sm:px-6 py-5 transition-all hover:bg-cream-50 dark:hover:bg-dark-600/50 ${idx !== hpc.length - 1 ? 'border-b border-gold-50 dark:border-dark-600' : ''}`}
+                                className="group bg-white dark:bg-dark-800 border border-gold-50 dark:border-dark-600 p-4 md:p-6 rounded-[32px] md:rounded-full flex flex-col md:flex-row items-center gap-4 transition-all hover:border-gold-300 dark:hover:border-gold-500/50 shadow-sm hover:shadow-md"
                             >
-                                {/* Position Number & Handle */}
-                                <div className="flex items-center gap-2 flex-shrink-0">
-                                    <GripVertical size={18} className="text-gold-300 dark:text-dark-500" />
-                                    <div className="w-10 h-10 bg-gold-50 dark:bg-dark-800 rounded-xl flex items-center justify-center text-gold-600 dark:text-gold-400 font-black text-lg">
-                                        {idx + 1}
+                                {/* Mobile Header / Position */}
+                                <div className="flex w-full md:w-auto justify-between md:justify-start items-center gap-4">
+                                    <div className="flex items-center gap-3">
+                                        <GripVertical size={20} className="text-gold-200 dark:text-dark-500 hidden md:block" />
+                                        <div className="w-12 h-12 bg-gold-50 dark:bg-dark-700/50 rounded-2xl flex items-center justify-center text-gold-600 dark:text-gold-400 font-black text-xl shadow-inner">
+                                            {idx + 1}
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons (Mobile Positioned Top) */}
+                                    <div className="flex md:hidden gap-2">
+                                        <button
+                                            onClick={() => handleOpenHpcModal(section)}
+                                            className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-dark-700 text-text-muted dark:text-gold-400 rounded-xl"
+                                        >
+                                            <Pencil size={18} />
+                                        </button>
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${section.is_active ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-400'}`}>
+                                            {section.is_active ? <CheckCircle2 size={20} /> : <CircleDashed size={20} />}
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Move Arrows */}
-                                <div className="flex flex-row sm:flex-col gap-1 items-center flex-shrink-0">
+                                {/* Movement Controls (Mobile Row) */}
+                                <div className="flex md:flex-col gap-2 w-full md:w-auto justify-center md:justify-start border-y md:border-y-0 border-gold-50/50 py-3 md:py-0">
                                     <button
                                         disabled={idx === 0}
                                         onClick={() => handleMoveSection(section, 'up')}
-                                        className="p-1 hover:bg-gold-50 dark:hover:bg-dark-800 rounded-lg text-gold-600 disabled:opacity-20 transition-all"
+                                        className="flex-1 md:flex-none p-2 bg-cream-50 dark:bg-dark-900 rounded-xl text-gold-600 disabled:opacity-20 hover:scale-110 md:hover:scale-125 transition-all flex items-center justify-center"
                                     >
-                                        <ChevronUp size={16} className="sm:rotate-0 rotate-[270deg]" />
+                                        <ChevronUp size={20} className="md:rotate-0 rotate-[-90deg]" />
                                     </button>
                                     <button
                                         disabled={idx === hpc.length - 1}
                                         onClick={() => handleMoveSection(section, 'down')}
-                                        className="p-1 hover:bg-gold-50 dark:hover:bg-dark-800 rounded-lg text-gold-600 disabled:opacity-20 transition-all"
+                                        className="flex-1 md:flex-none p-2 bg-cream-50 dark:bg-dark-900 rounded-xl text-gold-600 disabled:opacity-20 hover:scale-110 md:hover:scale-125 transition-all flex items-center justify-center"
                                     >
-                                        <ChevronDown size={16} className="sm:rotate-0 rotate-[270deg]" />
+                                        <ChevronDown size={20} className="md:rotate-0 rotate-[-90deg]" />
                                     </button>
-                                </div>
-
-                                {/* Status Icon */}
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${section.is_active ? 'bg-green-50 dark:bg-green-900/20 text-green-500' : 'bg-red-50 dark:bg-red-900/20 text-red-400'}`}>
-                                    {section.is_active ? <CheckCircle2 size={20} /> : <CircleDashed size={20} />}
                                 </div>
 
                                 {/* Section Info */}
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="font-black text-text-primary dark:text-cream-50 truncate">{section.section_display}</h4>
-                                    <p className="text-xs text-text-secondary dark:text-gold-400/70 truncate">{section.title_ar}</p>
+                                <div className="flex-1 text-center md:text-right w-full md:min-w-0">
+                                    <h4 className="font-black text-[15px] text-text-primary dark:text-cream-50 uppercase tracking-tight">{section.section_display}</h4>
+                                    <p className="text-xs font-bold text-text-secondary dark:text-gold-400/70 mt-0.5">{section.title_ar || 'بدون عنوان'}</p>
                                 </div>
 
-                                {/* Action Buttons */}
-                                <div className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto justify-end border-t sm:border-t-0 border-gold-50 pt-3 sm:pt-0 mt-1 sm:mt-0">
+                                {/* Desktop / Unified Actions */}
+                                <div className="flex items-center gap-3 w-full md:w-auto">
                                     <button
                                         onClick={() => toggleHPCStatus(section.id, section.is_active)}
-                                        className={`flex-1 sm:flex-none px-3 py-2 rounded-xl text-[11px] font-black transition-all flex items-center justify-center gap-1.5 ${section.is_active ? 'bg-green-50 dark:bg-green-900/20 text-green-600 hover:bg-green-100' : 'bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100'}`}
+                                        className={`flex-1 md:px-6 py-3.5 rounded-2xl md:rounded-full text-[11px] font-black transition-all flex items-center justify-center gap-2 ${section.is_active ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' : 'bg-gray-200 dark:bg-dark-600 text-text-muted'}`}
                                     >
-                                        {section.is_active ? <Eye size={13} /> : <EyeOff size={13} />}
-                                        {section.is_active ? 'نشط' : 'مخفي'}
+                                        {section.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+                                        {section.is_active ? 'ظاهر للعملاء' : 'مخفي حالياً'}
                                     </button>
                                     <button
                                         onClick={() => handleOpenHpcModal(section)}
-                                        className="p-2 text-text-muted dark:text-gold-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
-                                        title="تعديل القسم"
+                                        className="hidden md:flex w-12 h-12 items-center justify-center bg-gold-50 dark:bg-dark-700 text-gold-700 dark:text-gold-400 rounded-full hover:bg-gold-500 hover:text-white transition-all shadow-sm"
                                     >
-                                        <Pencil size={16} />
+                                        <Pencil size={18} />
                                     </button>
                                 </div>
                             </div>

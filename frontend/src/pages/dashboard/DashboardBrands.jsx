@@ -216,100 +216,100 @@ const DashboardBrands = () => {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal} />
-                    <div className="relative bg-white dark:bg-dark-700 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 border border-gold-100 dark:border-dark-600">
-                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex items-center justify-between">
-                            <h2 className="text-2xl font-black text-text-primary dark:text-cream-50">{currentBrand ? 'تعديل ماركة' : 'إضافة ماركة جديدة'}</h2>
-                            <button onClick={handleCloseModal} className="p-2 hover:bg-gray-100 dark:hover:bg-dark-600 rounded-full transition-colors text-text-secondary dark:text-gold-400">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 overflow-y-auto">
+                    <div className="absolute inset-0 bg-dark-900/60 backdrop-blur-md" onClick={handleCloseModal} />
+                    <div className="relative bg-white dark:bg-dark-800 w-full max-w-xl rounded-[40px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 border border-gold-100/50 dark:border-dark-600">
+                        <div className="p-6 md:p-8 border-b border-gold-50 dark:border-dark-700 flex items-center justify-between bg-cream-50/50 dark:bg-dark-900/30">
+                            <div>
+                                <h2 className="text-xl md:text-2xl font-black text-text-primary dark:text-cream-50">{currentBrand ? 'تعديل البراند' : 'إضافة براند فاخر'}</h2>
+                                <p className="text-[10px] text-gold-600 dark:text-gold-400 font-bold uppercase tracking-widest mt-0.5">Brand Management Portfolio</p>
+                            </div>
+                            <button onClick={handleCloseModal} className="w-12 h-12 flex items-center justify-center hover:bg-gold-50 dark:hover:bg-dark-700 rounded-2xl transition-all text-text-muted dark:text-gold-400">
                                 <X size={24} />
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                            <div className="space-y-2">
-                                <label className="block text-sm font-bold text-text-secondary dark:text-gold-400">الاسم بالعربية</label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.name_ar}
-                                    onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 rounded-2xl py-3.5 px-5 focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all text-text-primary dark:text-cream-50"
-                                    placeholder="مثال: العربية للعود"
-                                />
-                            </div>
 
-                            <div className="space-y-2">
-                                <label className="block text-sm font-bold text-text-secondary dark:text-gold-400">الرابط (Slug)</label>
-                                <input
-                                    type="text"
-                                    value={formData.slug}
-                                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 rounded-2xl py-3.5 px-5 focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all font-poppins text-text-primary dark:text-cream-50"
-                                    placeholder="مثال: arabian-oud (يترك فارغاً للتوليد التلقائي)"
-                                />
-                            </div>
+                        <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-8">
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="block text-[11px] font-black text-text-secondary dark:text-gold-400 uppercase mb-2 tracking-wider">اسم البراند (AR)</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.name_ar}
+                                        onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
+                                        placeholder="مثال: ديور، شانيل..."
+                                        className="w-full bg-cream-50 dark:bg-dark-700 border border-gold-100 dark:border-dark-600 rounded-[20px] py-4 px-6 focus:ring-2 focus:ring-gold-500/20 outline-none text-sm font-black text-text-primary dark:text-cream-50 transition-all placeholder:text-text-muted/50"
+                                    />
+                                </div>
 
-                            <div className="space-y-2">
-                                <label className="block text-sm font-bold text-text-secondary dark:text-gold-400">الوصف</label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 rounded-2xl py-3.5 px-5 focus:ring-2 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all text-text-primary dark:text-cream-50 min-h-[100px]"
-                                    placeholder="وصف مختصر للماركة..."
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="block text-sm font-bold text-text-secondary dark:text-gold-400">الشعار</label>
-                                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gold-100 dark:border-dark-600 border-dashed rounded-3xl relative hover:bg-gold-50/30 dark:hover:bg-dark-600/30 transition-colors">
-                                    {imagePreview ? (
-                                        <div className="relative w-full h-32 flex justify-center">
-                                            <img src={imagePreview} alt="Preview" className="h-full object-contain" />
-                                            <button
-                                                type="button"
-                                                onClick={() => { setImagePreview(null); setFormData({ ...formData, logo: null }) }}
-                                                className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors"
-                                            >
-                                                <X size={14} />
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-2 text-center">
-                                            <div className="w-12 h-12 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center mx-auto text-gold-500">
-                                                <Upload size={24} />
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-[11px] font-black text-text-secondary dark:text-gold-400 uppercase mb-2 tracking-wider">الرابط الفريد (Slug)</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={formData.slug}
+                                            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                            placeholder="brand-slug"
+                                            className="w-full bg-cream-50 dark:bg-dark-700 border border-gold-100 dark:border-dark-600 rounded-[20px] py-4 px-6 focus:ring-2 focus:ring-gold-500/20 outline-none font-poppins text-sm font-black text-text-primary dark:text-cream-50 transition-all placeholder:text-text-muted/50"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col justify-end">
+                                        <label className="flex items-center gap-3 cursor-pointer p-4 bg-cream-50 dark:bg-dark-700 rounded-[20px] border border-gold-100 dark:border-dark-600 transition-all hover:bg-gold-50/50">
+                                            <div className="relative">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.is_active}
+                                                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                                    className="sr-only peer"
+                                                />
+                                                <div className="w-10 h-6 bg-gray-200 dark:bg-dark-600 rounded-full peer peer-checked:bg-gold-500 transition-all"></div>
+                                                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:left-5"></div>
                                             </div>
-                                            <div className="flex flex-col text-sm text-text-secondary dark:text-gold-400">
-                                                <label className="relative cursor-pointer rounded-md font-bold text-gold-600 hover:text-gold-500 focus-within:outline-none">
-                                                    <span>اختر ملفاً للرفع</span>
-                                                    <input type="file" className="sr-only" accept="image/*" onChange={handleImageChange} />
-                                                </label>
-                                                <p className="text-xs opacity-70 mt-1">PNG, JPG, SVG up to 2MB</p>
+                                            <span className="text-[11px] font-black text-text-primary dark:text-cream-50 uppercase">حالة العرض</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-[11px] font-black text-text-secondary dark:text-gold-400 uppercase mb-3 tracking-wider">هوية البراند (Logo)</label>
+                                    <div className="group relative">
+                                        {imagePreview ? (
+                                            <div className="relative w-full aspect-video rounded-[32px] overflow-hidden border-2 border-gold-200 dark:border-dark-600 shadow-xl">
+                                                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700" />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { setImagePreview(null); setFormData({ ...formData, image: null }) }}
+                                                        className="w-12 h-12 bg-white text-rose-600 rounded-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-xl"
+                                                    >
+                                                        <Trash2 size={24} />
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
+                                        ) : (
+                                            <label className="flex flex-col items-center justify-center w-full aspect-video border-4 border-dashed border-gold-100 dark:border-dark-600 rounded-[32px] hover:border-gold-300 dark:hover:border-gold-500/50 transition-all cursor-pointer bg-cream-50/30 group">
+                                                <div className="bg-white dark:bg-dark-700 p-6 rounded-3xl shadow-lg border border-gold-50 dark:border-dark-600 mb-4 group-hover:scale-110 transition-transform">
+                                                    <Upload className="h-8 w-8 text-gold-600" />
+                                                </div>
+                                                <span className="text-sm font-black text-text-primary dark:text-cream-50">اضغط لرفع الشعار</span>
+                                                <span className="text-[10px] text-text-muted mt-2 uppercase font-bold tracking-tighter">PNG, JPG, SVG up to 5MB</span>
+                                                <input type="file" className="sr-only" accept="image/*" onChange={handleImageChange} />
+                                            </label>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 p-4 bg-cream-50 dark:bg-dark-600 rounded-2xl">
-                                <input
-                                    type="checkbox"
-                                    id="is_active"
-                                    checked={formData.is_active}
-                                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                                    className="w-5 h-5 accent-gold-600 rounded-md cursor-pointer"
-                                />
-                                <label htmlFor="is_active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">
-                                    تفعيل الماركة (إظهارها في المتجر)
-                                </label>
+                            <div className="pt-4">
+                                <button
+                                    type="submit"
+                                    className="w-full bg-gold-600 text-white py-5 rounded-[24px] font-black text-sm uppercase tracking-widest hover:bg-gold-700 transition-all shadow-2xl shadow-gold-600/30 active:scale-[0.98]"
+                                >
+                                    {currentBrand ? 'تحديث بيانات البراند' : 'تأكيد الإضافة والرفع'}
+                                </button>
                             </div>
-
-                            <button
-                                type="submit"
-                                className="w-full bg-gold-600 text-white py-4 rounded-2xl font-bold hover:bg-gold-700 transition-all shadow-xl shadow-gold-600/20 flex items-center justify-center gap-2"
-                            >
-                                <Check size={20} />
-                                <span>حفظ التغييرات</span>
-                            </button>
                         </form>
                     </div>
                 </div>

@@ -53,6 +53,53 @@ const DashboardAnalytics = () => {
         }
     }, [timeRange]);
 
+    const handleExportCSV = () => {
+        if (!data) {
+            toast.error('لا توجد بيانات لتصديرها.');
+            return;
+        }
+
+        const { summary, monthly_sales, top_products } = data;
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+
+        // Summary Data
+        csvContent += "Metric,Value\n";
+        csvContent += `Total Revenue,${summary.total_revenue || 0}\n`;
+        csvContent += `Monthly Revenue,${summary.monthly_revenue || 0}\n`;
+        csvContent += `Total Orders,${summary.total_orders || 0}\n`;
+        csvContent += `Total Customers,${summary.total_customers || 0}\n`;
+        csvContent += `Average Order Value,${summary.avg_order_value || 0}\n`;
+
+        // Monthly Sales Data
+        if (monthly_sales && monthly_sales.length > 0) {
+            csvContent += "\n\nMonthly Sales\n";
+            csvContent += "Month,Revenue,Orders\n";
+            monthly_sales.forEach(item => {
+                const monthName = new Date(item.month).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+                csvContent += `${monthName},${item.revenue},${item.orders}\n`;
+            });
+        }
+
+        // Top Products Data
+        if (top_products && top_products.length > 0) {
+            csvContent += "\n\nTop Products\n";
+            csvContent += "Product Name,Units Sold,Income\n";
+            top_products.forEach(item => {
+                csvContent += `"${item.name}",${item.sold},${item.income}\n`;
+            });
+        }
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `analytics_export_${timeRange}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success('تم تصدير البيانات بنجاح');
+    };
+
     useEffect(() => {
         fetchAnalytics();
     }, [fetchAnalytics]);
@@ -131,8 +178,12 @@ const DashboardAnalytics = () => {
                             آخر 90 يوم
                         </button>
                     </div>
-                    <button className="p-3 bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-600 rounded-2xl text-gold-600 hover:bg-gold-50 dark:hover:bg-dark-800 transition-all shadow-sm">
-                        <Download size={22} />
+                    <button
+                        onClick={handleExportCSV}
+                        className="p-3 bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-600 rounded-2xl text-gold-600 hover:bg-gold-50 dark:hover:bg-dark-800 transition-all shadow-sm group"
+                        title="تصدير البيانات"
+                    >
+                        <Download size={22} className="group-active:scale-90 transition-transform" />
                     </button>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -16,11 +16,13 @@ import {
     Sun,
     Moon,
     TrendingUp,
-    Tag
+    Tag,
+    AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useThemeStore from '../../store/themeStore';
 import ErrorBoundary from '../common/ErrorBoundary';
+import { analyticsApi } from '../../services/api';
 
 const SidebarLink = ({ to, icon: Icon, label, active, onClick }) => (
     <Link
@@ -35,9 +37,53 @@ const SidebarLink = ({ to, icon: Icon, label, active, onClick }) => (
 
 const DashboardLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [notifications, setNotifications] = useState([]);
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggleTheme } = useThemeStore();
+
+    useEffect(() => {
+        const fetchAlerts = async () => {
+            try {
+                const res = await analyticsApi.getStats();
+                const alerts = [];
+
+                // Simple orders alert
+                if (res.data?.total_orders > 0) {
+                    alerts.push({
+                        type: 'order',
+                        title: 'طلبات جديدة',
+                        message: `لديك ${res.data.total_orders} طلباً إجمالياً بانتظار المتابعة`,
+                        time: 'الآن'
+                    });
+                }
+
+                // Low stock alert logic (mocked if no direct field, or checking inventory)
+                try {
+                    const inv = await analyticsApi.getInventory();
+                    const lowStock = inv.data?.filter(p => p.stock < 5) || [];
+                    if (lowStock.length > 0) {
+                        alerts.push({
+                            type: 'stock',
+                            title: 'تنبيه المخزون',
+                            message: `هناك ${lowStock.length} منتجات في حالة مخزون منخفض`,
+                            time: 'منذ قليل'
+                        });
+                    }
+                } catch (e) { console.error('Inv error', e); }
+
+                setNotifications(alerts);
+            } catch (err) {
+                console.error('Failed to fetch alerts', err);
+            }
+        };
+
+        fetchAlerts();
+        // Refresh every 5 mins
+        const interval = setInterval(fetchAlerts, 300000);
+        return () => clearInterval(interval);
+    }, []);
 
     const menuItems = [
         { to: '/dashboard', icon: LayoutDashboard, label: 'لوحة التحكم' },
@@ -125,10 +171,53 @@ const DashboardLayout = () => {
                             <ExternalLink size={16} />
                             <span className="hidden sm:inline">عرض المتجر</span>
                         </Link>
-                        <button className="p-2.5 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 rounded-xl hover:bg-gold-50 dark:hover:bg-dark-700 transition-all relative">
-                            <Bell size={20} />
-                            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-dark-600"></span>
-                        </button>
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowNotifications(!showNotifications)}
+                                className={`p-2.5 rounded-xl transition-all relative ${showNotifications ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-700'}`}
+                            >
+                                <Bell size={20} />
+                                {notifications.length > 0 && (
+                                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-dark-600"></span>
+                                )}
+                            </button>
+
+                            {/* Notifications Dropdown */}
+                            {showNotifications && (
+                                <div className="absolute left-0 top-full mt-4 w-80 bg-white dark:bg-dark-800 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in duration-200">
+                                    <div className="p-5 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50/50 dark:bg-dark-900/30">
+                                        <h4 className="font-black text-sm text-text-primary dark:text-cream-50">التنبيهات</h4>
+                                        <span className="text-[10px] font-black bg-gold-500 text-white px-2 py-0.5 rounded-lg">{notifications.length} جديد</span>
+                                    </div>
+                                    <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                                        {notifications.length > 0 ? (
+                                            notifications.map((notif, i) => (
+                                                <div key={i} className="p-5 hover:bg-gold-50/30 dark:hover:bg-dark-700 transition-colors border-b border-gold-50 last:border-0 dark:border-dark-700">
+                                                    <div className="flex gap-4">
+                                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${notif.type === 'order' ? 'bg-green-50 text-green-600' : 'bg-rose-50 text-rose-600'}`}>
+                                                            {notif.type === 'order' ? <ShoppingBag size={18} /> : <AlertTriangle size={18} />}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[12px] font-black text-text-primary dark:text-cream-50 mb-0.5">{notif.title}</p>
+                                                            <p className="text-[10px] text-text-secondary dark:text-gold-400/70 font-bold mb-1">{notif.message}</p>
+                                                            <p className="text-[8px] text-text-muted font-black uppercase">{notif.time}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="p-10 text-center text-text-muted">
+                                                <Bell className="mx-auto mb-2 opacity-20" size={32} />
+                                                <p className="text-xs font-bold italic">لا توجد تنبيهات جديدة</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="p-4 bg-gray-50 dark:bg-dark-900/50 text-center">
+                                        <button className="text-[10px] font-black text-gold-600 hover:text-gold-700 uppercase tracking-widest">تحديد الكل كمقروء</button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <div className="w-10 h-10 bg-gold-100 dark:bg-dark-600 rounded-xl flex items-center justify-center text-gold-700 dark:text-gold-400 font-bold border border-gold-200 dark:border-dark-600">
                             AD
                         </div>
