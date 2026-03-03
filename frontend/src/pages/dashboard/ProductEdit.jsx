@@ -205,10 +205,17 @@ const ProductEdit = () => {
             const data = new FormData();
 
             // Basic Fields
-            const textFields = ['name_ar', 'name_en', 'slug', 'description', 'story', 'gender', 'brand', 'occasion', 'vibe'];
+            const textFields = ['name_ar', 'name_en', 'description', 'story', 'gender', 'brand', 'occasion', 'vibe'];
             textFields.forEach(key => {
-                if (formData[key] !== undefined && formData[key] !== null) data.append(key, formData[key]);
+                if (formData[key] !== undefined && formData[key] !== null) {
+                    data.append(key, formData[key]);
+                }
             });
+
+            // Handle Slug separately (only send if not empty)
+            if (formData.slug) {
+                data.append('slug', formData.slug);
+            }
 
             // Booleans
             ['is_active', 'is_featured', 'is_new', 'is_bestseller'].forEach(key => {
@@ -736,18 +743,18 @@ const ProductEdit = () => {
             {/* Variant Modal (Edit Mode) */}
             {isVariantModalOpen && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                    className="fixed inset-0 z-[100] grid place-items-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto"
                     onClick={() => setIsVariantModalOpen(false)}
                 >
                     <div
-                        className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-In"
+                        className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-In relative max-h-[90vh] flex flex-col"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-gold-50 dark:bg-dark-800">
                             <h3 className="text-xl font-black text-gold-600">{editingVariant ? 'تعديل العبوة' : 'إضافة عبوة جديدة'}</h3>
                             <button onClick={() => setIsVariantModalOpen(false)} className="p-2 hover:bg-white rounded-full"><X size={20} /></button>
                         </div>
-                        <form onSubmit={handleVariantSubmit} className="p-8 space-y-6">
+                        <form onSubmit={handleVariantSubmit} className="p-8 space-y-6 overflow-y-auto">
 
                             {/* Variant Type Toggle */}
                             <div className="bg-gold-50 dark:bg-dark-800 p-4 rounded-2xl flex items-center justify-between">
@@ -772,7 +779,13 @@ const ProductEdit = () => {
                                 )}
                                 <div className="space-y-2">
                                     <label className="text-sm font-bold text-text-secondary dark:text-gold-400">SKU (اختياري)</label>
-                                    <input type="text" value={variantForm.sku} onChange={e => setVariantForm({ ...variantForm, sku: e.target.value })} className="w-full p-3 rounded-xl border border-gold-100 dark:border-dark-600 bg-cream-50 dark:bg-dark-800" placeholder="توليد تلقائي" />
+                                    <input
+                                        type="text"
+                                        value={variantForm.sku || ''}
+                                        onChange={e => setVariantForm({ ...variantForm, sku: e.target.value })}
+                                        className="w-full p-3 rounded-xl border border-gold-100 dark:border-dark-600 bg-cream-50 dark:bg-dark-800"
+                                        placeholder="توليد تلقائي"
+                                    />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">

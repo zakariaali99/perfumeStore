@@ -58,7 +58,7 @@ class Product(models.Model):
     ]
     
     name_ar = models.CharField(max_length=200, verbose_name="الاسم بالعربية")
-    slug = models.SlugField(unique=True, allow_unicode=True)
+    slug = models.SlugField(unique=True, allow_unicode=True, blank=True)
     description = models.TextField(blank=True, default='', verbose_name="الوصف")
     story = models.TextField(blank=True, default='', help_text="القصة العطرية", verbose_name="القصة العطرية")
     

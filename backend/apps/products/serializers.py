@@ -35,7 +35,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
         model = ProductVariant
         fields = ['id', 'product', 'name', 'size_ml', 'price', 'sale_price', 'current_price', 'discount_percentage', 'stock_quantity', 'sku', 'image', 'is_active', 'product_name_ar', 'product_main_image']
         extra_kwargs = {
-            'sku': {'required': False, 'allow_blank': True},
+            'sku': {'required': False, 'allow_blank': True, 'validators': []},
         }
 
     def get_product_main_image(self, obj):
@@ -75,6 +75,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             'main_image': {'required': False, 'allow_null': True},
             'brand': {'required': False, 'allow_null': True},
             'categories': {'required': False},
+            'slug': {'required': False, 'allow_blank': True, 'validators': []},
         }
 
     def to_representation(self, instance):
@@ -83,3 +84,4 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         data['categories'] = CategorySerializer(instance.categories.all(), many=True).data
         data['brand'] = BrandSerializer(instance.brand).data if instance.brand else None
         return data
+
