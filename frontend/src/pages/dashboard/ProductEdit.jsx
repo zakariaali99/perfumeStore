@@ -154,10 +154,20 @@ const ProductEdit = () => {
     // Handlers
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
+        setFormData(prev => {
+            const newData = {
+                ...prev,
+                [name]: type === 'checkbox' ? checked : value
+            };
+
+            // Auto-slug if empty and changing name
+            if (name === 'name_ar' && !prev.slug && value) {
+                // Simple slugify for Arabic
+                newData.slug = value.trim().replace(/\s+/g, '-');
+            }
+
+            return newData;
+        });
     };
 
     const handleCategoryToggle = (catId) => {
@@ -227,7 +237,7 @@ const ProductEdit = () => {
                     product: productId,
                     price: defaultVariant.price,
                     stock_quantity: defaultVariant.stock_quantity,
-                    sku: defaultVariant.sku || `${formData.slug}-standard`,
+                    sku: defaultVariant.sku, // Backend will generate if empty
                     is_active: true
                 };
 
@@ -383,7 +393,6 @@ const ProductEdit = () => {
                                 <input
                                     type="text"
                                     name="name_ar"
-                                    required
                                     value={formData.name_ar}
                                     onChange={handleChange}
                                     className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
@@ -391,15 +400,14 @@ const ProductEdit = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الرابط (Slug)</label>
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الرابط (Slug) - اختياري</label>
                                 <input
                                     type="text"
                                     name="slug"
-                                    required
                                     value={formData.slug}
                                     onChange={handleChange}
                                     className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-text-primary dark:text-cream-50"
-                                    placeholder="product-slug"
+                                    placeholder="يترك فارغاً للتوليد التلقائي"
                                 />
                             </div>
                         </div>
@@ -635,7 +643,6 @@ const ProductEdit = () => {
                             <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الماركة (Brand)</label>
                             <select
                                 name="brand"
-                                required
                                 value={formData.brand}
                                 onChange={handleChange}
                                 className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-bold"
@@ -728,8 +735,14 @@ const ProductEdit = () => {
 
             {/* Variant Modal (Edit Mode) */}
             {isVariantModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-In">
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                    onClick={() => setIsVariantModalOpen(false)}
+                >
+                    <div
+                        className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-In"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <div className="p-6 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-gold-50 dark:bg-dark-800">
                             <h3 className="text-xl font-black text-gold-600">{editingVariant ? 'تعديل العبوة' : 'إضافة عبوة جديدة'}</h3>
                             <button onClick={() => setIsVariantModalOpen(false)} className="p-2 hover:bg-white rounded-full"><X size={20} /></button>
@@ -758,8 +771,8 @@ const ProductEdit = () => {
                                     </div>
                                 )}
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400">SKU</label>
-                                    <input type="text" required value={variantForm.sku} onChange={e => setVariantForm({ ...variantForm, sku: e.target.value })} className="w-full p-3 rounded-xl border border-gold-100 dark:border-dark-600 bg-cream-50 dark:bg-dark-800" />
+                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400">SKU (اختياري)</label>
+                                    <input type="text" value={variantForm.sku} onChange={e => setVariantForm({ ...variantForm, sku: e.target.value })} className="w-full p-3 rounded-xl border border-gold-100 dark:border-dark-600 bg-cream-50 dark:bg-dark-800" placeholder="توليد تلقائي" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">

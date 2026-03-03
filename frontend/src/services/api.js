@@ -94,12 +94,12 @@ export const ordersApi = {
 
 export const cmsApi = {
     getSlides: () => api.get('cms/slides/'),
-    createSlide: (data) => api.post('cms/slides/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    updateSlide: (id, data) => api.patch(`cms/slides/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    createSlide: (data) => api.post('cms/slides/', data),
+    updateSlide: (id, data) => api.patch(`cms/slides/${id}/`, data),
     deleteSlide: (id) => api.delete(`cms/slides/${id}/`),
     getBanners: () => api.get('cms/banners/'),
-    createBanner: (data) => api.post('cms/banners/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    updateBanner: (id, data) => api.patch(`cms/banners/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    createBanner: (data) => api.post('cms/banners/', data),
+    updateBanner: (id, data) => api.patch(`cms/banners/${id}/`, data),
     deleteBanner: (id) => api.delete(`cms/banners/${id}/`),
     getSettings: () => api.get('cms/settings/'),
     updateSettings: (id, data) => api.patch(`cms/settings/${id}/`, data),
@@ -128,30 +128,30 @@ export const adminProductsApi = {
     get: (id) => api.get(`products/admin/products/${id}/`),
     listCategories: () => api.get('products/categories/'),
     listBrands: () => api.get('products/brands/'),
-    create: (data) => api.post('products/admin/products/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    update: (id, data) => api.patch(`products/admin/products/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    create: (data) => api.post('products/admin/products/', data),
+    update: (id, data) => api.patch(`products/admin/products/${id}/`, data),
     delete: (id) => api.delete(`products/admin/products/${id}/`),
 };
 
 export const adminVariantsApi = {
     getAll: (params) => api.get('products/admin/variants/', { params }),
     getDetail: (id) => api.get(`products/admin/variants/${id}/`),
-    create: (data) => api.post('products/admin/variants/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    update: (id, data) => api.patch(`products/admin/variants/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    create: (data) => api.post('products/admin/variants/', data),
+    update: (id, data) => api.patch(`products/admin/variants/${id}/`, data),
     delete: (id) => api.delete(`products/admin/variants/${id}/`),
 };
 
 export const adminCategoriesApi = {
     getAll: (params) => api.get('products/admin/categories/', { params }),
-    create: (data) => api.post('products/admin/categories/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    update: (id, data) => api.patch(`products/admin/categories/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    create: (data) => api.post('products/admin/categories/', data),
+    update: (id, data) => api.patch(`products/admin/categories/${id}/`, data),
     delete: (id) => api.delete(`products/admin/categories/${id}/`),
 };
 
 export const adminBrandsApi = {
     getAll: (params) => api.get('products/admin/brands/', { params }),
-    create: (data) => api.post('products/admin/brands/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    update: (id, data) => api.patch(`products/admin/brands/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    create: (data) => api.post('products/admin/brands/', data),
+    update: (id, data) => api.patch(`products/admin/brands/${id}/`, data),
     delete: (id) => api.delete(`products/admin/brands/${id}/`),
 };
 

@@ -34,6 +34,9 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariant
         fields = ['id', 'product', 'name', 'size_ml', 'price', 'sale_price', 'current_price', 'discount_percentage', 'stock_quantity', 'sku', 'image', 'is_active', 'product_name_ar', 'product_main_image']
+        extra_kwargs = {
+            'sku': {'required': False, 'allow_blank': True},
+        }
 
     def get_product_main_image(self, obj):
         if obj.image:
@@ -69,7 +72,9 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'description': {'required': False, 'allow_blank': True},
             'story': {'required': False, 'allow_blank': True},
-            'main_image': {'required': False},
+            'main_image': {'required': False, 'allow_null': True},
+            'brand': {'required': False, 'allow_null': True},
+            'categories': {'required': False},
         }
 
     def to_representation(self, instance):
