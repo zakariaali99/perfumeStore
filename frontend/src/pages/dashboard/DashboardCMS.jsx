@@ -31,6 +31,7 @@ const DashboardCMS = () => {
     const [banners, setBanners] = useState([]);
     const [hpc, setHpc] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState('slides');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isHpcModalOpen, setIsHpcModalOpen] = useState(false);
@@ -166,6 +167,8 @@ const DashboardCMS = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (submitting) return;
+        setSubmitting(true);
         const data = new FormData();
 
         const slideFields = ['title', 'subtitle', 'description_ar', 'button_text', 'button_link', 'order', 'is_active', 'image', 'image_mobile'];
@@ -210,6 +213,8 @@ const DashboardCMS = () => {
                 ? Object.entries(error.response.data).map(([k, v]) => `${k}: ${v}`).join(', ')
                 : 'حدث خطأ أثناء حفظ البيانات';
             toast.error(errorMsg);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -916,10 +921,11 @@ const DashboardCMS = () => {
                             <div className="pt-6 flex gap-4">
                                 <button
                                     type="submit"
-                                    className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-gold-600/20 transition-all"
+                                    disabled={submitting}
+                                    className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-gold-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <Save size={20} />
-                                    حفظ التغييرات
+                                    {submitting ? 'جاري الحفظ...' : 'حفظ التغييرات'}
                                 </button>
                                 <button
                                     type="button"

@@ -626,8 +626,7 @@ const ProductEdit = () => {
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
                                         <button
                                             type="button"
-                                            onClick={() => document.getElementById('imageInput').click()}
-                                            className="bg-white text-gold-600 px-6 py-2 rounded-xl font-black text-sm"
+                                            className="bg-white text-gold-600 px-6 py-2 rounded-xl font-black text-sm pointer-events-none"
                                         >تغيير الصورة</button>
                                     </div>
                                 </>
@@ -637,7 +636,13 @@ const ProductEdit = () => {
                                     <p className="text-sm text-text-secondary dark:text-gold-400 font-bold">اضغط هنا أو اسحب الصورة</p>
                                 </div>
                             )}
-                            <input id="imageInput" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                            <input
+                                id="imageInput"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                            />
                         </div>
                     </div>
 
@@ -742,14 +747,9 @@ const ProductEdit = () => {
 
             {/* Variant Modal (Edit Mode) */}
             {isVariantModalOpen && (
-                <div
-                    className="fixed inset-0 z-[100] grid place-items-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto"
-                    onClick={() => setIsVariantModalOpen(false)}
-                >
-                    <div
-                        className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-In relative max-h-[90vh] flex flex-col"
-                        onClick={(e) => e.stopPropagation()}
-                    >
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto">
+                    <div className="absolute inset-0 bg-dark-900/60 backdrop-blur-md" onClick={() => setIsVariantModalOpen(false)} />
+                    <div className="relative z-10 bg-white dark:bg-dark-700 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-In max-h-[90vh] flex flex-col">
                         <div className="p-6 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-gold-50 dark:bg-dark-800">
                             <h3 className="text-xl font-black text-gold-600">{editingVariant ? 'تعديل العبوة' : 'إضافة عبوة جديدة'}</h3>
                             <button onClick={() => setIsVariantModalOpen(false)} className="p-2 hover:bg-white rounded-full"><X size={20} /></button>
