@@ -2,25 +2,12 @@ from django.db.models import Min, Case, When, F, DecimalField
 from rest_framework import viewsets, filters, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Category, Brand, FragranceFamily, Product, ProductVariant, ProductImage, ProductNote
+from .models import Category, Brand, FragranceFamily, Product, ProductVariant
 from .serializers import (
     CategorySerializer, BrandSerializer, FragranceFamilySerializer,
     ProductListSerializer, ProductDetailSerializer, ProductVariantSerializer
 )
-
-class AdminCategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [permissions.IsAdminUser]
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
-
-class AdminBrandViewSet(viewsets.ModelViewSet):
-    queryset = Brand.objects.all()
-    serializer_class = BrandSerializer
-    permission_classes = [permissions.IsAdminUser]
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.filter(is_active=True)
@@ -39,8 +26,8 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = []
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = {
-        'categories__slug': ['exact'],
-        'brand__slug': ['exact'],
+        'category': ['exact'],
+        'brand': ['exact'],
         'gender': ['exact'],
         'is_featured': ['exact'],
         'is_new': ['exact'],
@@ -59,37 +46,16 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
                     output_field=DecimalField()
                 )
             )
-        ).select_related('brand').prefetch_related('variants', 'categories').order_by('-created_at')
+        ).select_related('category', 'brand').prefetch_related('variants')
 
     @action(detail=True, methods=['get'])
     def related(self, request, slug=None):
         product = self.get_object()
-        
-        # Base queryset: active products excluding current
-        qs = Product.objects.filter(is_active=True).exclude(id=product.id)
-        
-        # Scoring logic using Annotate
-        from django.db.models import Case, When, IntegerField, F, Count
-        
-        category_ids = product.categories.values_list('id', flat=True)
-        
-        qs = qs.annotate(
-            score=Case(
-                When(gender=product.gender, then=3),
-                default=0,
-                output_field=IntegerField(),
-            ) + Case(
-                When(brand=product.brand, then=2),
-                default=0,
-                output_field=IntegerField(),
-            ) + Case(
-                When(categories__in=category_ids, then=1),
-                default=0,
-                output_field=IntegerField(),
-            )
-        ).order_by('-score', '-created_at').distinct()[:4]
-        
-        serializer = ProductListSerializer(qs, many=True)
+        related = Product.objects.filter(
+            category=product.category,
+            is_active=True
+        ).exclude(id=product.id)[:4]
+        serializer = ProductListSerializer(related, many=True)
         return Response(serializer.data)
 
     def get_serializer_class(self):
@@ -98,15 +64,9 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         return ProductListSerializer
 
 class AdminProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
     permission_classes = [permissions.IsAdminUser]
     serializer_class = ProductDetailSerializer
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['name_ar', 'slug']
-    filterset_fields = {'categories__slug': ['exact']}
-
-    def get_queryset(self):
-        return Product.objects.all().select_related('brand').prefetch_related('variants', 'notes', 'images', 'fragrance_families', 'categories').order_by('-created_at')
 
 class AdminVariantViewSet(viewsets.ModelViewSet):
     queryset = ProductVariant.objects.all()

@@ -3,13 +3,12 @@ from products.models import Product
 
 class HeroSlide(models.Model):
     title = models.CharField(max_length=100, verbose_name="العنوان")
-    subtitle = models.TextField(max_length=200, blank=True, verbose_name="العنوان الفرعي")
-    description_ar = models.TextField(max_length=500, blank=True, null=True, verbose_name="الوصف")
+    subtitle = models.TextField(max_length=200, verbose_name="العنوان الفرعي")
     image = models.ImageField(upload_to='cms/slides/', verbose_name="صورة العرض")
     image_mobile = models.ImageField(upload_to='cms/slides/mobile/', blank=True, verbose_name="صورة الجوال (اختياري)")
     
-    button_text = models.CharField(max_length=50, blank=True, verbose_name="نص الزر")
-    button_link = models.CharField(max_length=200, blank=True, verbose_name="رابط الزر")
+    button_text = models.CharField(max_length=50, verbose_name="نص الزر")
+    button_link = models.CharField(max_length=200, verbose_name="رابط الزر")
     
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="ارتباط بمنتج")
     
@@ -26,31 +25,6 @@ class HeroSlide(models.Model):
 
     def __str__(self):
         return self.title
-
-class HomePageSection(models.Model):
-    SECTION_KEYS = [
-        ('ramadan' , 'قسم رمضان/المناسبات'),
-        ('features', 'مميزات المتجر'),
-        ('best_sellers', 'الأكثر مبيعاً (سلايدر)'),
-        ('featured_products', 'العطور المميزة'),
-        ('banner', 'البانر الإعلاني'),
-        ('vision', 'الرؤية وفلسفة العطور'),
-        ('categories', 'تسوق حسب الفئات'),
-        ('stats', 'إحصائيات النجاح'),
-    ]
-    key = models.CharField(max_length=50, choices=SECTION_KEYS, unique=True, verbose_name="القسم")
-    title_ar = models.CharField(max_length=100, verbose_name="عنوان القسم (داخلي)")
-    is_active = models.BooleanField(default=True, verbose_name="ظهور القسم")
-    order = models.PositiveIntegerField(default=0, verbose_name="الترتيب")
-    content = models.JSONField(default=dict, blank=True, verbose_name="محتوى القسم")
-
-    class Meta:
-        verbose_name = "محتوى الصفحة الرئيسية (HPC)"
-        verbose_name_plural = "محتويات الصفحة الرئيسية (HPC)"
-        ordering = ['order']
-
-    def __str__(self):
-        return f"{self.get_key_display()} - {'نشط' if self.is_active else 'معطل'}"
 
 class Banner(models.Model):
     POSITION_CHOICES = [
@@ -83,9 +57,7 @@ class StoreSettings(models.Model):
     instagram_link = models.URLField(blank=True, verbose_name="رابط انستغرام")
     tiktok_link = models.URLField(blank=True, verbose_name="رابط تيك توك")
     
-    # Top Banner Settings
-    top_banner_text = models.CharField(max_length=255, blank=True, verbose_name="نص البانر العلوي")
-    top_banner_is_active = models.BooleanField(default=True, verbose_name="تفعيل البانر العلوي")
+    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=25.0, verbose_name="تكلفة الشحن (ثابتة)")
     
     class Meta:
         verbose_name = "إعدادات المتجر"

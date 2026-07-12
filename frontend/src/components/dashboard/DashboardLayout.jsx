@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -15,14 +15,10 @@ import {
     ExternalLink,
     Sun,
     Moon,
-    TrendingUp,
-    Tag,
-    AlertTriangle
+    TrendingUp
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useThemeStore from '../../store/themeStore';
-import ErrorBoundary from '../common/ErrorBoundary';
-import { analyticsApi } from '../../services/api';
 
 const SidebarLink = ({ to, icon: Icon, label, active, onClick }) => (
     <Link
@@ -37,73 +33,13 @@ const SidebarLink = ({ to, icon: Icon, label, active, onClick }) => (
 
 const DashboardLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [showNotifications, setShowNotifications] = useState(false);
-    const [notifications, setNotifications] = useState([]);
-    const notifRef = useRef(null);
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggleTheme } = useThemeStore();
 
-    // Close notifications on click outside
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (notifRef.current && !notifRef.current.contains(e.target)) {
-                setShowNotifications(false);
-            }
-        };
-        if (showNotifications) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [showNotifications]);
-
-    useEffect(() => {
-        const fetchAlerts = async () => {
-            try {
-                const res = await analyticsApi.getStats();
-                const alerts = [];
-
-                // Simple orders alert
-                if (res.data?.total_orders > 0) {
-                    alerts.push({
-                        type: 'order',
-                        title: 'طلبات جديدة',
-                        message: `لديك ${res.data.total_orders} طلباً إجمالياً بانتظار المتابعة`,
-                        time: 'الآن'
-                    });
-                }
-
-                // Low stock alert logic (mocked if no direct field, or checking inventory)
-                try {
-                    const inv = await analyticsApi.getInventory();
-                    const lowStock = inv.data?.filter(p => p.stock < 5) || [];
-                    if (lowStock.length > 0) {
-                        alerts.push({
-                            type: 'stock',
-                            title: 'تنبيه المخزون',
-                            message: `هناك ${lowStock.length} منتجات في حالة مخزون منخفض`,
-                            time: 'منذ قليل'
-                        });
-                    }
-                } catch (e) { console.error('Inv error', e); }
-
-                setNotifications(alerts);
-            } catch (err) {
-                console.error('Failed to fetch alerts', err);
-            }
-        };
-
-        fetchAlerts();
-        // Refresh every 5 mins
-        const interval = setInterval(fetchAlerts, 300000);
-        return () => clearInterval(interval);
-    }, []);
-
     const menuItems = [
         { to: '/dashboard', icon: LayoutDashboard, label: 'لوحة التحكم' },
         { to: '/dashboard/analytics', icon: TrendingUp, label: 'التقارير والتحليلات' },
-        { to: '/dashboard/categories', icon: Menu, label: 'الفئات' },
-        { to: '/dashboard/brands', icon: Tag, label: 'الماركات' },
         { to: '/dashboard/products', icon: Package, label: 'المنتجات' },
         { to: '/dashboard/orders', icon: ShoppingBag, label: 'الطلبات' },
         { to: '/dashboard/customers', icon: Users, label: 'العملاء (CRM)' },
@@ -115,8 +51,7 @@ const DashboardLayout = () => {
     const handleLogout = () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        localStorage.removeItem('user');
-        navigate('/dashboard/login');
+        navigate('/');
     };
 
     return (
@@ -155,10 +90,10 @@ const DashboardLayout = () => {
             </aside>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+            <div className="flex-1 flex flex-col min-w-0">
                 {/* Header */}
-                <header className="h-20 bg-white dark:bg-dark-800 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 transition-colors duration-300">
-                    <div className="flex items-center gap-2 md:gap-4">
+                <header className="h-20 bg-white dark:bg-dark-800 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between px-6 sticky top-0 z-30 transition-colors duration-300">
+                    <div className="flex items-center gap-4">
                         <button
                             onClick={() => setIsSidebarOpen(true)}
                             className="lg:hidden p-2 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-lg text-text-primary dark:text-cream-50"
@@ -166,72 +101,25 @@ const DashboardLayout = () => {
                             <Menu size={24} />
                         </button>
                         <h1 className="text-xl font-black text-text-primary dark:text-cream-50 hidden md:block">
-                            {menuItems.find(i =>
-                                i.to === '/dashboard'
-                                    ? location.pathname === '/dashboard'
-                                    : location.pathname.startsWith(i.to)
-                            )?.label || 'الإدارة'}
+                            {menuItems.find(i => i.to === location.pathname)?.label || 'الإدارة'}
                         </h1>
                     </div>
 
-                    <div className="flex items-center gap-2 md:gap-4">
+                    <div className="flex items-center gap-4">
                         <button
                             onClick={toggleTheme}
                             className="p-2.5 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 rounded-xl hover:bg-gold-50 dark:hover:bg-dark-700 transition-all"
                         >
                             {isDark ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
-                        <Link to="/" className="flex items-center gap-2 text-text-secondary dark:text-gold-400 hover:text-gold-600 text-sm font-bold bg-gold-50 dark:bg-dark-600 px-3 md:px-4 py-2 rounded-xl border border-gold-100 dark:border-dark-600 transition-all">
+                        <Link to="/" className="flex items-center gap-2 text-text-secondary dark:text-gold-400 hover:text-gold-600 text-sm font-bold bg-gold-50 dark:bg-dark-600 px-4 py-2 rounded-xl border border-gold-100 dark:border-dark-600 transition-all">
                             <ExternalLink size={16} />
-                            <span className="hidden sm:inline">عرض المتجر</span>
+                            عرض المتجر
                         </Link>
-                        <div className="relative" ref={notifRef}>
-                            <button
-                                onClick={() => setShowNotifications(!showNotifications)}
-                                className={`p-2.5 rounded-xl transition-all relative ${showNotifications ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-700'}`}
-                            >
-                                <Bell size={20} />
-                                {notifications.length > 0 && (
-                                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-dark-600"></span>
-                                )}
-                            </button>
-
-                            {/* Notifications Dropdown */}
-                            {showNotifications && (
-                                <div className="absolute left-0 top-full mt-4 w-80 bg-white dark:bg-dark-800 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in duration-200">
-                                    <div className="p-5 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50/50 dark:bg-dark-900/30">
-                                        <h4 className="font-black text-sm text-text-primary dark:text-cream-50">التنبيهات</h4>
-                                        <span className="text-[10px] font-black bg-gold-500 text-white px-2 py-0.5 rounded-lg">{notifications.length} جديد</span>
-                                    </div>
-                                    <div className="max-h-96 overflow-y-auto custom-scrollbar">
-                                        {notifications.length > 0 ? (
-                                            notifications.map((notif, i) => (
-                                                <div key={i} className="p-5 hover:bg-gold-50/30 dark:hover:bg-dark-700 transition-colors border-b border-gold-50 last:border-0 dark:border-dark-700">
-                                                    <div className="flex gap-4">
-                                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${notif.type === 'order' ? 'bg-green-50 text-green-600' : 'bg-rose-50 text-rose-600'}`}>
-                                                            {notif.type === 'order' ? <ShoppingBag size={18} /> : <AlertTriangle size={18} />}
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-[12px] font-black text-text-primary dark:text-cream-50 mb-0.5">{notif.title}</p>
-                                                            <p className="text-[10px] text-text-secondary dark:text-gold-400/70 font-bold mb-1">{notif.message}</p>
-                                                            <p className="text-[8px] text-text-muted font-black uppercase">{notif.time}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <div className="p-10 text-center text-text-muted">
-                                                <Bell className="mx-auto mb-2 opacity-20" size={32} />
-                                                <p className="text-xs font-bold italic">لا توجد تنبيهات جديدة</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="p-4 bg-gray-50 dark:bg-dark-900/50 text-center">
-                                        <button className="text-[10px] font-black text-gold-600 hover:text-gold-700 uppercase tracking-widest">تحديد الكل كمقروء</button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        <button className="p-2.5 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 rounded-xl hover:bg-gold-50 dark:hover:bg-dark-700 transition-all relative">
+                            <Bell size={20} />
+                            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-dark-600"></span>
+                        </button>
                         <div className="w-10 h-10 bg-gold-100 dark:bg-dark-600 rounded-xl flex items-center justify-center text-gold-700 dark:text-gold-400 font-bold border border-gold-200 dark:border-dark-600">
                             AD
                         </div>
@@ -239,10 +127,8 @@ const DashboardLayout = () => {
                 </header>
 
                 {/* Page Content */}
-                <main className="p-4 md:p-6 lg:p-10">
-                    <ErrorBoundary>
-                        <Outlet />
-                    </ErrorBoundary>
+                <main className="p-6 md:p-10">
+                    <Outlet />
                 </main>
             </div>
 
@@ -262,7 +148,7 @@ const DashboardLayout = () => {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 right-0 w-72 bg-white dark:bg-dark-800 z-50 lg:hidden flex flex-col overflow-y-auto"
+                            className="fixed inset-y-0 right-0 w-72 bg-white dark:bg-dark-800 z-50 lg:hidden flex flex-col"
                         >
                             <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex items-center justify-between">
                                 <div className="flex items-center gap-3">

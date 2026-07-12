@@ -19,20 +19,13 @@ class Category(models.Model):
 
 class Brand(models.Model):
     name_ar = models.CharField(max_length=100, verbose_name="الاسم بالعربية")
-    slug = models.SlugField(unique=True, allow_unicode=True, blank=True)
-    logo = models.ImageField(upload_to='brands/', blank=True, verbose_name="الشعار")
+    logo = models.ImageField(upload_to='brands/', verbose_name="الشعار")
     description = models.TextField(blank=True, verbose_name="الوصف")
     is_active = models.BooleanField(default=True, verbose_name="نشط")
 
     class Meta:
         verbose_name = "الماركة"
         verbose_name_plural = "الماركات"
-        ordering = ['name_ar']
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name_ar, allow_unicode=True)
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name_ar
@@ -50,7 +43,7 @@ class FragranceFamily(models.Model):
         return self.name_ar
 
 class Product(models.Model):
-    GENDER_CHOICES = [('men', 'رجالي'), ('women', 'نسائي'), ('unisex', 'للجنسين')]
+    GENDER_CHOICES = [('M', 'رجالي'), ('F', 'نسائي'), ('U', 'للجنسين')]
     CONCENTRATION = [
         ('EDT', 'Eau de Toilette'),
         ('EDP', 'Eau de Parfum'),
@@ -58,19 +51,20 @@ class Product(models.Model):
     ]
     
     name_ar = models.CharField(max_length=200, verbose_name="الاسم بالعربية")
-    slug = models.SlugField(unique=True, allow_unicode=True, blank=True)
-    description = models.TextField(blank=True, default='', verbose_name="الوصف")
-    story = models.TextField(blank=True, default='', help_text="القصة العطرية", verbose_name="القصة العطرية")
+    slug = models.SlugField(unique=True, allow_unicode=True)
+    description = models.TextField(verbose_name="الوصف")
+    story = models.TextField(help_text="القصة العطرية", verbose_name="القصة العطرية")
     
-    categories = models.ManyToManyField(Category, blank=True, verbose_name="الفئات")
-    brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="الماركة")
-    fragrance_families = models.ManyToManyField(FragranceFamily, blank=True, verbose_name="العائلات العطرية")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="الفئة")
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name="الماركة")
+    fragrance_families = models.ManyToManyField(FragranceFamily, verbose_name="العائلات العطرية")
     
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, verbose_name="الجنس", default='unisex')
-    occasion = models.TextField(blank=True, verbose_name="مناسب لـ", help_text="ex: ليلي, حفلات, كلاسيكي")
-    vibe = models.TextField(blank=True, verbose_name="مزاج العطر", help_text="ex: قوي, دافئ, رجولي")
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="الجنس")
+    concentration = models.CharField(max_length=3, choices=CONCENTRATION, verbose_name="التركيز")
     
-    main_image = models.ImageField(upload_to='products/', null=True, blank=True, verbose_name="الصورة الرئيسية")
+    main_image = models.ImageField(upload_to='products/', verbose_name="الصورة الرئيسية")
+    longevity_rating = models.PositiveIntegerField(default=5, verbose_name="تقييم الثبات") # 1-10
+    sillage_rating = models.PositiveIntegerField(default=5, verbose_name="تقييم الفوحان") # 1-10
     
     is_featured = models.BooleanField(default=False, verbose_name="مميز")
     is_bestseller = models.BooleanField(default=False, verbose_name="الأكثر مبيعاً")
@@ -86,34 +80,21 @@ class Product(models.Model):
     class Meta:
         verbose_name = "المنتج"
         verbose_name_plural = "المنتجات"
-        ordering = ['-created_at']
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name_ar, allow_unicode=True)
-            # Check for uniqueness
-            orig_slug = self.slug
-            counter = 1
-            while Product.objects.filter(slug=self.slug).exists():
-                self.slug = f"{orig_slug}-{counter}"
-                counter += 1
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name_ar
 
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name='variants', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, blank=True, verbose_name="اسم العبوة")
-    size_ml = models.PositiveIntegerField(verbose_name="الحجم (مل)", null=True, blank=True)
+    size_ml = models.PositiveIntegerField(verbose_name="الحجم (مل)")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="السعر الأصلي")
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="سعر العرض")
-    cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="للتقارير الداخلية", verbose_name="سعر التكلفة")
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2, help_text="للتقارير الداخلية", verbose_name="سعر التكلفة")
     
     stock_quantity = models.PositiveIntegerField(default=0, verbose_name="الكمية في المخزن")
     low_stock_threshold = models.PositiveIntegerField(default=5, verbose_name="حد المخزون المنخفض")
     
-    sku = models.CharField(max_length=50, unique=True, blank=True, verbose_name="رمز SKU")
+    sku = models.CharField(max_length=50, unique=True, verbose_name="رمز SKU")
     barcode = models.CharField(max_length=100, blank=True, verbose_name="الباركود")
     image = models.ImageField(upload_to='variants/', blank=True, verbose_name="صورة خاصة للعبوة")
     
@@ -123,42 +104,12 @@ class ProductVariant(models.Model):
         verbose_name = "عبوة المنتج"
         verbose_name_plural = "عبوات المنتجات"
 
-    def save(self, *args, **kwargs):
-        # Ensure sale_price is None if 0
-        if self.sale_price == 0:
-            self.sale_price = None
-        
-        # Auto-generate SKU
-        if not self.sku:
-            import random, string
-            prefix = slugify(self.product.name_ar, allow_unicode=True)[:10]
-            size = self.size_ml or "std"
-            rand = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
-            self.sku = f"{prefix}-{size}-{rand}".upper()
-            
-            # Ensure uniqueness
-            while ProductVariant.objects.filter(sku=self.sku).exists():
-                rand = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
-                self.sku = f"{prefix}-{size}-{rand}".upper()
-
-        super().save(*args, **kwargs)
-
     def __str__(self):
-        if self.name:
-            return f"{self.product.name_ar} - {self.name}"
-        size_str = f"{self.size_ml}ml" if self.size_ml else "Standard"
-        return f"{self.product.name_ar} - {size_str}"
+        return f"{self.product.name_ar} - {self.size_ml}ml"
 
     @property
     def current_price(self):
         return self.sale_price if self.sale_price else self.price
-
-    @property
-    def discount_percentage(self):
-        if self.sale_price and self.price > 0:
-            discount = ((self.price - self.sale_price) / self.price) * 100
-            return int(discount)
-        return 0
 
 class ProductNote(models.Model):
     NOTE_TYPES = [('top', 'افتتاحية'), ('heart', 'قلب'), ('base', 'قاعدية')]

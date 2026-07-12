@@ -29,8 +29,7 @@ const DashboardCoupons = () => {
         valid_from: new Date().toISOString().split('T')[0],
         valid_to: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         usage_limit: null,
-        is_active: true,
-        max_discount_amount: null
+        is_active: true
     });
 
     useEffect(() => {
@@ -42,8 +41,7 @@ const DashboardCoupons = () => {
         try {
             const res = await marketingApi.list();
             setCoupons(res.data.results || res.data || []);
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
             toast.error('تعذر تحميل الكوبونات');
         } finally {
             setLoading(false);
@@ -61,8 +59,7 @@ const DashboardCoupons = () => {
                 valid_from: item.valid_from.split('T')[0],
                 valid_to: item.valid_to.split('T')[0],
                 usage_limit: item.usage_limit,
-                is_active: item.is_active,
-                max_discount_amount: item.max_discount_amount
+                is_active: item.is_active
             });
         } else {
             setEditingItem(null);
@@ -74,8 +71,7 @@ const DashboardCoupons = () => {
                 valid_from: new Date().toISOString().split('T')[0],
                 valid_to: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                 usage_limit: null,
-                is_active: true,
-                max_discount_amount: null
+                is_active: true
             });
         }
         setIsModalOpen(true);
@@ -92,18 +88,13 @@ const DashboardCoupons = () => {
     };
 
     const handleDelete = async (code) => {
-        if (!window.confirm(`هل أنت متأكد من حذف الكوبون (${code})؟`)) return;
-        setLoading(true);
+        if (!window.confirm('هل أنت متأكد من حذف هذا الكوبون؟')) return;
         try {
             await marketingApi.delete(code);
             toast.success('تم الحذف بنجاح');
             fetchCoupons();
-        } catch (error) {
-            console.error(error);
-            const errorMsg = error.response?.data?.detail || 'حدث خطأ أثناء الحذف';
-            toast.error(errorMsg);
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            toast.error('حدث خطأ أثناء الحذف');
         }
     };
 
@@ -119,9 +110,8 @@ const DashboardCoupons = () => {
             }
             handleCloseModal();
             fetchCoupons();
-        } catch (error) {
-            console.error(error);
-            toast.error(error.response?.data?.code?.[0] || 'حدث خطأ أثناء الحفظ');
+        } catch (err) {
+            toast.error(err.response?.data?.code?.[0] || 'حدث خطأ أثناء الحفظ');
         }
     };
 
@@ -142,7 +132,7 @@ const DashboardCoupons = () => {
             </div>
 
             {/* Coupons List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {loading ? (
                     [1, 2, 3].map(i => <div key={i} className="h-64 bg-white dark:bg-dark-700 animate-pulse rounded-[40px] border border-gold-100 dark:border-dark-600"></div>)
                 ) : coupons.length === 0 ? (
@@ -157,7 +147,7 @@ const DashboardCoupons = () => {
                             {/* Card Background Decoration */}
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gold-50 dark:bg-dark-800 rounded-bl-[100px] -z-10 opacity-50 group-hover:bg-gold-100 dark:group-hover:bg-dark-600 transition-colors"></div>
 
-                            <div className="p-5 md:p-8">
+                            <div className="p-8">
                                 <div className="flex justify-between items-start mb-6">
                                     <div
                                         onClick={() => copyToClipboard(coupon.code)}
@@ -204,17 +194,16 @@ const DashboardCoupons = () => {
                                 <div className="flex gap-2 mt-8">
                                     <button
                                         onClick={() => handleOpenModal(coupon)}
-                                        className="flex-1 py-3 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-500 hover:text-white text-blue-600 dark:text-blue-400 rounded-2xl transition-all font-bold text-xs flex items-center justify-center gap-2 border border-blue-100 dark:border-blue-900/30"
+                                        className="flex-1 py-3 bg-gray-50 dark:bg-dark-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-text-secondary dark:text-gold-400 hover:text-blue-600 rounded-2xl transition-all font-bold text-xs flex items-center justify-center gap-2"
                                     >
                                         <Edit size={14} />
                                         تعديل
                                     </button>
                                     <button
                                         onClick={() => handleDelete(coupon.code)}
-                                        className="flex-1 py-3 bg-red-50/50 dark:bg-red-900/10 hover:bg-red-500 hover:text-white text-red-600 dark:text-red-400 rounded-2xl transition-all font-bold text-xs flex items-center justify-center gap-2 border border-red-100 dark:border-red-900/30"
+                                        className="p-3 bg-gray-50 dark:bg-dark-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-text-secondary dark:text-gold-400 hover:text-red-600 rounded-2xl transition-all"
                                     >
-                                        <Trash2 size={14} />
-                                        حذف
+                                        <Trash2 size={16} />
                                     </button>
                                 </div>
                             </div>
@@ -225,10 +214,10 @@ const DashboardCoupons = () => {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
                     <div className="bg-white dark:bg-dark-700 w-full max-w-xl rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-100 dark:border-dark-600">
-                        <div className="p-5 md:p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
+                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
                             <div>
                                 <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">
                                     {editingItem ? 'تعديل الكوبون' : 'إنشاء كوبون جديد'}
@@ -240,7 +229,7 @@ const DashboardCoupons = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-5 md:p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+                        <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">كود الخصم</label>
@@ -329,27 +318,16 @@ const DashboardCoupons = () => {
                                         placeholder="اتركه فارغاً للاستخدام غير المحدود"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">أقصى قيمة للخصم</label>
+                                <div className="flex items-center gap-3 pt-8">
                                     <input
-                                        type="number"
-                                        value={formData.max_discount_amount || ''}
-                                        onChange={(e) => setFormData({ ...formData, max_discount_amount: e.target.value ? parseFloat(e.target.value) : null })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                        placeholder="للنسب المئوية فقط"
+                                        type="checkbox"
+                                        id="active"
+                                        checked={formData.is_active}
+                                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                        className="w-5 h-5 accent-gold-600"
                                     />
+                                    <label htmlFor="active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">تفعيل الكوبون الآن</label>
                                 </div>
-                            </div>
-
-                            <div className="flex items-center gap-3 pt-8">
-                                <input
-                                    type="checkbox"
-                                    id="active"
-                                    checked={formData.is_active}
-                                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                                    className="w-5 h-5 accent-gold-600"
-                                />
-                                <label htmlFor="active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">تفعيل الكوبون الآن</label>
                             </div>
 
                             <div className="pt-6 flex gap-4">

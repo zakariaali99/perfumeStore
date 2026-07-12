@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { ordersApi } from '../../services/api';
 import {
     Search,
@@ -37,7 +37,11 @@ const DashboardOrders = () => {
         'returned': { label: 'مرتجع', color: 'text-gray-600', bg: 'bg-gray-50', icon: AlertCircle },
     };
 
-    const fetchOrders = useCallback(async () => {
+    useEffect(() => {
+        fetchOrders();
+    }, [currentPage]);
+
+    const fetchOrders = async () => {
         setLoading(true);
         try {
             const res = await ordersApi.getAll({
@@ -48,33 +52,34 @@ const DashboardOrders = () => {
             });
             setOrders(res.data.results || res.data || []);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
             toast.error('تعذر تحميل الطلبات');
         } finally {
             setLoading(false);
         }
-    }, [currentPage, searchTerm, filterStatus]);
-
-    useEffect(() => {
-        fetchOrders();
-    }, [fetchOrders]);
+    };
 
     const handleUpdateStatus = async (orderId, newStatus) => {
         try {
             await ordersApi.updateStatus(orderId, { status: newStatus });
             toast.success('تم تحديث حالة الطلب');
             fetchOrders();
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
             toast.error('فشل تحديث الحالة');
         }
     };
 
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            setCurrentPage(1);
+            fetchOrders();
+        }, 500);
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm, filterStatus]);
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex justify-between items-center">
                 <div>
                     <h2 className="text-3xl font-black text-text-primary dark:text-cream-50 mb-1">الطلبات</h2>
                     <p className="text-text-secondary dark:text-gold-400 text-sm">متابعة المبيعات، الشحن وتحديث حالات الطلب.</p>
@@ -83,7 +88,7 @@ const DashboardOrders = () => {
 
             {/* Filters Bar */}
             <div className="bg-white dark:bg-dark-700 p-4 rounded-3xl border border-gold-100 dark:border-dark-600 flex flex-wrap gap-4 items-center">
-                <div className="flex-1 relative min-w-0 w-full md:min-w-[300px]">
+                <div className="flex-1 relative min-w-[300px]">
                     <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted dark:text-gold-400" size={18} />
                     <input
                         type="text"
@@ -111,12 +116,12 @@ const DashboardOrders = () => {
                     <table className="w-full text-right">
                         <thead className="bg-[#FAF9F6] dark:bg-dark-800 text-text-secondary dark:text-gold-400 text-xs uppercase font-bold">
                             <tr>
-                                <th className="px-4 md:px-8 py-5">الطلب</th>
-                                <th className="px-4 md:px-8 py-5">العميل</th>
-                                <th className="px-4 md:px-8 py-5 hidden md:table-cell">تاريخ الطلب</th>
-                                <th className="px-4 md:px-8 py-5">الإجمالي</th>
-                                <th className="px-4 md:px-8 py-5">الحالة</th>
-                                <th className="px-4 md:px-8 py-5">إجراءات</th>
+                                <th className="px-8 py-5">الطلب</th>
+                                <th className="px-8 py-5">العميل</th>
+                                <th className="px-8 py-5">تاريخ الطلب</th>
+                                <th className="px-8 py-5">الإجمالي</th>
+                                <th className="px-8 py-5">الحالة</th>
+                                <th className="px-8 py-5">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gold-50 dark:divide-dark-600 text-sm">
@@ -138,29 +143,29 @@ const DashboardOrders = () => {
                                     const s = statusMap[order.status] || { label: order.status, color: 'text-gray-500', bg: 'bg-gray-50', icon: AlertCircle };
                                     return (
                                         <tr key={order.id} className="hover:bg-gold-50/20 dark:hover:bg-dark-600 transition-colors">
-                                            <td className="px-4 md:px-8 py-5 font-black font-poppins text-gold-700 dark:text-gold-400">
+                                            <td className="px-8 py-5 font-black font-poppins text-gold-700 dark:text-gold-400">
                                                 #{order.order_number}
                                             </td>
-                                            <td className="px-4 md:px-8 py-5">
+                                            <td className="px-8 py-5">
                                                 <div className="flex flex-col">
                                                     <span className="font-bold text-text-primary dark:text-cream-50">{order.customer_name}</span>
                                                     <span className="text-xs text-text-secondary dark:text-gold-400 font-poppins">{order.customer_phone}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-4 md:px-8 py-5 hidden md:table-cell text-text-secondary dark:text-gold-400">
+                                            <td className="px-8 py-5 text-text-secondary dark:text-gold-400">
                                                 {new Date(order.created_at).toLocaleDateString('ar-LY')}
                                                 <span className="block text-[10px] opacity-70 font-poppins">{new Date(order.created_at).toLocaleTimeString('ar-LY')}</span>
                                             </td>
-                                            <td className="px-4 md:px-8 py-5 font-bold font-poppins text-text-primary dark:text-cream-50">
+                                            <td className="px-8 py-5 font-bold font-poppins text-text-primary dark:text-cream-50">
                                                 {order.total} د.ل
                                             </td>
-                                            <td className="px-4 md:px-8 py-5">
+                                            <td className="px-8 py-5">
                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${s.color} ${s.bg} dark:bg-opacity-20`}>
                                                     <s.icon size={14} />
                                                     {s.label}
                                                 </span>
                                             </td>
-                                            <td className="px-4 md:px-8 py-5">
+                                            <td className="px-8 py-5">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         onClick={() => setSelectedOrder(order)}
@@ -206,7 +211,7 @@ const DashboardOrders = () => {
                         animate={{ x: 0 }}
                         className="bg-white dark:bg-dark-700 w-full max-w-2xl h-full shadow-2xl relative z-10 overflow-hidden flex flex-col"
                     >
-                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-cream-50 dark:bg-dark-800">
+                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
                             <div>
                                 <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">تفاصيل الطلب</h3>
                                 <p className="text-gold-600 font-poppins font-black text-lg">#{selectedOrder.order_number}</p>
@@ -225,24 +230,15 @@ const DashboardOrders = () => {
                                             <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600"><User size={20} /></div>
                                             <div>
                                                 <p className="font-bold text-text-primary dark:text-cream-50">{selectedOrder.customer_name}</p>
-                                                <div className="flex flex-col">
-                                                    <p className="text-xs text-text-secondary dark:text-gold-400 font-poppins">{selectedOrder.customer_phone}</p>
-                                                    {selectedOrder.customer_email && <p className="text-[10px] text-text-secondary dark:text-gold-400 font-poppins">{selectedOrder.customer_email}</p>}
-                                                    {(selectedOrder.birth_day && selectedOrder.birth_month) && (
-                                                        <p className="text-[10px] text-gold-600 dark:text-gold-400 font-bold mt-1">
-                                                            عيد ميلاد: {selectedOrder.birth_day}/{selectedOrder.birth_month}
-                                                        </p>
-                                                    )}
-                                                </div>
+                                                <p className="text-xs text-text-secondary dark:text-gold-400 font-poppins">{selectedOrder.customer_phone}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-start gap-3">
                                             <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600 shrink-0"><MapPin size={20} /></div>
-                                            <div className="text-sm text-text-primary dark:text-cream-50 leading-relaxed font-bold">
-                                                <p>{selectedOrder.city}, {selectedOrder.area}</p>
-                                                <p className="text-xs opacity-80">{selectedOrder.address}</p>
-                                                {selectedOrder.location_details && <p className="text-xs text-text-secondary mt-1 border-t border-gold-50 pt-1">{selectedOrder.location_details}</p>}
-                                            </div>
+                                            <p className="text-sm text-text-primary dark:text-cream-50 leading-relaxed font-bold">
+                                                {selectedOrder.city}, {selectedOrder.area}<br />
+                                                {selectedOrder.address}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>

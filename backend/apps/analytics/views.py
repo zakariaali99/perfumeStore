@@ -15,8 +15,7 @@ class DashboardStatsView(APIView):
 
     def get(self, request):
         now = timezone.now()
-        days = int(request.query_params.get('days', 30))
-        this_month_start = now - timedelta(days=days)
+        this_month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         last_month_start = this_month_start - relativedelta(months=1)
         last_month_end = this_month_start - timedelta(seconds=1)
         
@@ -29,25 +28,16 @@ class DashboardStatsView(APIView):
         # Current Month Stats
         cur_month_rev = Order.objects.filter(status='delivered', created_at__gte=this_month_start).aggregate(Sum('total'))['total__sum'] or 0
         cur_month_orders = Order.objects.filter(created_at__gte=this_month_start).count()
-        cur_month_customers = CustomerProfile.objects.filter(created_at__gte=this_month_start).count()
         
         # Last Month Stats (for trend)
         prev_month_rev = Order.objects.filter(status='delivered', created_at__gte=last_month_start, created_at__lte=last_month_end).aggregate(Sum('total'))['total__sum'] or 0
-        prev_month_orders = Order.objects.filter(created_at__gte=last_month_start, created_at__lte=last_month_end).count()
-        prev_month_customers = CustomerProfile.objects.filter(created_at__gte=last_month_start, created_at__lte=last_month_end).count()
+        
+        rev_trend = 0
+        if prev_month_rev > 0:
+            rev_trend = ((cur_month_rev - prev_month_rev) / prev_month_rev) * 100
 
-        def calc_trend(cur, prev):
-            if prev > 0:
-                return round(((cur - prev) / prev) * 100, 1)
-            return 0
-
-        rev_trend = calc_trend(cur_month_rev, prev_month_rev)
-        orders_trend = calc_trend(cur_month_orders, prev_month_orders)
-        customers_trend = calc_trend(cur_month_customers, prev_month_customers)
-
-        # Monthly Revenue (Last 12 months)
-        one_year_ago = this_month_start - relativedelta(years=1)
-        monthly_sales = Order.objects.filter(status='delivered', created_at__gte=one_year_ago) \
+        # Monthly Revenue 
+        monthly_sales = Order.objects.filter(status='delivered') \
             .annotate(month=TruncMonth('created_at')) \
             .values('month') \
             .annotate(revenue=Sum('total'), orders=Count('id')) \
@@ -79,10 +69,7 @@ class DashboardStatsView(APIView):
                 'total_customers': total_customers,
                 'aov': total_revenue / total_orders if total_orders > 0 else 0,
                 'monthly_revenue': cur_month_rev,
-                'revenue_trend': rev_trend,
-                'orders_trend': orders_trend,
-                'customers_trend': customers_trend,
-                'mrr': cur_month_rev, # For this store, MRR is current month revenue
+                'revenue_trend': round(rev_trend, 1)
             },
             'monthly_sales': monthly_sales,
             'top_products': top_products,

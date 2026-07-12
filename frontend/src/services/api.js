@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || '/api/',
-    withCredentials: true,
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -14,12 +13,6 @@ api.interceptors.request.use((config) => {
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
-
-    // If the data is FormData, remove Content-Type so axios doesn't force application/json
-    if (config.data instanceof FormData) {
-        delete config.headers['Content-Type'];
-    }
-
     return config;
 });
 
@@ -48,8 +41,7 @@ api.interceptors.response.use(
                     localStorage.setItem('access_token', res.data.access);
                     api.defaults.headers.common.Authorization = `Bearer ${res.data.access}`;
                     return api(originalRequest);
-                } catch (error) {
-                    console.error(error);
+                } catch (refreshError) {
                     localStorage.removeItem('access_token');
                     localStorage.removeItem('refresh_token');
                     // Only redirect to login for dashboard-related requests
@@ -100,24 +92,22 @@ export const ordersApi = {
 
 export const cmsApi = {
     getSlides: () => api.get('cms/slides/'),
-    createSlide: (data) => api.post('cms/slides/', data),
-    updateSlide: (id, data) => api.patch(`cms/slides/${id}/`, data),
+    createSlide: (data) => api.post('cms/slides/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    updateSlide: (id, data) => api.patch(`cms/slides/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     deleteSlide: (id) => api.delete(`cms/slides/${id}/`),
     getBanners: () => api.get('cms/banners/'),
-    createBanner: (data) => api.post('cms/banners/', data),
-    updateBanner: (id, data) => api.patch(`cms/banners/${id}/`, data),
+    createBanner: (data) => api.post('cms/banners/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    updateBanner: (id, data) => api.patch(`cms/banners/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     deleteBanner: (id) => api.delete(`cms/banners/${id}/`),
     getSettings: () => api.get('cms/settings/'),
     updateSettings: (id, data) => api.patch(`cms/settings/${id}/`, data),
-    getHPC: () => api.get('cms/hpc/'),
-    updateHPC: (id, data) => api.patch(`cms/hpc/${id}/`, data),
 };
 
 export const marketingApi = {
     list: (params) => api.get('marketing/coupons/', { params }),
     create: (data) => api.post('marketing/coupons/', data),
-    update: (code, data) => api.patch(`marketing/coupons/${encodeURIComponent(code)}/`, data),
-    delete: (code) => api.delete(`marketing/coupons/${encodeURIComponent(code)}/`),
+    update: (code, data) => api.patch(`marketing/coupons/${code}/`, data),
+    delete: (code) => api.delete(`marketing/coupons/${code}/`),
     validateCoupon: (code, cartTotal) => api.post('marketing/coupons/validate/', { code, cart_total: cartTotal }),
 };
 
@@ -131,38 +121,14 @@ export const crmApi = {
 
 export const adminProductsApi = {
     getAll: (params) => api.get('products/admin/products/', { params }),
-    get: (id) => api.get(`products/admin/products/${id}/`),
-    listCategories: () => api.get('products/categories/'),
-    listBrands: () => api.get('products/brands/'),
-    create: (data) => api.post('products/admin/products/', data),
-    update: (id, data) => api.patch(`products/admin/products/${id}/`, data),
+    getDetail: (id) => api.get(`products/admin/products/${id}/`),
+    create: (data) => api.post('products/admin/products/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    update: (id, data) => api.patch(`products/admin/products/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     delete: (id) => api.delete(`products/admin/products/${id}/`),
 };
 
-export const adminVariantsApi = {
-    getAll: (params) => api.get('products/admin/variants/', { params }),
-    getDetail: (id) => api.get(`products/admin/variants/${id}/`),
-    create: (data) => api.post('products/admin/variants/', data),
-    update: (id, data) => api.patch(`products/admin/variants/${id}/`, data),
-    delete: (id) => api.delete(`products/admin/variants/${id}/`),
-};
-
-export const adminCategoriesApi = {
-    getAll: (params) => api.get('products/admin/categories/', { params }),
-    create: (data) => api.post('products/admin/categories/', data),
-    update: (id, data) => api.patch(`products/admin/categories/${id}/`, data),
-    delete: (id) => api.delete(`products/admin/categories/${id}/`),
-};
-
-export const adminBrandsApi = {
-    getAll: (params) => api.get('products/admin/brands/', { params }),
-    create: (data) => api.post('products/admin/brands/', data),
-    update: (id, data) => api.patch(`products/admin/brands/${id}/`, data),
-    delete: (id) => api.delete(`products/admin/brands/${id}/`),
-};
-
 export const analyticsApi = {
-    getStats: (params) => api.get('analytics/stats/', { params }),
+    getStats: () => api.get('analytics/stats/'),
     getInventory: () => api.get('analytics/inventory/'),
 };
 

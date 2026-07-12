@@ -1,405 +1,114 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-    ShoppingBag,
-    Search,
-    Menu,
-    User,
-    Sun,
-    Moon,
-    X,
-    Phone,
-    MessageCircle,
-    Instagram,
-    Facebook,
-    ChevronDown,
-    Truck,
-    Package,
-    Youtube
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ShoppingBag, Search, Menu, User, Sun, Moon, X } from 'lucide-react';
 import useCartStore from '../../store/cartStore';
 import useThemeStore from '../../store/themeStore';
 import CartDrawer from '../cart/CartDrawer';
-import RamadanBanner from '../common/RamadanBanner';
-import { productsApi } from '../../services/api';
 
 const Header = () => {
     const { cart } = useCartStore();
     const { isDark, toggleTheme } = useThemeStore();
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-    const [categories, setCategories] = useState([]);
 
-    // Check if user is logged in
-    const token = localStorage.getItem('access_token');
-    const userString = localStorage.getItem('user');
-    const user = userString ? JSON.parse(userString) : null;
-    const isLoggedIn = !!token;
-    const isAdmin = user?.is_staff;
-
-    // Search State
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const searchInputRef = useRef(null);
-
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    const cartItemsCount = cart.items ? cart.items.reduce((acc, item) => acc + item.quantity, 0) : 0;
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const res = await productsApi.getCategories();
-                setCategories(res.data.results || res.data || []);
-            } catch (error) {
-                console.error("Failed to fetch categories", error);
-            }
-        };
-        fetchCategories();
-    }, []);
-
-    useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 20);
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    useEffect(() => {
-        if (isSearchOpen && searchInputRef.current) {
-            searchInputRef.current.focus();
-        }
-    }, [isSearchOpen]);
-
-    const handleSearchSubmit = (e) => {
-        e.preventDefault();
-        if (searchQuery.trim()) {
-            navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
-            setIsSearchOpen(false);
-            setSearchQuery('');
-        }
-    };
-
-    const isActive = (path) => {
-        if (path === '#') return false;
-        return location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
-    };
+    const cartItemsCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
 
     const navLinks = [
         { name: 'كل العطور', path: '/products' },
-        {
-            name: 'الأقسام',
-            path: '#',
-            dropdown: categories.length > 0
-                ? categories.map(c => ({ name: c.name_ar, path: `/products?category=${c.slug}` }))
-                : [
-                    { name: 'عطور شرقية', path: '/products?category=oriental' }, // Fallback
-                    { name: 'عطور عود', path: '/products?category=oud' },
-                ]
-        },
-        { name: 'تتبع الطلب', path: '/track' },
+        { name: 'عطور شرقية', path: '/category/oriental' },
+        { name: 'عطور زهرية', path: '/category/floral' },
         { name: 'من نحن', path: '/about' },
-        { name: 'اتصل بنا', path: '/contact' },
     ];
 
     return (
         <>
-            <RamadanBanner />
-            <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-20 shadow-xl' : 'bg-transparent h-28'}`}>
-                <div className="container mx-auto px-4 h-full flex items-center justify-between gap-4 md:gap-8">
-                    {/* Mobile Toggle */}
+            <header className="sticky top-0 z-50 bg-cream-50/80 dark:bg-dark-800/90 backdrop-blur-md border-b border-gold-100 dark:border-dark-600 transition-colors duration-300">
+                <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+                    {/* Mobile Menu Toggle */}
                     <button
                         onClick={() => setIsMobileMenuOpen(true)}
-                        className="lg:hidden text-text-primary dark:text-cream-50 p-3 hover:bg-gold-50 dark:hover:bg-dark-700 rounded-2xl transition-all"
+                        className="lg:hidden text-text-primary dark:text-cream-50 p-2 hover:bg-gold-50 dark:hover:bg-dark-700 rounded-xl transition-colors"
                     >
                         <Menu size={24} />
                     </button>
 
-                    {/* Branding */}
-                    <Link to="/" className="flex items-center gap-3 group shrink-0">
-                        <div
-                            className="flex justify-center items-center shrink-0 transition-all duration-500 rounded-2xl bg-white overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105"
-                            style={{
-                                width: scrolled ? '65px' : '85px',
-                                height: scrolled ? '65px' : '85px'
-                            }}
-                        >
-                            <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain scale-[1.35]" />
-                        </div>
-                        <div className="hidden md:flex flex-col">
-                            <div className="flex items-center gap-2">
-                                <span className={`font-black text-gold-600 tracking-tight transition-all duration-500 ${scrolled ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
-                                    عطور مصطفى
-                                </span>
-                                {!scrolled && (
-                                    <motion.span
-                                        animate={{ opacity: [0.3, 0.8, 0.3], scale: [0.9, 1.1, 0.9] }}
-                                        transition={{ duration: 3, repeat: Infinity }}
-                                        className="text-gold-500 text-sm mb-2"
-                                    >
-                                        🌙
-                                    </motion.span>
-                                )}
-                            </div>
-                            <span className={`font-bold uppercase tracking-[0.3em] text-text-secondary dark:text-gold-400 group-hover:text-gold-500 transition-all duration-500 ${scrolled ? 'text-[8px]' : 'text-[10px] md:text-xs'}`}>
-                                Luxury Perfumes
-                            </span>
-                        </div>
+                    {/* Logo */}
+                    <Link to="/" className="text-2xl font-bold text-gold-600 tracking-wider">
+                        ALMOSTAFAS <span className="text-sm block text-center font-normal -mt-1 tracking-widest text-text-secondary dark:text-gold-500">PERFUME</span>
                     </Link>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden lg:flex items-center gap-10">
+                    <nav className="hidden lg:flex items-center space-x-8 space-x-reverse text-sm font-medium text-text-primary dark:text-cream-50">
                         {navLinks.map((link) => (
-                            <div key={link.name} className="relative group/nav">
-                                <Link
-                                    to={link.path}
-                                    className={`text-sm font-black transition-all flex items-center gap-1.5 ${isActive(link.path) ? 'text-gold-600' : 'text-text-primary dark:text-cream-50 hover:text-gold-600'}`}
-                                >
-                                    {link.name}
-                                    {link.dropdown && <ChevronDown size={14} className="group-hover/nav:rotate-180 transition-transform" />}
-                                </Link>
-
-                                {link.dropdown && (
-                                    <div className="absolute top-full -right-4 pt-4 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 translate-y-2 group-hover/nav:translate-y-0">
-                                        <div className="bg-white dark:bg-dark-700 w-56 rounded-3xl shadow-2xl border border-gold-50 dark:border-dark-600 overflow-hidden flex flex-col p-2">
-                                            {link.dropdown.map(item => (
-                                                <Link
-                                                    key={item.name}
-                                                    to={item.path}
-                                                    className="px-5 py-3.5 text-xs font-bold text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600 hover:text-gold-600 rounded-[18px] transition-all flex items-center justify-between group/item"
-                                                >
-                                                    {item.name}
-                                                    <span className="w-1.5 h-1.5 bg-gold-500 rounded-full scale-0 group-hover/item:scale-100 transition-all"></span>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
+                            <Link key={link.path} to={link.path} className="hover:text-gold-500 transition-colors">
+                                {link.name}
+                            </Link>
                         ))}
                     </nav>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 md:gap-4">
-                        {/* Search Bar - Desktop */}
-                        <div className={`hidden sm:flex items-center transition-all duration-300 ${isSearchOpen ? 'w-64 bg-gray-50 dark:bg-dark-700 px-3 py-1.5 rounded-2xl border border-gold-200 dark:border-dark-600' : 'w-12 bg-transparent justify-center'}`}>
-                            {isSearchOpen ? (
-                                <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center">
-                                    <input
-                                        ref={searchInputRef}
-                                        type="text"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        placeholder="بحث..."
-                                        className="w-full bg-transparent border-none outline-none text-sm text-text-primary dark:text-cream-50 placeholder:text-text-muted"
-                                        onBlur={() => !searchQuery && setIsSearchOpen(false)}
-                                    />
-                                    <button type="submit" className="text-gold-500">
-                                        <Search size={16} />
-                                    </button>
-                                </form>
-                            ) : (
-                                <button
-                                    onClick={() => setIsSearchOpen(true)}
-                                    className="p-3 rounded-2xl bg-gray-50/50 dark:bg-dark-700/50 hover:bg-gold-50 dark:hover:bg-dark-600 text-text-primary dark:text-cream-50 transition-all shadow-sm"
-                                >
-                                    <Search size={20} />
-                                </button>
-                            )}
-                        </div>
-
+                    {/* Icons */}
+                    <div className="flex items-center space-x-2 md:space-x-5 space-x-reverse">
                         <button
                             onClick={toggleTheme}
-                            className="hidden md:block p-3 rounded-2xl bg-gray-50/50 dark:bg-dark-700/50 hover:bg-gold-50 dark:hover:bg-dark-600 text-text-primary dark:text-gold-400 transition-all shadow-sm border border-transparent hover:border-gold-100 dark:hover:border-dark-500"
+                            className="p-2 h-10 w-10 flex items-center justify-center rounded-full hover:bg-gold-100/50 dark:hover:bg-dark-600 transition-colors text-text-primary dark:text-gold-400"
                         >
-                            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                            {isDark ? <Sun size={22} /> : <Moon size={22} />}
                         </button>
-
+                        <button className="hidden sm:flex text-text-primary dark:text-cream-50 hover:text-gold-500 transition-colors p-2">
+                            <Search size={22} />
+                        </button>
                         <button
                             onClick={() => setIsCartOpen(true)}
-                            className="relative p-3 rounded-2xl bg-gold-600 hover:bg-gold-700 text-white transition-all shadow-lg shadow-gold-600/20 group scale-100 active:scale-95"
+                            className="relative text-text-primary dark:text-cream-50 hover:text-gold-500 transition-colors p-2"
                         >
-                            <ShoppingBag size={20} />
+                            <ShoppingBag size={22} />
                             {cartItemsCount > 0 && (
-                                <span className="absolute -top-1.5 -right-1.5 bg-white dark:bg-dark-800 text-gold-600 dark:text-gold-400 text-[10px] w-6 h-6 rounded-full flex items-center justify-center font-black shadow-md border-2 border-gold-600 group-hover:scale-110 transition-transform">
+                                <span className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                                     {cartItemsCount}
                                 </span>
                             )}
                         </button>
-
-                        {(isLoggedIn && isAdmin) && (
-                            <Link
-                                to="/dashboard"
-                                className="hidden md:flex items-center gap-3 p-1.5 pr-4 rounded-2xl bg-gray-50 dark:bg-dark-700 border border-gold-100 dark:border-dark-600 hover:border-gold-500 transition-all"
-                            >
-                                <span className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase tracking-widest leading-none">Management</span>
-                                <div className="w-9 h-9 bg-gold-100 dark:bg-dark-600 rounded-xl flex items-center justify-center text-gold-600">
-                                    <User size={18} />
-                                </div>
-                            </Link>
-                        )}
+                        <Link to="/accounts/profile" className="hidden md:flex text-text-primary dark:text-cream-50 hover:text-gold-500 transition-colors p-2">
+                            <User size={22} />
+                        </Link>
                     </div>
                 </div>
             </header>
 
-            {/* Mobile Sidebar */}
-            <AnimatePresence>
-                {isMobileMenuOpen && (
-                    <div className="fixed inset-0 z-[200] lg:hidden">
-                        {/* Overlay */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-                        />
-
-                        {/* Sidebar */}
-                        <motion.div
-                            initial={{ x: '100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '100%' }}
-                            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                            className="absolute inset-y-0 right-0 w-[85%] max-w-sm bg-white dark:bg-dark-800 shadow-2xl flex flex-col overflow-hidden"
-                            dir="rtl"
-                        >
-                            {/* Mobile Header */}
-                            <div className="p-8 border-b border-gold-50 dark:border-dark-700 flex justify-between items-center bg-cream-50/30 dark:bg-dark-900/40">
-                                <div className="flex flex-col">
-                                    <span className="text-xl font-black text-gold-600">عطور مصطفى</span>
-                                    <span className="text-[8px] font-black uppercase tracking-widest dark:text-gold-400">Luxury Perfumes</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={toggleTheme}
-                                        className="p-3 bg-white dark:bg-dark-700 rounded-2xl shadow-sm text-text-primary dark:text-gold-400 border border-gold-50 dark:border-dark-600"
-                                    >
-                                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
-                                    </button>
-                                    <button
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className="p-3 bg-white dark:bg-dark-700 rounded-2xl shadow-sm text-text-primary dark:text-cream-50"
-                                    >
-                                        <X size={20} />
-                                    </button>
-                                </div>
+            {/* Mobile Menu Sidebar */}
+            {isMobileMenuOpen && (
+                <div className="fixed inset-0 z-[100] lg:hidden">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+                    <div className="absolute inset-y-0 right-0 w-3/4 max-w-sm bg-white dark:bg-dark-800 shadow-2xl flex flex-col p-6 animate-slide-in-right">
+                        <div className="flex justify-between items-center mb-10">
+                            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-gold-600">
+                                ALMOSTAFAS
+                            </Link>
+                            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-gold-50 dark:hover:bg-dark-700 rounded-full">
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <nav className="flex flex-col space-y-6">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="text-lg font-bold text-text-primary dark:text-cream-50 hover:text-gold-600 transition-colors"
+                                >
+                                    {link.name}
+                                </Link>
+                            ))}
+                            <div className="pt-6 border-t border-gold-50 dark:border-dark-700">
+                                <Link to="/accounts/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-lg font-bold text-text-primary dark:text-cream-50">
+                                    <User size={20} />
+                                    حسابي
+                                </Link>
                             </div>
-
-                            {/* Mobile Nav */}
-                            <div className="flex-1 overflow-y-auto p-8 space-y-12">
-                                {/* Mobile Search */}
-                                <form onSubmit={handleSearchSubmit} className="relative">
-                                    <input
-                                        type="text"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        placeholder="ما الذي تبحث عنه؟"
-                                        className="w-full bg-gray-50 dark:bg-dark-700 px-4 py-4 rounded-2xl border-none outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                    />
-                                    <button type="submit" className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-500">
-                                        <Search size={20} />
-                                    </button>
-                                </form>
-
-                                <nav className="space-y-6">
-                                    <p className="text-[10px] uppercase tracking-widest text-text-muted font-black border-r-2 border-gold-500 pr-3">القائمة الرئيسية</p>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {navLinks.map((link) => (
-                                            !link.dropdown ? (
-                                                <Link
-                                                    key={link.name}
-                                                    to={link.path}
-                                                    onClick={() => setIsMobileMenuOpen(false)}
-                                                    className={`p-4 rounded-[22px] border-2 transition-all font-bold text-sm text-center flex flex-col items-center gap-3 ${isActive(link.path) ? 'bg-gold-50 overflow-hidden border-gold-500 text-gold-600 shadow-sm' : 'border-gold-50 dark:border-dark-700 text-text-primary dark:text-cream-50'}`}
-                                                >
-                                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isActive(link.path) ? 'bg-gold-500 text-white' : 'bg-gold-50 dark:bg-dark-700 text-gold-600'}`}>
-                                                        {link.name === 'تتبع الطلب' ? <Truck size={20} /> : <Package size={20} />}
-                                                    </div>
-                                                    {link.name}
-                                                </Link>
-                                            ) : null
-                                        ))}
-                                    </div>
-                                </nav>
-
-                                <nav className="space-y-6">
-                                    <p className="text-[10px] uppercase tracking-widest text-text-muted font-black border-r-2 border-gold-500 pr-3">تسوق حسب القسم</p>
-                                    <div className="space-y-3">
-                                        {categories.map(item => (
-                                            <Link
-                                                key={item.id}
-                                                to={`/products?category=${item.slug}`}
-                                                onClick={() => setIsMobileMenuOpen(false)}
-                                                className="flex items-center justify-between p-5 rounded-3xl bg-gray-50/50 dark:bg-dark-700/50 border border-gold-50 dark:border-dark-700 text-sm font-bold text-text-primary dark:text-cream-50 group hover:border-gold-500 hover:bg-gold-50 transition-all"
-                                            >
-                                                {item.name_ar}
-                                                <ChevronDown size={14} className="-rotate-90 text-gold-500" />
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </nav>
-
-                                {/* Mobile Contact */}
-                                <div className="space-y-6 pb-20">
-                                    <p className="text-[10px] uppercase tracking-widest text-text-muted dark:text-gold-400 font-black border-r-2 border-gold-500 pr-3">تواصل معنا</p>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <a href="https://wa.me/218917359191" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 rounded-3xl bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 text-green-600 transition-all active:scale-95">
-                                            <MessageCircle size={24} />
-                                            <span className="text-[10px] font-black">واتساب</span>
-                                        </a>
-                                        <a href="https://www.tiktok.com/@mostafaperfumes?_r=1&_t=ZS-943SX1wYWer" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 rounded-3xl bg-gray-50/50 dark:bg-dark-700/50 border border-gold-50 dark:border-dark-700 text-text-primary dark:text-cream-50 transition-all active:scale-95">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.89-.6-4.13-1.47-1.26-.88-2.12-2.22-2.49-3.66L15.8 20.06c-.05 1.05-.34 2.1-.9 3.01-.55.91-1.39 1.62-2.34 2.05-1.01.46-2.15.58-3.23.41-1.12-.17-2.18-.7-3.03-1.45-.85-.75-1.41-1.78-1.57-2.9-.16-1.12.01-2.3.56-3.29.54-1 1.41-1.79 2.45-2.22 1.04-.43 2.2-.44 3.28-.1v4.19c-.91-.32-1.95-.21-2.73.35-.78.56-1.16 1.55-1.02 2.51.14.96.84 1.78 1.75 2.1.91.31 2.01.07 2.66-.64.65-.7.83-1.72.63-2.65L12.7 0h-.175z" />
-                                            </svg>
-                                            <span className="text-[10px] font-black">تيك توك</span>
-                                        </a>
-                                        <a href="https://www.instagram.com/the.mostafa.perfumes?igsh=MXVnejh4d25qMjV4ZQ==" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 rounded-3xl bg-pink-50/50 dark:bg-pink-900/10 border border-pink-100 dark:border-pink-900/30 text-pink-600 transition-all active:scale-95">
-                                            <Instagram size={24} />
-                                            <span className="text-[10px] font-black">إنستغرام</span>
-                                        </a>
-                                        <a href="https://m.youtube.com/@mostafaperfumes?si=3KH5kj2c5Q47rVYB" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 rounded-3xl bg-red-50/50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 text-red-600 transition-all active:scale-95">
-                                            <Youtube size={24} />
-                                            <span className="text-[10px] font-black">يوتيوب</span>
-                                        </a>
-                                        <a href="tel:0917359191" className="col-span-2 flex items-center justify-center gap-3 p-4 rounded-3xl bg-gold-50/50 dark:bg-gold-900/10 border border-gold-100 dark:border-gold-900/30 text-gold-600 transition-all active:scale-95">
-                                            <Phone size={24} />
-                                            <span className="text-[12px] font-black font-poppins">0917359191</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Mobile Footer */}
-                            {(isLoggedIn && isAdmin) && (
-                                <div className="p-8 border-t border-gold-50 dark:border-dark-700 bg-cream-50/30 dark:bg-dark-900/40">
-                                    <Link
-                                        to="/dashboard"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className="w-full flex items-center justify-center gap-3 py-4 bg-dark-900 text-gold-400 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-gold-900/20"
-                                    >
-                                        <User size={16} />
-                                        لوحة التحكم
-                                    </Link>
-                                </div>
-                            )}
-                            {(!isLoggedIn) && (
-                                <div className="p-8 border-t border-gold-50 dark:border-dark-700 bg-cream-50/30 dark:bg-dark-900/40">
-                                    <Link
-                                        to="/dashboard/login"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className="w-full flex items-center justify-center gap-3 py-4 bg-dark-900 text-gold-400 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-gold-900/20 opacity-0 pointer-events-none"
-                                    >
-                                        Admin login
-                                    </Link>
-                                </div>
-                            )}
-                        </motion.div>
+                        </nav>
                     </div>
-                )}
-            </AnimatePresence>
+                </div>
+            )}
 
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
         </>

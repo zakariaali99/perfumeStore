@@ -25,9 +25,8 @@ const DashboardLogin = () => {
             localStorage.setItem('user', JSON.stringify(res.data.user));
             toast.success('تم تسجيل الدخول بنجاح');
             navigate('/dashboard');
-        } catch (error) {
-            console.error(error);
-            setError(error.response?.data?.error || 'بيانات الاعتماد غير صحيحة');
+        } catch (err) {
+            setError(err.response?.data?.error || 'بيانات الاعتماد غير صحيحة');
             toast.error('خطأ في تسجيل الدخول');
         } finally {
             setLoading(false);
@@ -45,7 +44,7 @@ const DashboardLogin = () => {
                     <p className="text-text-secondary dark:text-gold-400">سجل الدخول للمتابعة إلى الإدارة</p>
                 </div>
 
-                <div className="bg-white dark:bg-dark-700 p-6 md:p-10 rounded-3xl md:rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-2xl">
+                <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-2xl">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {error && (
                             <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 p-4 rounded-2xl flex items-center gap-3 text-red-600 dark:text-red-400 text-sm font-bold">
@@ -104,7 +103,7 @@ const DashboardLogin = () => {
                 </div>
 
                 <p className="text-center mt-10 text-xs text-text-muted dark:text-gold-500 font-bold uppercase tracking-widest">
-                    Almostafa&apos;s Admin v1.0.0
+                    Almostafa's Admin v1.0.0
                 </p>
             </div>
         </div>

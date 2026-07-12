@@ -18,17 +18,9 @@ env = environ.Env(
 # Read environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# Critical Django Settings (Must be early for cPanel stability)
-ROOT_URLCONF = "config.urls"
-SECRET_KEY = env('SECRET_KEY', default='django-insecure-your-secret-key-goes-here-change-in-production')
-# FORCE SETTINGS FOR CPANEL STABILITY
-ALLOWED_HOSTS = ['*']
-DEBUG = True
-
-# Security & Proxy Settings
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env('DEBUG')
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 # Application definition
 
@@ -59,7 +51,6 @@ LOCAL_APPS = [
     "analytics",
     "cms",
     "marketing",
-    "recommendations",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -75,15 +66,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# ROOT_URLCONF defined at top
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            os.path.join(BASE_DIR, 'templates'),
-            os.path.join(BASE_DIR, 'static'),
-        ],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -101,7 +89,7 @@ ASGI_APPLICATION = "config.asgi.application"
 
 # Database
 DATABASES = {
-    'default': env.db('DATABASE_URL', default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}")
+    'default': env.db(),
 }
 
 # Password validation
@@ -154,24 +142,7 @@ SIMPLE_JWT = {
 }
 
 # CORS Settings
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174",
-    "http://127.0.0.1:5174",
-    "http://localhost:5175",
-    "http://127.0.0.1:5175",
-]
-CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174",
-    "http://127.0.0.1:5174",
-    "http://localhost:5175",
-    "http://127.0.0.1:5175",
-]
+CORS_ALLOW_ALL_ORIGINS = True # In production change this
 
 # CKEditor Settings
 CKEDITOR_CONFIGS = {
@@ -190,5 +161,3 @@ EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='Almostafas Perfume <noreply@almostafas.com>')
-# Silence CKEditor warning
-SILENCED_SYSTEM_CHECKS = ['ckeditor.W001']

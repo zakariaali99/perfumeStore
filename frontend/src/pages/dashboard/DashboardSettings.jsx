@@ -9,6 +9,7 @@ import {
     Facebook,
     Instagram,
     Twitter,
+    Truck,
     Settings,
     ShieldCheck,
     Bell
@@ -25,8 +26,7 @@ const DashboardSettings = () => {
         facebook_link: '',
         instagram_link: '',
         tiktok_link: '',
-        top_banner_text: '',
-        top_banner_is_active: true,
+        shipping_cost: 25.0,
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -39,9 +39,8 @@ const DashboardSettings = () => {
         setLoading(true);
         try {
             const res = await cmsApi.getSettings();
-            setSettings(prev => ({ ...prev, ...(res.data || {}) }));
-        } catch (error) {
-            console.error(error);
+            setSettings(res.data);
+        } catch (err) {
             toast.error('تعذر تحميل الإعدادات');
         } finally {
             setLoading(false);
@@ -54,8 +53,7 @@ const DashboardSettings = () => {
         try {
             await cmsApi.updateSettings(settings.id, settings);
             toast.success('تم حفظ الإعدادات بنجاح');
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
             toast.error('خطأ في حفظ الإعدادات');
         } finally {
             setSaving(false);
@@ -80,7 +78,7 @@ const DashboardSettings = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-3xl font-black text-text-primary dark:text-cream-50 mb-1">إعدادات النظام</h2>
-                    <p className="text-text-secondary dark:text-gold-400 text-sm">تخصيص معلومات المتجر وقنوات التواصل.</p>
+                    <p className="text-text-secondary dark:text-gold-400 text-sm">تخصيص معلومات المتجر، قنوات التواصل، وتكاليف الشحن.</p>
                 </div>
                 <button
                     onClick={handleSave}
@@ -99,7 +97,7 @@ const DashboardSettings = () => {
             <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 {/* General Settings */}
                 <div className="space-y-8">
-                    <div className="bg-white dark:bg-dark-700 p-6 md:p-10 rounded-3xl md:rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
                         <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
                             <Settings size={22} className="text-gold-500" />
                             المعلومات الأساسية
@@ -114,35 +112,6 @@ const DashboardSettings = () => {
                                     onChange={handleChange}
                                     className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 font-bold"
                                 />
-                            </div>
-
-                            <div className="p-6 bg-gold-50 dark:bg-dark-600/50 rounded-3xl border border-gold-100 dark:border-dark-600 space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <Bell size={20} className="text-gold-600" />
-                                        <h4 className="font-black text-text-primary dark:text-cream-50 text-sm">البانر العلوي (الإعلاني)</h4>
-                                    </div>
-                                    <label className="relative inline-flex items-center cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={settings.top_banner_is_active}
-                                            onChange={(e) => setSettings({ ...settings, top_banner_is_active: e.target.checked })}
-                                            className="sr-only peer"
-                                        />
-                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-dark-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gold-500"></div>
-                                    </label>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] uppercase font-black text-gold-600 dark:text-gold-400 pr-1 tracking-widest">نص البانر</label>
-                                    <input
-                                        type="text"
-                                        name="top_banner_text"
-                                        value={settings.top_banner_text}
-                                        onChange={handleChange}
-                                        className="w-full bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-xs text-text-primary dark:text-cream-50 font-bold"
-                                        placeholder="مثال: خصومات رمضان ✦ تسوق الآن"
-                                    />
-                                </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
@@ -186,11 +155,33 @@ const DashboardSettings = () => {
                             </div>
                         </div>
                     </div>
+
+                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                        <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
+                            <Truck size={22} className="text-gold-500" />
+                            الشحن والتسليم
+                        </h3>
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">تكلفة الشحن الثابتة (د.ل)</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        name="shipping_cost"
+                                        value={settings.shipping_cost}
+                                        onChange={handleChange}
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-black text-text-primary dark:text-cream-50"
+                                    />
+                                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xs font-bold text-gold-600">دينار ليبي</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Social Networks */}
                 <div className="space-y-8">
-                    <div className="bg-white dark:bg-dark-700 p-6 md:p-10 rounded-3xl md:rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm h-full">
+                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm h-full">
                         <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
                             <Globe size={22} className="text-gold-500" />
                             قنوات التواصل الاجتماعي
@@ -266,8 +257,8 @@ const DashboardSettings = () => {
                         </div>
                     </div>
                 </div>
-            </form >
-        </div >
+            </form>
+        </div>
     );
 };
 
