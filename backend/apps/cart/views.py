@@ -5,11 +5,25 @@ from .models import Cart, CartItem
 from .serializers import CartSerializer, CartItemSerializer
 from products.models import ProductVariant
 
+
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     queryset = Cart.objects.all()
     permission_classes = [permissions.AllowAny]
-    authentication_classes = []  # Allow anonymous access (session-based carts)
+    authentication_classes = []
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response({'detail': 'Not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response({'detail': 'Not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response({'detail': 'Not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response({'detail': 'Not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def get_cart(self):
         if self.request.user.is_authenticated:
@@ -32,16 +46,38 @@ class CartViewSet(viewsets.ModelViewSet):
     def add_item(self, request):
         cart = self.get_cart()
         variant_id = request.data.get('variant_id')
-        quantity = int(request.data.get('quantity', 1))
-        
+        quantity_raw = request.data.get('quantity', 1)
+
+        try:
+            quantity = int(quantity_raw)
+            if quantity < 1:
+                raise ValueError
+        except (ValueError, TypeError):
+            return Response(
+                {'error': 'Quantity must be a positive integer'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
             variant = ProductVariant.objects.get(id=variant_id)
         except ProductVariant.DoesNotExist:
             return Response({'error': 'Variant not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        if quantity > variant.stock_quantity:
+            return Response(
+                {'error': f'Insufficient stock for {variant.product.name_ar}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         item, created = CartItem.objects.get_or_create(cart=cart, variant=variant)
         if not created:
-            item.quantity += quantity
+            new_quantity = item.quantity + quantity
+            if new_quantity > variant.stock_quantity:
+                return Response(
+                    {'error': f'Insufficient stock for {variant.product.name_ar}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            item.quantity = new_quantity
         else:
             item.quantity = quantity
         item.save()
@@ -51,10 +87,30 @@ class CartViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['patch'])
     def update_item(self, request):
         item_id = request.data.get('item_id')
-        quantity = int(request.data.get('quantity'))
-        
+        quantity_raw = request.data.get('quantity')
+
+        if quantity_raw is None:
+            return Response(
+                {'error': 'Quantity is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         try:
-            item = CartItem.objects.get(id=item_id, cart=self.get_cart())
+            quantity = int(quantity_raw)
+            if quantity < 1:
+                raise ValueError
+        except (ValueError, TypeError):
+            return Response(
+                {'error': 'Quantity must be a positive integer'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            item = CartItem.objects.select_related('variant').get(id=item_id, cart=self.get_cart())
+            if quantity > item.variant.stock_quantity:
+                return Response(
+                    {'error': f'Insufficient stock for {item.variant.product.name_ar}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             item.quantity = quantity
             item.save()
         except CartItem.DoesNotExist:
@@ -78,4 +134,3 @@ class CartViewSet(viewsets.ModelViewSet):
         cart = self.get_cart()
         cart.items.all().delete()
         return Response(self.get_serializer(cart).data)
-

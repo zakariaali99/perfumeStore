@@ -30,6 +30,9 @@ def order_create_notification(sender, instance, created, **kwargs):
 @receiver(post_save, sender=OrderStatusHistory)
 def order_status_change_notification(sender, instance, created, **kwargs):
     if created:
+        # Skip the initial 'pending' entry because Order signal already sent confirmation
+        if instance.status == 'pending':
+            return
         order = instance.order
         if order.customer_email:
             status_labels = dict(Order.STATUS_CHOICES)

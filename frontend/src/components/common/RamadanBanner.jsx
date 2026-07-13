@@ -53,16 +53,15 @@ const RamadanBanner = () => {
         sessionStorage.setItem('ramadan_banner_dismissed', 'true');
     };
 
-    if (!isVisible) return null;
-
     return (
         <AnimatePresence>
-            <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="bg-gradient-to-r from-dark-900 via-indigo-950 to-dark-900 border-b border-gold-500/20 relative z-[110] overflow-hidden"
-            >
+            {isVisible && (
+                <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="bg-gradient-to-r from-dark-900 via-indigo-950 to-dark-900 border-b border-gold-500/20 relative z-[110] overflow-hidden"
+                >
                 {/* Decorative stars background - Only in Ramadan/Eid mode */}
                 {isRamadanMode && (
                     <div className="absolute inset-0 pointer-events-none opacity-30">
@@ -118,6 +117,7 @@ const RamadanBanner = () => {
                     </button>
                 </div>
             </motion.div>
+            )}
         </AnimatePresence>
     );
 };

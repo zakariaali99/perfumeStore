@@ -61,7 +61,8 @@ class CustomerProfile(models.Model):
     class Meta:
         verbose_name = "ملف العميل"
         verbose_name_plural = "ملفات العملاء"
-        unique_together = ('name', 'birth_day', 'birth_month', 'birth_year')
+        unique_together = ('name', 'phone')
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.name} - {self.phone}"

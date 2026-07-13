@@ -72,7 +72,6 @@ const DashboardOrders = () => {
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             setCurrentPage(1);
-            fetchOrders();
         }, 500);
         return () => clearTimeout(delayDebounce);
     }, [searchTerm, filterStatus]);
@@ -175,13 +174,14 @@ const DashboardOrders = () => {
                                                     </button>
 
                                                     <select
-                                                        value=""
+                                                        value={order.status}
                                                         onChange={(e) => {
-                                                            if (e.target.value) handleUpdateStatus(order.id, e.target.value);
+                                                            if (e.target.value && e.target.value !== order.status) {
+                                                                handleUpdateStatus(order.id, e.target.value);
+                                                            }
                                                         }}
                                                         className="bg-gray-50 dark:bg-dark-600 border-none text-[10px] font-bold px-2 py-1 rounded-lg focus:ring-0 cursor-pointer text-text-primary dark:text-cream-50"
                                                     >
-                                                        <option value="" disabled>تغيير الحالة...</option>
                                                         {Object.entries(statusMap).map(([key, val]) => (
                                                             <option key={key} value={key}>{val.label}</option>
                                                         ))}

@@ -17,18 +17,22 @@ class Category(models.Model):
     def __str__(self):
         return self.name_ar
 
+
 class Brand(models.Model):
     name_ar = models.CharField(max_length=100, verbose_name="الاسم بالعربية")
-    logo = models.ImageField(upload_to='brands/', verbose_name="الشعار")
+    slug = models.SlugField(unique=True, allow_unicode=True, blank=True, verbose_name="المعرف")
+    logo = models.ImageField(upload_to='brands/', blank=True, verbose_name="الشعار")
     description = models.TextField(blank=True, verbose_name="الوصف")
     is_active = models.BooleanField(default=True, verbose_name="نشط")
 
     class Meta:
         verbose_name = "الماركة"
         verbose_name_plural = "الماركات"
+        ordering = ['name_ar']
 
     def __str__(self):
         return self.name_ar
+
 
 class FragranceFamily(models.Model):
     name_ar = models.CharField(max_length=100, verbose_name="الاسم بالعربية")
@@ -42,62 +46,65 @@ class FragranceFamily(models.Model):
     def __str__(self):
         return self.name_ar
 
+
 class Product(models.Model):
-    GENDER_CHOICES = [('M', 'رجالي'), ('F', 'نسائي'), ('U', 'للجنسين')]
-    CONCENTRATION = [
-        ('EDT', 'Eau de Toilette'),
-        ('EDP', 'Eau de Parfum'),
-        ('P', 'Parfum')
+    GENDER_CHOICES = [
+        ('men', 'رجالي'),
+        ('women', 'نسائي'),
+        ('unisex', 'للجنسين')
     ]
-    
+
     name_ar = models.CharField(max_length=200, verbose_name="الاسم بالعربية")
     slug = models.SlugField(unique=True, allow_unicode=True)
-    description = models.TextField(verbose_name="الوصف")
-    story = models.TextField(help_text="القصة العطرية", verbose_name="القصة العطرية")
-    
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="الفئة")
-    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name="الماركة")
-    fragrance_families = models.ManyToManyField(FragranceFamily, verbose_name="العائلات العطرية")
-    
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="الجنس")
-    concentration = models.CharField(max_length=3, choices=CONCENTRATION, verbose_name="التركيز")
-    
-    main_image = models.ImageField(upload_to='products/', verbose_name="الصورة الرئيسية")
-    longevity_rating = models.PositiveIntegerField(default=5, verbose_name="تقييم الثبات") # 1-10
-    sillage_rating = models.PositiveIntegerField(default=5, verbose_name="تقييم الفوحان") # 1-10
-    
+    description = models.TextField(blank=True, default="", verbose_name="الوصف")
+    story = models.TextField(blank=True, default="", help_text="القصة العطرية", verbose_name="القصة العطرية")
+
+    categories = models.ManyToManyField(Category, blank=True, verbose_name="الفئات")
+    brand = models.ForeignKey(Brand, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="الماركة")
+    fragrance_families = models.ManyToManyField(FragranceFamily, blank=True, verbose_name="العائلات العطرية")
+
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='unisex', verbose_name="الجنس")
+
+    occasion = models.TextField(blank=True, help_text="ex: ليلي, حفلات, كلاسيكي", verbose_name="مناسب لـ")
+    vibe = models.TextField(blank=True, help_text="ex: قوي, دافئ, رجولي", verbose_name="مزاج العطر")
+
+    main_image = models.ImageField(upload_to='products/', null=True, blank=True, verbose_name="الصورة الرئيسية")
+
     is_featured = models.BooleanField(default=False, verbose_name="مميز")
     is_bestseller = models.BooleanField(default=False, verbose_name="الأكثر مبيعاً")
     is_new = models.BooleanField(default=False, verbose_name="جديد")
     is_active = models.BooleanField(default=True, verbose_name="نشط")
-    
+
     view_count = models.PositiveIntegerField(default=0, verbose_name="عدد المشاهدات")
     sales_count = models.PositiveIntegerField(default=0, verbose_name="عدد المبيعات")
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "المنتج"
         verbose_name_plural = "المنتجات"
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.name_ar
 
+
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name='variants', on_delete=models.CASCADE)
-    size_ml = models.PositiveIntegerField(verbose_name="الحجم (مل)")
+    name = models.CharField(max_length=100, blank=True, verbose_name="اسم العبوة")
+    size_ml = models.PositiveIntegerField(null=True, blank=True, verbose_name="الحجم (مل)")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="السعر الأصلي")
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="سعر العرض")
-    cost_price = models.DecimalField(max_digits=10, decimal_places=2, help_text="للتقارير الداخلية", verbose_name="سعر التكلفة")
-    
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="للتقارير الداخلية", verbose_name="سعر التكلفة")
+
     stock_quantity = models.PositiveIntegerField(default=0, verbose_name="الكمية في المخزن")
     low_stock_threshold = models.PositiveIntegerField(default=5, verbose_name="حد المخزون المنخفض")
-    
-    sku = models.CharField(max_length=50, unique=True, verbose_name="رمز SKU")
+
+    sku = models.CharField(max_length=50, unique=True, blank=True, verbose_name="رمز SKU")
     barcode = models.CharField(max_length=100, blank=True, verbose_name="الباركود")
     image = models.ImageField(upload_to='variants/', blank=True, verbose_name="صورة خاصة للعبوة")
-    
+
     is_active = models.BooleanField(default=True, verbose_name="نشط")
 
     class Meta:
@@ -111,6 +118,13 @@ class ProductVariant(models.Model):
     def current_price(self):
         return self.sale_price if self.sale_price else self.price
 
+    @property
+    def discount_percentage(self):
+        if self.sale_price and self.price and self.price > 0:
+            return round((self.price - self.sale_price) / self.price * 100, 0)
+        return 0
+
+
 class ProductNote(models.Model):
     NOTE_TYPES = [('top', 'افتتاحية'), ('heart', 'قلب'), ('base', 'قاعدية')]
     product = models.ForeignKey(Product, related_name='notes', on_delete=models.CASCADE)
@@ -122,6 +136,10 @@ class ProductNote(models.Model):
         verbose_name = "نوتة العطر"
         verbose_name_plural = "نوتات العطور"
 
+    def __str__(self):
+        return f"{self.name_ar} ({self.note_type})"
+
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='products/gallery/', verbose_name="الصورة")
@@ -132,3 +150,6 @@ class ProductImage(models.Model):
         verbose_name = "صورة إضافية"
         verbose_name_plural = "صور إضافية"
         ordering = ['order']
+
+    def __str__(self):
+        return f"{self.product.name_ar} - {self.order}"

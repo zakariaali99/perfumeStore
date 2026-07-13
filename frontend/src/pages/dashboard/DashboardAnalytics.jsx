@@ -44,7 +44,7 @@ const DashboardAnalytics = () => {
     const fetchAnalytics = async () => {
         setLoading(true);
         try {
-            const res = await analyticsApi.getStats();
+            const res = await analyticsApi.getStats({ range: timeRange });
             setData(res.data);
         } catch (err) {
             toast.error('تعذر تحميل البيانات التحليلية');
@@ -57,6 +57,14 @@ const DashboardAnalytics = () => {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
                 <div className="w-10 h-10 border-4 border-gold-200 border-t-gold-600 rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (!data) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <p className="text-text-secondary dark:text-gold-400 font-bold">تعذر تحميل البيانات</p>
             </div>
         );
     }

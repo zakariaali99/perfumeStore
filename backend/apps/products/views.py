@@ -6,8 +6,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Category, Brand, FragranceFamily, Product, ProductVariant
 from .serializers import (
     CategorySerializer, BrandSerializer, FragranceFamilySerializer,
-    ProductListSerializer, ProductDetailSerializer, ProductVariantSerializer
+    ProductListSerializer, ProductDetailSerializer, ProductVariantSerializer,
+    AdminProductCreateSerializer
 )
+
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.filter(is_active=True)
@@ -15,18 +17,27 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
 
+
 class BrandViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Brand.objects.filter(is_active=True)
     serializer_class = BrandSerializer
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
 
+
+class FragranceFamilyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = FragranceFamily.objects.all()
+    serializer_class = FragranceFamilySerializer
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = {
-        'category': ['exact'],
+        'categories': ['exact'],
         'brand': ['exact'],
         'gender': ['exact'],
         'is_featured': ['exact'],
@@ -37,7 +48,6 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
 
     def get_queryset(self):
-        # Annotate min_price for sorting
         return Product.objects.filter(is_active=True).annotate(
             min_price=Min(
                 Case(
@@ -46,15 +56,16 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
                     output_field=DecimalField()
                 )
             )
-        ).select_related('category', 'brand').prefetch_related('variants')
+        ).select_related('brand').prefetch_related('categories', 'variants').distinct()
 
     @action(detail=True, methods=['get'])
     def related(self, request, slug=None):
         product = self.get_object()
+        category_ids = product.categories.values_list('id', flat=True)
         related = Product.objects.filter(
-            category=product.category,
+            categories__id__in=category_ids,
             is_active=True
-        ).exclude(id=product.id)[:4]
+        ).exclude(id=product.id).select_related('brand').prefetch_related('categories', 'variants').distinct()[:4]
         serializer = ProductListSerializer(related, many=True)
         return Response(serializer.data)
 
@@ -63,12 +74,33 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
             return ProductDetailSerializer
         return ProductListSerializer
 
+
 class AdminProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('brand').prefetch_related(
+        'categories', 'fragrance_families', 'variants', 'notes', 'images'
+    )
     permission_classes = [permissions.IsAdminUser]
-    serializer_class = ProductDetailSerializer
+    lookup_field = 'slug'
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return AdminProductCreateSerializer
+        return ProductDetailSerializer
+
 
 class AdminVariantViewSet(viewsets.ModelViewSet):
-    queryset = ProductVariant.objects.all()
-    permission_classes = [permissions.IsAdminUser]
+    queryset = ProductVariant.objects.select_related('product')
     serializer_class = ProductVariantSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+
+class AdminCategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAdminUser]
+
+
+class AdminBrandViewSet(viewsets.ModelViewSet):
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializer
+    permission_classes = [permissions.IsAdminUser]

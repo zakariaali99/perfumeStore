@@ -30,15 +30,15 @@ const ProductEdit = () => {
         slug: '',
         description: '',
         story: '',
-        category: '',
+        categories: [],
         brand: '',
         gender: 'unisex',
-        concentration: 'EDP',
-        longevity_rating: 5,
-        sillage_rating: 5,
+        occasion: '',
+        vibe: '',
         is_active: true,
         is_featured: false,
         is_new: true,
+        is_bestseller: false,
     });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -64,9 +64,20 @@ const ProductEdit = () => {
             const res = await adminProductsApi.getDetail(id);
             const data = res.data;
             setFormData({
-                ...data,
-                category: data.category?.id || '',
+                name_ar: data.name_ar || '',
+                name_en: data.name_en || '',
+                slug: data.slug || '',
+                description: data.description || '',
+                story: data.story || '',
+                categories: data.categories?.map(c => String(c.id)) || [],
                 brand: data.brand?.id || '',
+                gender: data.gender || 'unisex',
+                occasion: data.occasion || '',
+                vibe: data.vibe || '',
+                is_active: data.is_active ?? true,
+                is_featured: data.is_featured ?? false,
+                is_new: data.is_new ?? true,
+                is_bestseller: data.is_bestseller ?? false,
             });
             if (data.main_image) {
                 setImagePreview(data.main_image);
@@ -98,15 +109,21 @@ const ProductEdit = () => {
 
         try {
             const data = new FormData();
-            Object.keys(formData).forEach(key => {
-                if (key === 'main_image' || key === 'images' || key === 'variants' || key === 'category' || key === 'brand') {
-                    // Handle specific fields if needed, but basic strings/bools are straightforward
-                    if ((key === 'category' || key === 'brand') && formData[key]) {
-                        data.append(key, formData[key]);
-                    }
-                } else if (formData[key] !== null && formData[key] !== undefined) {
-                    data.append(key, formData[key]);
+            const fields = [
+                'name_ar', 'name_en', 'slug', 'description', 'story',
+                'brand', 'gender', 'occasion', 'vibe',
+                'is_active', 'is_featured', 'is_new', 'is_bestseller'
+            ];
+
+            fields.forEach(key => {
+                const value = formData[key];
+                if (value !== null && value !== undefined && value !== '') {
+                    data.append(key, value);
                 }
+            });
+
+            formData.categories.forEach(id => {
+                data.append('categories', id);
             });
 
             if (imageFile) {
@@ -229,41 +246,24 @@ const ProductEdit = () => {
                             />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">التركيز</label>
-                                <select
-                                    name="concentration"
-                                    value={formData.concentration}
-                                    onChange={handleChange}
-                                    className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none"
-                                >
-                                    <option value="EDT">Eau de Toilette</option>
-                                    <option value="EDP">Eau de Parfum</option>
-                                    <option value="P">Parfum</option>
-                                </select>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">الثبات (1-10)</label>
+                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">مناسب لـ</label>
                                 <input
-                                    type="number"
-                                    min="1"
-                                    max="10"
-                                    name="longevity_rating"
-                                    value={formData.longevity_rating}
+                                    name="occasion"
+                                    value={formData.occasion}
                                     onChange={handleChange}
+                                    placeholder="ليلي، حفلات، كلاسيكي..."
                                     className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">الفوحان (1-10)</label>
+                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">مزاج العطر</label>
                                 <input
-                                    type="number"
-                                    min="1"
-                                    max="10"
-                                    name="sillage_rating"
-                                    value={formData.sillage_rating}
+                                    name="vibe"
+                                    value={formData.vibe}
                                     onChange={handleChange}
+                                    placeholder="قوي، دافئ، رجولي..."
                                     className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none"
                                 />
                             </div>
@@ -307,14 +307,17 @@ const ProductEdit = () => {
 
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1">التصنيف</label>
+                                <label className="text-xs font-bold text-text-secondary px-1">التصنيفات</label>
                                 <select
-                                    name="category"
-                                    value={formData.category}
-                                    onChange={handleChange}
-                                    className="w-full bg-cream-50 border border-gold-50 px-4 py-4 rounded-2xl focus:outline-none"
+                                    name="categories"
+                                    multiple
+                                    value={formData.categories}
+                                    onChange={(e) => {
+                                        const options = Array.from(e.target.selectedOptions).map(o => String(o.value));
+                                        setFormData({ ...formData, categories: options });
+                                    }}
+                                    className="w-full bg-cream-50 border border-gold-50 px-4 py-4 rounded-2xl focus:outline-none min-h-[120px]"
                                 >
-                                    <option value="">اختر التصنيف</option>
                                     {categories.map(c => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
                                 </select>
                             </div>

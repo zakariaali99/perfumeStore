@@ -191,7 +191,11 @@ const Cart = () => {
                             </div>
 
                             <button
-                                onClick={() => navigate('/checkout')}
+                                onClick={() => {
+                                    const params = new URLSearchParams();
+                                    if (couponCode) params.set('coupon', couponCode);
+                                    navigate(`/checkout?${params.toString()}`);
+                                }}
                                 className="w-full bg-gold-500 hover:bg-gold-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-gold-500/20 flex items-center justify-center gap-2 transition-all active:scale-95"
                             >
                                 إتمام الطلب

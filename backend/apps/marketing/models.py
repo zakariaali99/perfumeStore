@@ -24,6 +24,7 @@ class Coupon(models.Model):
     class Meta:
         verbose_name = "كوبون الخصم"
         verbose_name_plural = "كوبونات الخصم"
+        ordering = ['code']
 
     def __str__(self):
         return self.code

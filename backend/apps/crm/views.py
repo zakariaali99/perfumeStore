@@ -1,22 +1,25 @@
+from django.db.models import Count
 from rest_framework import viewsets, filters, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import CustomerProfile, CustomerTag, CustomerInteraction
 from .serializers import (
-    CustomerProfileSerializer, 
+    CustomerProfileSerializer,
     CustomerProfileDetailSerializer,
-    CustomerTagSerializer, 
+    CustomerTagSerializer,
     CustomerInteractionSerializer
 )
+
 
 class CustomerTagViewSet(viewsets.ModelViewSet):
     queryset = CustomerTag.objects.all()
     serializer_class = CustomerTagSerializer
     permission_classes = [permissions.IsAdminUser]
 
+
 class CustomerInteractionViewSet(viewsets.ModelViewSet):
-    queryset = CustomerInteraction.objects.all()
+    queryset = CustomerInteraction.objects.select_related('customer', 'created_by')
     serializer_class = CustomerInteractionSerializer
     permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -26,8 +29,13 @@ class CustomerInteractionViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
+
 class CustomerProfileViewSet(viewsets.ModelViewSet):
-    queryset = CustomerProfile.objects.all()
+    queryset = CustomerProfile.objects.annotate(
+        interactions_count=Count('interactions')
+    ).select_related('user').prefetch_related(
+        'tags', 'favorite_brands', 'favorite_families', 'interactions'
+    )
     permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['segment', 'city', 'tags']
@@ -42,14 +50,14 @@ class CustomerProfileViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def add_interaction(self, request, pk=None):
         customer = self.get_object()
-        serializer = CustomerInteractionSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(customer=customer, created_by=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = request.data.copy()
+        data.pop('customer', None)
+        serializer = CustomerInteractionSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(customer=customer, created_by=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['get'])
     def segments_stats(self, request):
-        from django.db.models import Count
         stats = CustomerProfile.objects.values('segment').annotate(count=Count('id'))
         return Response(stats)

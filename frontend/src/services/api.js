@@ -127,6 +127,20 @@ export const adminProductsApi = {
     delete: (id) => api.delete(`products/admin/products/${id}/`),
 };
 
+export const adminCategoriesApi = {
+    getAll: () => api.get('products/admin/categories/'),
+    create: (data) => api.post('products/admin/categories/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    update: (id, data) => api.patch(`products/admin/categories/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    delete: (id) => api.delete(`products/admin/categories/${id}/`),
+};
+
+export const adminBrandsApi = {
+    getAll: () => api.get('products/admin/brands/'),
+    create: (data) => api.post('products/admin/brands/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    update: (id, data) => api.patch(`products/admin/brands/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    delete: (id) => api.delete(`products/admin/brands/${id}/`),
+};
+
 export const analyticsApi = {
     getStats: () => api.get('analytics/stats/'),
     getInventory: () => api.get('analytics/inventory/'),

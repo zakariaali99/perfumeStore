@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Search, Menu, User, Sun, Moon, X } from 'lucide-react';
+import { ShoppingBag, Search, Menu, Sun, Moon, X } from 'lucide-react';
 import useCartStore from '../../store/cartStore';
 import useThemeStore from '../../store/themeStore';
 import CartDrawer from '../cart/CartDrawer';
@@ -15,8 +15,8 @@ const Header = () => {
 
     const navLinks = [
         { name: 'كل العطور', path: '/products' },
-        { name: 'عطور شرقية', path: '/category/oriental' },
-        { name: 'عطور زهرية', path: '/category/floral' },
+        { name: 'عطور شرقية', path: '/products?category=oriental' },
+        { name: 'عطور زهرية', path: '/products?category=floral' },
         { name: 'من نحن', path: '/about' },
     ];
 
@@ -68,9 +68,7 @@ const Header = () => {
                                 </span>
                             )}
                         </button>
-                        <Link to="/accounts/profile" className="hidden md:flex text-text-primary dark:text-cream-50 hover:text-gold-500 transition-colors p-2">
-                            <User size={22} />
-                        </Link>
+
                     </div>
                 </div>
             </header>
@@ -99,12 +97,7 @@ const Header = () => {
                                     {link.name}
                                 </Link>
                             ))}
-                            <div className="pt-6 border-t border-gold-50 dark:border-dark-700">
-                                <Link to="/accounts/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-lg font-bold text-text-primary dark:text-cream-50">
-                                    <User size={20} />
-                                    حسابي
-                                </Link>
-                            </div>
+
                         </nav>
                     </div>
                 </div>

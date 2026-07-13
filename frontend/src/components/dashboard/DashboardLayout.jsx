@@ -15,7 +15,9 @@ import {
     ExternalLink,
     Sun,
     Moon,
-    TrendingUp
+    TrendingUp,
+    LayoutGrid,
+    Briefcase
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useThemeStore from '../../store/themeStore';
@@ -41,6 +43,8 @@ const DashboardLayout = () => {
         { to: '/dashboard', icon: LayoutDashboard, label: 'لوحة التحكم' },
         { to: '/dashboard/analytics', icon: TrendingUp, label: 'التقارير والتحليلات' },
         { to: '/dashboard/products', icon: Package, label: 'المنتجات' },
+        { to: '/dashboard/categories', icon: LayoutGrid, label: 'التصنيفات' },
+        { to: '/dashboard/brands', icon: Briefcase, label: 'الماركات' },
         { to: '/dashboard/orders', icon: ShoppingBag, label: 'الطلبات' },
         { to: '/dashboard/customers', icon: Users, label: 'العملاء (CRM)' },
         { to: '/dashboard/cms', icon: Image, label: 'المحتوى (CMS)' },
@@ -101,7 +105,10 @@ const DashboardLayout = () => {
                             <Menu size={24} />
                         </button>
                         <h1 className="text-xl font-black text-text-primary dark:text-cream-50 hidden md:block">
-                            {menuItems.find(i => i.to === location.pathname)?.label || 'الإدارة'}
+                            {menuItems
+                                .filter(i => i.to !== '/dashboard' && location.pathname.startsWith(i.to))
+                                .sort((a, b) => b.to.length - a.to.length)[0]?.label
+                                || (location.pathname === '/dashboard' ? 'لوحة التحكم' : 'الإدارة')}
                         </h1>
                     </div>
 

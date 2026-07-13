@@ -1,6 +1,7 @@
 from django.db.models import Count, Q
-from products.models import Product, Category
+from products.models import Product
 from orders.models import OrderItem
+
 
 class RecommendationEngine:
     @staticmethod
@@ -12,17 +13,14 @@ class RecommendationEngine:
         3. Shared categories (Low weight)
         """
         category_ids = product.categories.values_list('id', flat=True)
-        
-        # Base queryset: active products excluding current
+
         qs = Product.objects.filter(is_active=True).exclude(id=product.id)
-        
-        # We also want to prioritize products with stock
         qs = qs.annotate(
             variant_count=Count('variants', filter=Q(variants__stock_quantity__gt=0))
         )
 
-        from django.db.models import Case, When, IntegerField, F
-        
+        from django.db.models import Case, When, IntegerField
+
         qs = qs.annotate(
             relevance_score=Case(
                 When(gender=product.gender, then=5),
@@ -38,7 +36,7 @@ class RecommendationEngine:
                 output_field=IntegerField(),
             )
         ).order_by('-relevance_score', '-created_at').distinct()[:limit]
-        
+
         return qs
 
     @staticmethod
@@ -46,16 +44,14 @@ class RecommendationEngine:
         """
         Finds products that were frequently bought in the same order as this product.
         """
-        # Find order IDs that contain this product
         order_ids = OrderItem.objects.filter(
             variant__product=product
         ).values_list('order_id', flat=True)
-        
+
         if not order_ids:
             return Product.objects.none()
-            
-        # Find other products in those same orders
-        similar_product_ids = OrderItem.objects.filter(
+
+        ranked_ids = OrderItem.objects.filter(
             order_id__in=order_ids
         ).exclude(
             variant__product=product
@@ -63,8 +59,16 @@ class RecommendationEngine:
         .annotate(frequency=Count('variant__product_id'))\
         .order_by('-frequency')\
         .values_list('variant__product_id', flat=True)[:limit]
-        
-        return Product.objects.filter(id__in=similar_product_ids, is_active=True)
+
+        # Preserve frequency ordering
+        from django.db.models import Case, When, IntegerField
+        preserved_order = Case(*[
+            When(id=pid, then=pos) for pos, pid in enumerate(ranked_ids)
+        ], output_field=IntegerField())
+
+        return Product.objects.filter(
+            id__in=list(ranked_ids), is_active=True
+        ).order_by(preserved_order)
 
     @staticmethod
     def get_new_arrivals(limit=4):

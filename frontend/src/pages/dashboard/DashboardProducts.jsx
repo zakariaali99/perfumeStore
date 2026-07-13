@@ -32,7 +32,7 @@ const DashboardProducts = () => {
         try {
             const res = await adminProductsApi.getAll({
                 search: searchTerm,
-                category: filterCategory,
+                categories: filterCategory,
                 page: currentPage,
                 page_size: 10
             });
@@ -66,7 +66,6 @@ const DashboardProducts = () => {
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             setCurrentPage(1);
-            fetchProducts();
         }, 500);
         return () => clearTimeout(delayDebounce);
     }, [searchTerm, filterCategory]);
@@ -105,7 +104,7 @@ const DashboardProducts = () => {
                     className="bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
                 >
                     <option value="">كل التصنيفات</option>
-                    {Array.isArray(categories) && categories.map(c => <option key={c.id} value={c.slug}>{c.name_ar}</option>)}
+                    {Array.isArray(categories) && categories.map(c => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
                 </select>
             </div>
 
@@ -153,7 +152,7 @@ const DashboardProducts = () => {
                                         </td>
                                         <td className="px-8 py-5">
                                             <span className="bg-gold-50 dark:bg-dark-600 text-gold-700 dark:text-gold-400 px-3 py-1 rounded-lg text-xs font-bold">
-                                                {product.category?.name_ar}
+                                                {product.categories?.map(c => c.name_ar).join(', ') || '-'}
                                             </span>
                                         </td>
                                         <td className="px-8 py-5 font-bold text-text-secondary dark:text-gold-400">

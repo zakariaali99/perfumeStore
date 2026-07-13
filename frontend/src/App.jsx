@@ -19,6 +19,10 @@ import DashboardCoupons from './pages/dashboard/DashboardCoupons';
 import DashboardSettings from './pages/dashboard/DashboardSettings';
 import DashboardAnalytics from './pages/dashboard/DashboardAnalytics';
 import DashboardLogin from './pages/dashboard/DashboardLogin';
+import DashboardBrands from './pages/dashboard/DashboardBrands';
+import DashboardCategories from './pages/dashboard/DashboardCategories';
+import ScrollToTop from './components/common/ScrollToTop';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import { Toaster } from 'react-hot-toast';
 import useThemeStore from './store/themeStore';
 import useCartStore from './store/cartStore';
@@ -70,43 +74,48 @@ function App() {
     }
   }, [isDark]);
 
-  return (
-    <Router>
-      <AppLayout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/product/:slug" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/track" element={<OrderTracking />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
+    return (
+        <Router>
+            <ScrollToTop />
+            <AppLayout>
+                <ErrorBoundary>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/products" element={<Products />} />
+                        <Route path="/product/:slug" element={<ProductDetail />} />
+                        <Route path="/cart" element={<Cart />} />
+                        <Route path="/checkout" element={<Checkout />} />
+                        <Route path="/track" element={<OrderTracking />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/privacy" element={<Privacy />} />
 
-          {/* Dashboard Route (Unprotected login) */}
-          <Route path="/dashboard/login" element={<DashboardLogin />} />
+                        {/* Dashboard Route (Unprotected login) */}
+                        <Route path="/dashboard/login" element={<DashboardLogin />} />
 
-          {/* Protected Dashboard Routes */}
-          <Route path="/dashboard" element={<ProtectedRoute />}>
-            <Route element={<DashboardLayout />}>
-              <Route index element={<DashboardHome />} />
-              <Route path="analytics" element={<DashboardAnalytics />} />
-              <Route path="products" element={<DashboardProducts />} />
-              <Route path="products/new" element={<ProductEdit />} />
-              <Route path="products/edit/:id" element={<ProductEdit />} />
-              <Route path="orders" element={<DashboardOrders />} />
-              <Route path="customers" element={<DashboardCustomers />} />
-              <Route path="cms" element={<DashboardCMS />} />
-              <Route path="coupons" element={<DashboardCoupons />} />
-              <Route path="settings" element={<DashboardSettings />} />
-            </Route>
-          </Route>
-        </Routes>
-      </AppLayout>
-    </Router>
-  );
+                        {/* Protected Dashboard Routes */}
+                        <Route path="/dashboard" element={<ProtectedRoute />}>
+                            <Route element={<DashboardLayout />}>
+                                <Route index element={<DashboardHome />} />
+                                <Route path="analytics" element={<DashboardAnalytics />} />
+                                <Route path="products" element={<DashboardProducts />} />
+                                <Route path="products/new" element={<ProductEdit />} />
+                                <Route path="products/edit/:id" element={<ProductEdit />} />
+                                <Route path="categories" element={<DashboardCategories />} />
+                                <Route path="brands" element={<DashboardBrands />} />
+                                <Route path="orders" element={<DashboardOrders />} />
+                                <Route path="customers" element={<DashboardCustomers />} />
+                                <Route path="cms" element={<DashboardCMS />} />
+                                <Route path="coupons" element={<DashboardCoupons />} />
+                                <Route path="settings" element={<DashboardSettings />} />
+                            </Route>
+                        </Route>
+                    </Routes>
+                </ErrorBoundary>
+            </AppLayout>
+        </Router>
+    );
 }
 
 export default App;

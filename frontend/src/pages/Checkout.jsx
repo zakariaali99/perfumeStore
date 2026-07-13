@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import useCartStore from '../store/cartStore';
 import { ordersApi } from '../services/api';
 import {
@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const LIBYAN_CITIES = [
     'طرابلس', 'بنغازي', 'مصراتة', 'الزاوية', 'زليتن', 'البيضاء', 'طبرق', 'غريان',
@@ -27,24 +27,7 @@ const Checkout = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(null);
     const navigate = useNavigate();
-
-    if (!cart.items || cart.items.length === 0) {
-        return (
-            <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-40 pb-20 transition-colors duration-300">
-                <div className="container mx-auto px-4 text-center max-w-lg">
-                    <ShoppingBag size={48} className="mx-auto mb-6 text-gold-300" />
-                    <h1 className="text-2xl font-black mb-4 text-text-primary dark:text-cream-50">السلة فارغة</h1>
-                    <p className="text-text-secondary dark:text-gold-400 mb-8">أضف بعض المنتجات أولاً قبل إتمام الشراء.</p>
-                    <button
-                        onClick={() => navigate('/products')}
-                        className="bg-gold-500 text-white px-10 py-4 rounded-2xl font-bold hover:bg-gold-600 transition-all shadow-lg shadow-gold-500/20"
-                    >
-                        تصفح العطور
-                    </button>
-                </div>
-            </div>
-        );
-    }
+    const [searchParams] = useSearchParams();
 
     const [formData, setFormData] = useState({
         name: '',
@@ -94,7 +77,8 @@ const Checkout = () => {
                 items: cart.items.map(item => ({
                     variant_id: item.variant.id,
                     quantity: item.quantity
-                }))
+                })),
+                coupon_code: searchParams.get('coupon') || undefined
             };
 
             const res = await ordersApi.create(orderData);
@@ -133,6 +117,24 @@ const Checkout = () => {
                         className="bg-gold-500 text-white px-10 py-4 rounded-2xl font-bold hover:bg-gold-600 transition-all shadow-lg shadow-gold-500/20"
                     >
                         العودة للرئيسية
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!cart.items || cart.items.length === 0) {
+        return (
+            <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-40 pb-20 transition-colors duration-300">
+                <div className="container mx-auto px-4 text-center max-w-lg">
+                    <ShoppingBag size={48} className="mx-auto mb-6 text-gold-300" />
+                    <h1 className="text-2xl font-black mb-4 text-text-primary dark:text-cream-50">السلة فارغة</h1>
+                    <p className="text-text-secondary dark:text-gold-400 mb-8">أضف بعض المنتجات أولاً قبل إتمام الشراء.</p>
+                    <button
+                        onClick={() => navigate('/products')}
+                        className="bg-gold-500 text-white px-10 py-4 rounded-2xl font-bold hover:bg-gold-600 transition-all shadow-lg shadow-gold-500/20"
+                    >
+                        تصفح العطور
                     </button>
                 </div>
             </div>

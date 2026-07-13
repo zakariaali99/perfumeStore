@@ -24,5 +24,6 @@ class CartItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = "عنصر في السلة"
+        verbose_name = "عنصر السلة"
         verbose_name_plural = "عناصر السلة"
+        unique_together = ('cart', 'variant')
