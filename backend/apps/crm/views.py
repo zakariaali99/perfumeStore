@@ -19,7 +19,7 @@ class CustomerTagViewSet(viewsets.ModelViewSet):
 
 
 class CustomerInteractionViewSet(viewsets.ModelViewSet):
-    queryset = CustomerInteraction.objects.select_related('customer', 'created_by')
+    queryset = CustomerInteraction.objects.select_related('customer', 'created_by').order_by('-created_at')
     serializer_class = CustomerInteractionSerializer
     permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -35,7 +35,7 @@ class CustomerProfileViewSet(viewsets.ModelViewSet):
         interactions_count=Count('interactions')
     ).select_related('user').prefetch_related(
         'tags', 'favorite_brands', 'favorite_families', 'interactions'
-    )
+    ).order_by('-created_at')
     permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['segment', 'city', 'tags']

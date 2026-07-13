@@ -47,7 +47,7 @@ const DashboardCMS = () => {
             ]);
             setSlides(slidesRes.data.results || slidesRes.data);
             setBanners(bannersRes.data.results || bannersRes.data);
-        } catch (err) {
+        } catch {
             toast.error('تعذر تحميل بيانات المحتوى');
         } finally {
             setLoading(false);
@@ -111,7 +111,7 @@ const DashboardCMS = () => {
             }
             toast.success('تم الحذف بنجاح');
             fetchCMSData();
-        } catch (err) {
+        } catch {
             toast.error('حدث خطأ أثناء الحذف');
         }
     };
@@ -149,7 +149,7 @@ const DashboardCMS = () => {
             }
             handleCloseModal();
             fetchCMSData();
-        } catch (err) {
+        } catch {
             toast.error('حدث خطأ أثناء حفظ البيانات');
         }
     };

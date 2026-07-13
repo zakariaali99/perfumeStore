@@ -52,7 +52,7 @@ const DashboardOrders = () => {
             });
             setOrders(res.data.results || res.data || []);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
-        } catch (err) {
+        } catch {
             toast.error('تعذر تحميل الطلبات');
         } finally {
             setLoading(false);
@@ -64,7 +64,7 @@ const DashboardOrders = () => {
             await ordersApi.updateStatus(orderId, { status: newStatus });
             toast.success('تم تحديث حالة الطلب');
             fetchOrders();
-        } catch (err) {
+        } catch {
             toast.error('فشل تحديث الحالة');
         }
     };

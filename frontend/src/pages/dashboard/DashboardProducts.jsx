@@ -38,7 +38,7 @@ const DashboardProducts = () => {
             });
             setProducts(res.data.results || res.data);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
-        } catch (err) {
+        } catch {
             toast.error('تعذر تحميل المنتجات');
         } finally {
             setLoading(false);
@@ -49,7 +49,7 @@ const DashboardProducts = () => {
         try {
             const res = await productsApi.getCategories();
             setCategories(res.data);
-        } catch (err) { }
+        } catch { /* ignore */ }
     };
 
     const handleDelete = async (id) => {
@@ -58,7 +58,7 @@ const DashboardProducts = () => {
             await adminProductsApi.delete(id);
             toast.success('تم حذف المنتج بنجاح');
             fetchProducts();
-        } catch (err) {
+        } catch {
             toast.error('خطأ في الحذف');
         }
     };

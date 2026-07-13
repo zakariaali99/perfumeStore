@@ -85,7 +85,7 @@ const Checkout = () => {
             setOrderSuccess(res.data);
             toast.success('تم إرسال طلبك بنجاح');
             if (clearCart) clearCart();
-        } catch (error) {
+        } catch {
             toast.error('حدث خطأ أثناء إتمام الطلب، يرجى المحاولة لاحقاً');
         } finally {
             setIsSubmitting(false);

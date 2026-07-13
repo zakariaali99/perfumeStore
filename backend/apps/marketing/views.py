@@ -1,3 +1,4 @@
+from decimal import Decimal
 from rest_framework import viewsets, permissions, status, serializers
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -44,6 +45,8 @@ class CouponViewSet(viewsets.ModelViewSet):
         discount = cart_total * (coupon.discount_value / 100) if coupon.discount_type == 'percentage' else coupon.discount_value
         if coupon.max_discount_amount and discount > coupon.max_discount_amount:
             discount = coupon.max_discount_amount
+
+        discount = discount.quantize(Decimal('0.01'))
 
         return Response({
             'valid': True,

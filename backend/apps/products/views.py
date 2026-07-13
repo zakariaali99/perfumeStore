@@ -56,7 +56,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
                     output_field=DecimalField()
                 )
             )
-        ).select_related('brand').prefetch_related('categories', 'variants').distinct()
+        ).select_related('brand').prefetch_related('categories', 'variants').distinct().order_by('-created_at')
 
     @action(detail=True, methods=['get'])
     def related(self, request, slug=None):

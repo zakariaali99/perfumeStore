@@ -27,7 +27,7 @@ const OrderTracking = () => {
         try {
             const res = await ordersApi.track(orderNumber, phone);
             setOrder(res.data);
-        } catch (err) {
+        } catch {
             setError('تعذر العثور على الطلب. يرجى التأكد من الرقم والمحاولة مرة أخرى.');
             setOrder(null);
         } finally {

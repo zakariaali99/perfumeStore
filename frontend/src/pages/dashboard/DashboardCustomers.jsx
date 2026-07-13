@@ -48,7 +48,7 @@ const DashboardCustomers = () => {
             });
             setCustomers(res.data.results || res.data);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
-        } catch (err) {
+        } catch {
             toast.error('تعذر تحميل العملاء');
         } finally {
             setLoading(false);
@@ -60,7 +60,7 @@ const DashboardCustomers = () => {
         try {
             const res = await crmApi.getProfileDetail(id);
             setCustomerDetail(res.data);
-        } catch (err) {
+        } catch {
             toast.error('تعذر تحميل تفاصيل العميل');
             setSelectedCustomer(null);
         } finally {
@@ -95,7 +95,7 @@ const DashboardCustomers = () => {
             toast.success('تم تسجيل التفاعل');
             setInteractionForm({ interaction_type: 'call', subject: '', content: '' });
             fetchCustomerDetail(selectedCustomer.id);
-        } catch (err) {
+        } catch {
             toast.error('خطأ في التسجيل');
         }
     };

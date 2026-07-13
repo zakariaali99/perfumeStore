@@ -40,7 +40,7 @@ const DashboardSettings = () => {
         try {
             const res = await cmsApi.getSettings();
             setSettings(res.data);
-        } catch (err) {
+        } catch {
             toast.error('تعذر تحميل الإعدادات');
         } finally {
             setLoading(false);
@@ -53,7 +53,7 @@ const DashboardSettings = () => {
         try {
             await cmsApi.updateSettings(settings.id, settings);
             toast.success('تم حفظ الإعدادات بنجاح');
-        } catch (err) {
+        } catch {
             toast.error('خطأ في حفظ الإعدادات');
         } finally {
             setSaving(false);

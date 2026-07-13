@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom';
-
 const StaticPage = ({ title, content }) => {
     return (
         <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-32 pb-20 transition-colors duration-300">

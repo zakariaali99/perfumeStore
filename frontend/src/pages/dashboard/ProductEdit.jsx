@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { productsApi, adminProductsApi } from '../../services/api';
 import {
     Save,
-    X,
     Plus,
     Trash2,
     Image as ImageIcon,
@@ -54,7 +53,7 @@ const ProductEdit = () => {
             ]);
             setCategories(catRes.data);
             setBrands(brandRes.data);
-        } catch (err) { }
+        } catch { /* ignore */ }
     };
 
     const fetchProduct = async () => {
@@ -80,7 +79,7 @@ const ProductEdit = () => {
             if (data.main_image) {
                 setImagePreview(data.main_image);
             }
-        } catch (err) {
+        } catch {
             toast.error('تعذر تحميل بيانات المنتج');
         }
     };

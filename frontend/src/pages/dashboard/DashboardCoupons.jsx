@@ -41,7 +41,7 @@ const DashboardCoupons = () => {
         try {
             const res = await marketingApi.list();
             setCoupons(res.data.results || res.data || []);
-        } catch (err) {
+        } catch {
             toast.error('تعذر تحميل الكوبونات');
         } finally {
             setLoading(false);
@@ -93,7 +93,7 @@ const DashboardCoupons = () => {
             await marketingApi.delete(code);
             toast.success('تم الحذف بنجاح');
             fetchCoupons();
-        } catch (err) {
+        } catch {
             toast.error('حدث خطأ أثناء الحذف');
         }
     };
@@ -111,6 +111,7 @@ const DashboardCoupons = () => {
             handleCloseModal();
             fetchCoupons();
         } catch (err) {
+            console.error(err);
             toast.error(err.response?.data?.code?.[0] || 'حدث خطأ أثناء الحفظ');
         }
     };

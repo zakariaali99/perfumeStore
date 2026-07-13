@@ -3,7 +3,7 @@ import useCartStore from '../../store/cartStore';
 import { Link } from 'react-router-dom';
 
 const CartDrawer = ({ isOpen, onClose }) => {
-    const { cart, updateItem, removeItem, loading } = useCartStore();
+    const { cart, updateItem, removeItem } = useCartStore();
 
     if (!isOpen) return null;
 

@@ -41,7 +41,7 @@ api.interceptors.response.use(
                     localStorage.setItem('access_token', res.data.access);
                     api.defaults.headers.common.Authorization = `Bearer ${res.data.access}`;
                     return api(originalRequest);
-                } catch (refreshError) {
+                } catch {
                     localStorage.removeItem('access_token');
                     localStorage.removeItem('refresh_token');
                     // Only redirect to login for dashboard-related requests

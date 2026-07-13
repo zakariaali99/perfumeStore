@@ -10,6 +10,9 @@ class CustomerTagSerializer(serializers.ModelSerializer):
 
 class CustomerInteractionSerializer(serializers.ModelSerializer):
     created_by_name = serializers.SerializerMethodField()
+    customer = serializers.PrimaryKeyRelatedField(
+        queryset=CustomerProfile.objects.all(), required=False
+    )
 
     class Meta:
         model = CustomerInteraction

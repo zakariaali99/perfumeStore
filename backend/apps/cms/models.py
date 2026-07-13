@@ -46,6 +46,7 @@ class Banner(models.Model):
     class Meta:
         verbose_name = "بانر"
         verbose_name_plural = "البانرات"
+        ordering = ['id']
 
     def __str__(self):
         return self.title

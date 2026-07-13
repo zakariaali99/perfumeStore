@@ -45,7 +45,7 @@ const Cart = () => {
             } else {
                 toast.error(res.data.message || 'كوبون غير صالح');
             }
-        } catch (error) {
+        } catch {
             toast.error('خطأ في التحقق من الكوبون');
         } finally {
             setIsValidatingCoupon(false);

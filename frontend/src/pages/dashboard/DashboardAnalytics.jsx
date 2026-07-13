@@ -46,7 +46,7 @@ const DashboardAnalytics = () => {
         try {
             const res = await analyticsApi.getStats({ range: timeRange });
             setData(res.data);
-        } catch (err) {
+        } catch {
             toast.error('تعذر تحميل البيانات التحليلية');
         } finally {
             setLoading(false);
