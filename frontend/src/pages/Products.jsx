@@ -52,7 +52,7 @@ const FilterSection = ({ filters, categories, brands, handleFilterChange }) => (
 );
 
 const Products = () => {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
@@ -87,7 +87,14 @@ const Products = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const res = await productsApi.getAll(filters);
+                const apiParams = {
+                    search: filters.search,
+                    ordering: filters.ordering,
+                };
+                if (filters.categories) apiParams.categories__slug = filters.categories;
+                if (filters.brand) apiParams.brand__slug = filters.brand;
+                
+                const res = await productsApi.getAll(apiParams);
                 setProducts(res.data.results || res.data);
             } catch (error) {
                 console.error("Error fetching products", error);
@@ -100,6 +107,20 @@ const Products = () => {
 
     const handleFilterChange = (key, value) => {
         setFilters(prev => ({ ...prev, [key]: value }));
+        
+        // Update URL to reflect new category/brand
+        if (key === 'categories' || key === 'brand') {
+            const newParams = new URLSearchParams(searchParams);
+            if (value) {
+                // Map 'categories' internal key to 'category' in URL for consistency with other parts of the app
+                const urlKey = key === 'categories' ? 'category' : key;
+                newParams.set(urlKey, value);
+            } else {
+                const urlKey = key === 'categories' ? 'category' : key;
+                newParams.delete(urlKey);
+            }
+            setSearchParams(newParams);
+        }
     };
 
     return (
