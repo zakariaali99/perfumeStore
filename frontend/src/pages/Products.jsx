@@ -1,10 +1,58 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { productsApi } from '../services/api';
 import ProductCard from '../components/products/ProductCard';
 import { Filter, ChevronDown, X, SlidersHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const FilterSection = ({ filters, categories, brands, handleFilterChange }) => (
+    <div className="space-y-8">
+        <div>
+            <h3 className="text-lg font-bold mb-4 border-b border-gold-100 dark:border-dark-600 pb-2 text-text-primary dark:text-cream-50">التصنيفات</h3>
+            <div className="space-y-2">
+                <button
+                    onClick={() => handleFilterChange('categories', '')}
+                    className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.categories === '' ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
+                >
+                    الكل
+                </button>
+                {Array.isArray(categories) && categories.map(cat => (
+                    <button
+                        key={cat.id}
+                        onClick={() => handleFilterChange('categories', cat.slug)}
+                        className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.categories === cat.slug ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
+                    >
+                        {cat.name_ar}
+                    </button>
+                ))}
+            </div>
+        </div>
+
+        <div>
+            <h3 className="text-lg font-bold mb-4 border-b border-gold-100 dark:border-dark-600 pb-2 text-text-primary dark:text-cream-50">الماركات</h3>
+            <div className="space-y-2">
+                <button
+                    onClick={() => handleFilterChange('brand', '')}
+                    className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.brand === '' ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
+                >
+                    الكل
+                </button>
+                {Array.isArray(brands) && brands.map(brand => (
+                    <button
+                        key={brand.id}
+                        onClick={() => handleFilterChange('brand', brand.slug)}
+                        className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.brand === brand.slug ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
+                    >
+                        {brand.name_ar}
+                    </button>
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
 const Products = () => {
+    const [searchParams] = useSearchParams();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
@@ -13,8 +61,8 @@ const Products = () => {
 
     // Filters state
     const [filters, setFilters] = useState({
-        category: '',
-        brand: '',
+        categories: searchParams.get('category') || '',
+        brand: searchParams.get('brand') || '',
         search: '',
         ordering: '-created_at'
     });
@@ -54,52 +102,6 @@ const Products = () => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
 
-    const FilterSection = () => (
-        <div className="space-y-8">
-            <div>
-                <h3 className="text-lg font-bold mb-4 border-b border-gold-100 dark:border-dark-600 pb-2 text-text-primary dark:text-cream-50">التصنيفات</h3>
-                <div className="space-y-2">
-                    <button
-                        onClick={() => handleFilterChange('category', '')}
-                        className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.category === '' ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
-                    >
-                        الكل
-                    </button>
-                    {Array.isArray(categories) && categories.map(cat => (
-                        <button
-                            key={cat.id}
-                            onClick={() => handleFilterChange('category', cat.slug)}
-                            className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.category === cat.slug ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
-                        >
-                            {cat.name_ar}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            <div>
-                <h3 className="text-lg font-bold mb-4 border-b border-gold-100 dark:border-dark-600 pb-2 text-text-primary dark:text-cream-50">الماركات</h3>
-                <div className="space-y-2">
-                    <button
-                        onClick={() => handleFilterChange('brand', '')}
-                        className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.brand === '' ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
-                    >
-                        الكل
-                    </button>
-                    {Array.isArray(brands) && brands.map(brand => (
-                        <button
-                            key={brand.id}
-                            onClick={() => handleFilterChange('brand', brand.slug)}
-                            className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.brand === brand.slug ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
-                        >
-                            {brand.name_ar}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-
     return (
         <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-24 pb-20 transition-colors duration-300">
             <div className="container mx-auto px-4">
@@ -108,7 +110,12 @@ const Products = () => {
                     {/* PC Sidebar */}
                     <aside className="hidden md:block w-64 flex-shrink-0">
                         <div className="bg-white dark:bg-dark-700 p-6 rounded-2xl border border-gold-100/50 dark:border-dark-600 sticky top-28 shadow-sm">
-                            <FilterSection />
+                            <FilterSection
+                                filters={filters}
+                                categories={categories}
+                                brands={brands}
+                                handleFilterChange={handleFilterChange}
+                            />
                         </div>
                     </aside>
 
@@ -186,7 +193,7 @@ const Products = () => {
                                 <h3 className="text-xl font-bold text-text-primary dark:text-cream-50 mb-2">لا توجد منتجات</h3>
                                 <p className="text-text-secondary dark:text-gold-400">حاول تغيير فلاتر البحث للعثور على ما تبحث عنه</p>
                                 <button
-                                    onClick={() => setFilters({ category: '', brand: '', search: '', ordering: '-created_at' })}
+                                    onClick={() => setFilters({ categories: '', brand: '', search: '', ordering: '-created_at' })}
                                     className="mt-6 text-gold-600 dark:text-gold-400 font-bold hover:underline"
                                 >
                                     إعادة ضبط الفلاتر
@@ -221,7 +228,12 @@ const Products = () => {
                                     <X size={24} />
                                 </button>
                             </div>
-                            <FilterSection />
+                            <FilterSection
+                                filters={filters}
+                                categories={categories}
+                                brands={brands}
+                                handleFilterChange={handleFilterChange}
+                            />
                             <button
                                 onClick={() => setShowMobileFilters(false)}
                                 className="w-full mt-10 py-4 bg-gold-500 text-white rounded-xl font-bold shadow-lg shadow-gold-500/20"

@@ -18,7 +18,6 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
 
 # Allowed hosts should already be set in base.py via env, but ensure no localhost wildcard in prod
 if not DEBUG and 'localhost' in ALLOWED_HOSTS:

@@ -65,7 +65,11 @@ const DashboardProducts = () => {
 
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
-            setCurrentPage(1);
+            if (currentPage !== 1) {
+                setCurrentPage(1);
+            } else {
+                fetchProducts();
+            }
         }, 500);
         return () => clearTimeout(delayDebounce);
     }, [searchTerm, filterCategory]);

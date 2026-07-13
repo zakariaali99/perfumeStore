@@ -280,7 +280,7 @@ const DashboardBrands = () => {
                                                 <img src={imagePreview} alt="Preview" className="w-full h-full object-contain bg-cream-50 dark:bg-dark-700" />
                                                 <button
                                                     type="button"
-                                                    onClick={() => { setImagePreview(null); setFormData({ ...formData, image: null }) }}
+                                                    onClick={() => { setImagePreview(null); setFormData({ ...formData, logo: null }) }}
                                                     className="absolute top-2 right-2 w-8 h-8 bg-white text-rose-600 rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg"
                                                 >
                                                     <Trash2 size={16} />

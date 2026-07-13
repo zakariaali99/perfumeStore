@@ -4,13 +4,11 @@ import { productsApi, adminProductsApi } from '../../services/api';
 import {
     Save,
     X,
-    Upload,
     Plus,
     Trash2,
     Image as ImageIcon,
     LayoutGrid,
     Type,
-    Tag,
     Briefcase,
     ChevronRight
 } from 'lucide-react';
@@ -386,6 +384,16 @@ const ProductEdit = () => {
                                     type="checkbox"
                                     name="is_new"
                                     checked={formData.is_new}
+                                    onChange={handleChange}
+                                    className="w-5 h-5 accent-gold-500"
+                                />
+                            </label>
+                            <label className="flex items-center justify-between p-4 bg-cream-50 rounded-2xl cursor-pointer">
+                                <span className="text-sm font-bold">الأكثر مبيعاً (Bestseller)</span>
+                                <input
+                                    type="checkbox"
+                                    name="is_bestseller"
+                                    checked={formData.is_bestseller}
                                     onChange={handleChange}
                                     className="w-5 h-5 accent-gold-500"
                                 />

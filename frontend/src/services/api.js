@@ -142,7 +142,7 @@ export const adminBrandsApi = {
 };
 
 export const analyticsApi = {
-    getStats: () => api.get('analytics/stats/'),
+    getStats: (params) => api.get('analytics/stats/', { params }),
     getInventory: () => api.get('analytics/inventory/'),
 };
 

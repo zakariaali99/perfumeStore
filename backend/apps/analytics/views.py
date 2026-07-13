@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db.models import Sum, Count, F
 from django.db.models.functions import TruncMonth
 from rest_framework import permissions
@@ -22,17 +23,17 @@ class DashboardStatsView(APIView):
         last_month_end = this_month_start - timedelta(seconds=1)
 
         # Core Stats (Total)
-        total_revenue = Order.objects.filter(status='delivered').aggregate(Sum('total'))['total__sum'] or 0
+        total_revenue = Order.objects.filter(status='delivered').aggregate(Sum('total'))['total__sum'] or Decimal('0.00')
         total_orders = Order.objects.count()
         total_products = Product.objects.count()
         total_customers = CustomerProfile.objects.count()
 
         # Current Month Stats
-        cur_month_rev = Order.objects.filter(status='delivered', created_at__gte=this_month_start).aggregate(Sum('total'))['total__sum'] or 0
+        cur_month_rev = Order.objects.filter(status='delivered', created_at__gte=this_month_start).aggregate(Sum('total'))['total__sum'] or Decimal('0.00')
         cur_month_orders = Order.objects.filter(created_at__gte=this_month_start).count()
 
         # Last Month Stats (for trend)
-        prev_month_rev = Order.objects.filter(status='delivered', created_at__gte=last_month_start, created_at__lte=last_month_end).aggregate(Sum('total'))['total__sum'] or 0
+        prev_month_rev = Order.objects.filter(status='delivered', created_at__gte=last_month_start, created_at__lte=last_month_end).aggregate(Sum('total'))['total__sum'] or Decimal('0.00')
 
         rev_trend = 0
         if prev_month_rev > 0:

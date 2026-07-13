@@ -10,7 +10,7 @@ def order_create_notification(sender, instance, created, **kwargs):
     if created:
         # Send confirmation email to customer
         if instance.customer_email:
-            subject = f'تأكيد طلبك رق {instance.order_number} - متجر المصطفى'
+            subject = f'تأكيد طلبك رقم {instance.order_number} - متجر المصطفى'
             message = f'شكراً لك {instance.customer_name}. تم استلام طلبك وهو الآن قيد المراجعة.'
             
             # In a real app, use render_to_string with an HTML template

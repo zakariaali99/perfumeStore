@@ -1,5 +1,5 @@
 from django.db.models import Min, Case, When, F, DecimalField
-from rest_framework import viewsets, filters, permissions, status
+from rest_framework import viewsets, filters, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
@@ -37,8 +37,8 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = []
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = {
-        'categories': ['exact'],
-        'brand': ['exact'],
+        'categories__slug': ['exact'],
+        'brand__slug': ['exact'],
         'gender': ['exact'],
         'is_featured': ['exact'],
         'is_new': ['exact'],
@@ -80,7 +80,16 @@ class AdminProductViewSet(viewsets.ModelViewSet):
         'categories', 'fragrance_families', 'variants', 'notes', 'images'
     )
     permission_classes = [permissions.IsAdminUser]
-    lookup_field = 'slug'
+    lookup_field = 'id'
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = {
+        'categories': ['exact'],
+        'brand': ['exact'],
+        'gender': ['exact'],
+        'is_active': ['exact'],
+    }
+    search_fields = ['name_ar', 'slug', 'description']
+    ordering_fields = ['created_at', 'sales_count', 'view_count']
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:

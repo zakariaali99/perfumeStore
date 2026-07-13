@@ -104,8 +104,9 @@ class CartViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        cart = self.get_cart()
         try:
-            item = CartItem.objects.select_related('variant').get(id=item_id, cart=self.get_cart())
+            item = CartItem.objects.select_related('variant').get(id=item_id, cart=cart)
             if quantity > item.variant.stock_quantity:
                 return Response(
                     {'error': f'Insufficient stock for {item.variant.product.name_ar}'},
@@ -116,7 +117,7 @@ class CartViewSet(viewsets.ModelViewSet):
         except CartItem.DoesNotExist:
             return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response(self.get_serializer(self.get_cart()).data)
+        return Response(self.get_serializer(cart).data)
 
     @action(detail=False, methods=['delete'])
     def remove_item(self, request):

@@ -70,7 +70,11 @@ const DashboardCustomers = () => {
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            setCurrentPage(1);
+            if (currentPage !== 1) {
+                setCurrentPage(1);
+            } else {
+                fetchCustomers();
+            }
         }, 500);
         return () => clearTimeout(timeoutId);
     }, [searchTerm, filterSegment]);

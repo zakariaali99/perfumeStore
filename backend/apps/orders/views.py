@@ -1,7 +1,7 @@
 import datetime
 import random
 from decimal import Decimal
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.db.models import F
 from django.utils import timezone
 from rest_framework import viewsets, status, permissions
@@ -128,10 +128,6 @@ class OrderViewSet(viewsets.ModelViewSet):
                 'total_price': item_total,
             })
 
-            variant.stock_quantity = F('stock_quantity') - qty
-            variant.save()
-            variant.refresh_from_db()
-
         # Coupon & totals
         coupon, discount_amount = self._apply_coupon(data.get('coupon_code', ''), subtotal)
         shipping_cost = self._get_shipping_cost()
@@ -164,7 +160,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                     notes=data.get('notes', '')
                 )
                 break
-            except Exception:
+            except IntegrityError:
                 continue
 
         if order is None:
@@ -173,7 +169,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        # Create order items
+        # Create order items and decrement stock atomically
         for item in order_items:
             OrderItem.objects.create(
                 order=order,
@@ -183,6 +179,9 @@ class OrderViewSet(viewsets.ModelViewSet):
                 quantity=item['quantity'],
                 unit_price=item['unit_price'],
                 total_price=item['total_price']
+            )
+            ProductVariant.objects.filter(id=item['variant'].id).update(
+                stock_quantity=F('stock_quantity') - item['quantity']
             )
 
         # Increment coupon usage

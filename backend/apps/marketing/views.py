@@ -16,9 +16,6 @@ class CouponViewSet(viewsets.ModelViewSet):
     lookup_field = 'code'
 
     def get_permissions(self):
-        if self.action == 'validate' or (self.request.method == 'POST' and self.action == 'create'):
-            # validate is public; create should be admin only
-            pass
         if self.action == 'validate':
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]

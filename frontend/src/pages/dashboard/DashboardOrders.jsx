@@ -71,7 +71,11 @@ const DashboardOrders = () => {
 
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
-            setCurrentPage(1);
+            if (currentPage !== 1) {
+                setCurrentPage(1);
+            } else {
+                fetchOrders();
+            }
         }, 500);
         return () => clearTimeout(delayDebounce);
     }, [searchTerm, filterStatus]);

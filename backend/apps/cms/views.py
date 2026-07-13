@@ -40,6 +40,7 @@ class BannerViewSet(viewsets.ModelViewSet):
 class StoreSettingsViewSet(viewsets.ModelViewSet):
     queryset = StoreSettings.objects.all()
     serializer_class = StoreSettingsSerializer
+    http_method_names = ['get', 'post', 'patch']
 
     def get_permissions(self):
         if self.request.method == 'GET':
