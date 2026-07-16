@@ -40,6 +40,7 @@ const DashboardBrands = () => {
             setFormData({
                 name_ar: brand.name_ar,
                 slug: brand.slug,
+                logo: brand.logo,
                 description: brand.description || '',
                 is_active: brand.is_active
             });

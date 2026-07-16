@@ -23,7 +23,6 @@ const ProductEdit = () => {
 
     const [formData, setFormData] = useState({
         name_ar: '',
-        name_en: '',
         slug: '',
         description: '',
         story: '',
@@ -51,8 +50,8 @@ const ProductEdit = () => {
                 productsApi.getCategories(),
                 productsApi.getBrands()
             ]);
-            setCategories(catRes.data);
-            setBrands(brandRes.data);
+            setCategories(catRes.data.results || catRes.data);
+            setBrands(brandRes.data.results || brandRes.data);
         } catch { /* ignore */ }
     };
 
@@ -62,7 +61,6 @@ const ProductEdit = () => {
             const data = res.data;
             setFormData({
                 name_ar: data.name_ar || '',
-                name_en: data.name_en || '',
                 slug: data.slug || '',
                 description: data.description || '',
                 story: data.story || '',
@@ -107,7 +105,7 @@ const ProductEdit = () => {
         try {
             const data = new FormData();
             const fields = [
-                'name_ar', 'name_en', 'slug', 'description', 'story',
+                'name_ar', 'slug', 'description', 'story',
                 'brand', 'gender', 'occasion', 'vibe',
                 'is_active', 'is_featured', 'is_new', 'is_bestseller'
             ];
@@ -198,16 +196,7 @@ const ProductEdit = () => {
                                     required
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">اسم العطر (English)</label>
-                                <input
-                                    name="name_en"
-                                    value={formData.name_en}
-                                    onChange={handleChange}
-                                    className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-bold font-poppins"
-                                    dir="ltr"
-                                />
-                            </div>
+
                             <div className="space-y-2 col-span-1 md:col-span-2">
                                 <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">رابط المنتج (Slug)</label>
                                 <input

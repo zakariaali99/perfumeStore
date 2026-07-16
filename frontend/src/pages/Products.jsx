@@ -74,8 +74,8 @@ const Products = () => {
                     productsApi.getCategories(),
                     productsApi.getBrands()
                 ]);
-                setCategories(catsRes.data);
-                setBrands(brandsRes.data);
+                setCategories(catsRes.data.results || catsRes.data);
+                setBrands(brandsRes.data.results || brandsRes.data);
             } catch (error) {
                 console.error("Error fetching filters", error);
             }

@@ -48,7 +48,7 @@ const DashboardProducts = () => {
     const fetchCategories = async () => {
         try {
             const res = await productsApi.getCategories();
-            setCategories(res.data);
+            setCategories(res.data.results || res.data);
         } catch { /* ignore */ }
     };
 
