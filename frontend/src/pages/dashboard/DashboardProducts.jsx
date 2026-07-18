@@ -37,8 +37,10 @@ const DashboardProducts = () => {
             const res = await adminProductsApi.getAll(params);
             setProducts(res.data.results || res.data);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
-        } catch {
-            toast.error('تعذر تحميل المنتجات');
+        } catch (err) {
+            if (err.response?.status !== 401) {
+                toast.error('تعذر تحميل المنتجات');
+            }
         } finally {
             setLoading(false);
         }

@@ -20,4 +20,5 @@ dist/
 *.swp
 
 # DB
-*.sqlite3   
+*.sqlite3
+backend/db.sqlite3
