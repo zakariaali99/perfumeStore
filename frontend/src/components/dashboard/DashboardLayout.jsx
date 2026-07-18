@@ -8,6 +8,7 @@ import {
     Image,
     Ticket,
     Settings,
+    HardDrive,
     Menu,
     X,
     LogOut,
@@ -50,6 +51,7 @@ const DashboardLayout = () => {
         { to: '/dashboard/cms', icon: Image, label: 'المحتوى (CMS)' },
         { to: '/dashboard/coupons', icon: Ticket, label: 'الكوبونات' },
         { to: '/dashboard/settings', icon: Settings, label: 'الإعدادات' },
+        { to: '/dashboard/backup', icon: HardDrive, label: 'النسخ الاحتياطي' },
     ];
 
     const handleLogout = () => {

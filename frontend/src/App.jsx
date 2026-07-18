@@ -17,6 +17,7 @@ import DashboardCustomers from './pages/dashboard/DashboardCustomers';
 import DashboardCMS from './pages/dashboard/DashboardCMS';
 import DashboardCoupons from './pages/dashboard/DashboardCoupons';
 import DashboardSettings from './pages/dashboard/DashboardSettings';
+import DashboardBackup from './pages/dashboard/DashboardBackup';
 import DashboardAnalytics from './pages/dashboard/DashboardAnalytics';
 import DashboardLogin from './pages/dashboard/DashboardLogin';
 import DashboardBrands from './pages/dashboard/DashboardBrands';
@@ -109,6 +110,7 @@ function App() {
                                 <Route path="cms" element={<DashboardCMS />} />
                                 <Route path="coupons" element={<DashboardCoupons />} />
                                 <Route path="settings" element={<DashboardSettings />} />
+                                <Route path="backup" element={<DashboardBackup />} />
                             </Route>
                         </Route>
                     </Routes>

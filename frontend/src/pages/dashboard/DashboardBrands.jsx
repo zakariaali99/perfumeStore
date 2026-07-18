@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, X, Upload, Check, Search } from 'lucide-react';
 import { adminBrandsApi } from '../../services/api';
 import { toast } from 'react-hot-toast';
+import Pagination from '../../components/common/Pagination';
 
 const DashboardBrands = () => {
     const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [currentBrand, setCurrentBrand] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -19,13 +22,17 @@ const DashboardBrands = () => {
     const [imagePreview, setImagePreview] = useState(null);
 
     useEffect(() => {
-        fetchBrands();
+        fetchBrands(1);
     }, []);
 
-    const fetchBrands = async () => {
+    const fetchBrands = async (page = 1, search = '') => {
         try {
-            const res = await adminBrandsApi.getAll();
+            const params = { page, page_size: 20 };
+            if (search) params.search = search;
+            const res = await adminBrandsApi.getAll(params);
             setBrands(res.data.results || res.data || []);
+            setTotalPages(Math.ceil((res.data.count || 0) / 20));
+            setCurrentPage(page);
         } catch (err) {
             console.error(err);
             toast.error('فشل في جلب الماركات');
@@ -89,7 +96,7 @@ const DashboardBrands = () => {
                 await adminBrandsApi.create(data);
                 toast.success('تم إنشاء الماركة بنجاح');
             }
-            fetchBrands();
+            fetchBrands(currentPage, searchTerm);
             handleCloseModal();
         } catch (err) {
             console.error(err);
@@ -102,17 +109,20 @@ const DashboardBrands = () => {
             try {
                 await adminBrandsApi.delete(id);
                 toast.success('تم حذف الماركة');
-                fetchBrands();
+                fetchBrands(currentPage, searchTerm);
             } catch {
                 toast.error('فشل في حذف الماركة');
             }
         }
     };
 
-    const filteredBrands = brands.filter(b =>
-        b.name_ar.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        b.slug.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            setCurrentPage(1);
+            fetchBrands(1, searchTerm);
+        }, 500);
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm]);
 
     if (loading) return (
         <div className="flex justify-center items-center h-64">
@@ -163,14 +173,14 @@ const DashboardBrands = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gold-50 dark:divide-dark-600">
-                            {filteredBrands.length === 0 ? (
+                            {brands.length === 0 ? (
                                 <tr>
                                     <td colSpan="5" className="px-8 py-12 text-center text-text-muted dark:text-gold-400">
                                         لا توجد ماركات حالياً
                                     </td>
                                 </tr>
                             ) : (
-                                filteredBrands.map((brand) => (
+                                brands.map((brand) => (
                                     <tr key={brand.id} className="hover:bg-gold-50/20 dark:hover:bg-dark-600 transition-colors">
                                         <td className="px-4 md:px-8 py-5">
                                             <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl overflow-hidden border border-gold-100 dark:border-dark-600 bg-white dark:bg-dark-800 p-1 md:p-2 flex items-center justify-center">
@@ -214,6 +224,15 @@ const DashboardBrands = () => {
                     </table>
                 </div>
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(p) => {
+                    setCurrentPage(p);
+                    fetchBrands(p, searchTerm);
+                }}
+            />
 
             {/* Modal */}
             {showModal && (

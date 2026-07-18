@@ -28,7 +28,8 @@ api.interceptors.response.use(
             requestUrl.includes('analytics/') ||
             requestUrl.includes('cms/') ||
             requestUrl.includes('crm/') ||
-            requestUrl.includes('admin/');
+            requestUrl.includes('admin/') ||
+            requestUrl.includes('backups/');
 
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
@@ -44,16 +45,15 @@ api.interceptors.response.use(
                 } catch {
                     localStorage.removeItem('access_token');
                     localStorage.removeItem('refresh_token');
-                    // Only redirect to login for dashboard-related requests
                     if (isDashboardRequest) {
                         window.location.href = '/dashboard/login';
+                        return new Promise(() => {});
                     }
                 }
             } else {
-                // Only redirect to login for dashboard-related requests
-                // For storefront requests (cart, orders, etc.), just let the error propagate
                 if (isDashboardRequest) {
                     window.location.href = '/dashboard/login';
+                    return new Promise(() => {});
                 }
             }
         }
@@ -128,14 +128,14 @@ export const adminProductsApi = {
 };
 
 export const adminCategoriesApi = {
-    getAll: () => api.get('products/admin/categories/'),
+    getAll: (params) => api.get('products/admin/categories/', { params }),
     create: (data) => api.post('products/admin/categories/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     update: (id, data) => api.patch(`products/admin/categories/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     delete: (id) => api.delete(`products/admin/categories/${id}/`),
 };
 
 export const adminBrandsApi = {
-    getAll: () => api.get('products/admin/brands/'),
+    getAll: (params) => api.get('products/admin/brands/', { params }),
     create: (data) => api.post('products/admin/brands/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     update: (id, data) => api.patch(`products/admin/brands/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     delete: (id) => api.delete(`products/admin/brands/${id}/`),
@@ -144,6 +144,21 @@ export const adminBrandsApi = {
 export const analyticsApi = {
     getStats: (params) => api.get('analytics/stats/', { params }),
     getInventory: () => api.get('analytics/inventory/'),
+};
+
+export const backupsApi = {
+    list: () => api.get('backups/'),
+    create: () => api.post('backups/'),
+    delete: (id) => api.delete(`backups/${id}/`),
+    download: (id) => api.get(`backups/${id}/download/`, { responseType: 'blob' }),
+    restore: (id) => api.post(`backups/${id}/restore/`),
+    restoreFromUpload: (file) => {
+        const formData = new FormData();
+        formData.append('backup_file', file);
+        return api.post('backups/restore-upload/', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+    },
 };
 
 export default api;

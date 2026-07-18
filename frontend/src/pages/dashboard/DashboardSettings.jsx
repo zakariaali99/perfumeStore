@@ -12,8 +12,10 @@ import {
     Truck,
     Settings,
     ShieldCheck,
-    Bell
+    Bell,
+    HardDrive,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const DashboardSettings = () => {
@@ -258,6 +260,24 @@ const DashboardSettings = () => {
                     </div>
                 </div>
             </form>
+
+            {/* Backup Card */}
+            <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                <h3 className="text-xl font-black mb-2 flex items-center gap-3 text-text-primary dark:text-cream-50">
+                    <HardDrive size={22} className="text-gold-500" />
+                    النسخ الاحتياطي
+                </h3>
+                <p className="text-sm text-text-secondary dark:text-gold-400 mb-6">
+                    يمكنك إنشاء نسخة احتياطية كاملة من النظام (قاعدة البيانات + الملفات) واستعادتها في أي وقت.
+                </p>
+                <Link
+                    to="/dashboard/backup"
+                    className="inline-flex bg-gold-600 text-white px-6 py-3.5 rounded-2xl font-bold items-center gap-2 hover:bg-gold-700 transition-all shadow-lg shadow-gold-600/20"
+                >
+                    <HardDrive size={20} />
+                    إدارة النسخ الاحتياطية
+                </Link>
+            </div>
         </div>
     );
 };

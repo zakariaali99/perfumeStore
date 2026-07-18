@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { productsApi } from '../services/api';
 import ProductCard from '../components/products/ProductCard';
+import Pagination from '../components/common/Pagination';
 import { Filter, ChevronDown, X, SlidersHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -58,6 +59,8 @@ const Products = () => {
     const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     // Filters state
     const [filters, setFilters] = useState({
@@ -90,12 +93,15 @@ const Products = () => {
                 const apiParams = {
                     search: filters.search,
                     ordering: filters.ordering,
+                    page: currentPage,
+                    page_size: 12,
                 };
                 if (filters.categories) apiParams.categories__slug = filters.categories;
                 if (filters.brand) apiParams.brand__slug = filters.brand;
                 
                 const res = await productsApi.getAll(apiParams);
                 setProducts(res.data.results || res.data);
+                setTotalPages(Math.ceil((res.data.count || res.data.length) / 12));
             } catch (error) {
                 console.error("Error fetching products", error);
             } finally {
@@ -103,9 +109,10 @@ const Products = () => {
             }
         };
         fetchProducts();
-    }, [filters]);
+    }, [filters, currentPage]);
 
     const handleFilterChange = (key, value) => {
+        setCurrentPage(1);
         setFilters(prev => ({ ...prev, [key]: value }));
         
         // Update URL to reflect new category/brand
@@ -214,13 +221,25 @@ const Products = () => {
                                 <h3 className="text-xl font-bold text-text-primary dark:text-cream-50 mb-2">لا توجد منتجات</h3>
                                 <p className="text-text-secondary dark:text-gold-400">حاول تغيير فلاتر البحث للعثور على ما تبحث عنه</p>
                                 <button
-                                    onClick={() => setFilters({ categories: '', brand: '', search: '', ordering: '-created_at' })}
+                                    onClick={() => {
+                                        setCurrentPage(1);
+                                        setFilters({ categories: '', brand: '', search: '', ordering: '-created_at' });
+                                    }}
                                     className="mt-6 text-gold-600 dark:text-gold-400 font-bold hover:underline"
                                 >
                                     إعادة ضبط الفلاتر
                                 </button>
                             </div>
                         )}
+
+                        {/* Pagination */}
+                        <div className="mt-8">
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setCurrentPage}
+                            />
+                        </div>
                     </main>
                 </div>
             </div>

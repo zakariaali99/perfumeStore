@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, X, Upload } from 'lucide-react';
 import { adminCategoriesApi } from '../../services/api';
 import { toast } from 'react-hot-toast';
+import Pagination from '../../components/common/Pagination';
 
 const DashboardCategories = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [currentCategory, setCurrentCategory] = useState(null);
     const [formData, setFormData] = useState({
@@ -19,13 +22,15 @@ const DashboardCategories = () => {
     const [imagePreview, setImagePreview] = useState(null);
 
     useEffect(() => {
-        fetchCategories();
+        fetchCategories(1);
     }, []);
 
-    const fetchCategories = async () => {
+    const fetchCategories = async (page = 1) => {
         try {
-            const res = await adminCategoriesApi.getAll();
+            const res = await adminCategoriesApi.getAll({ page, page_size: 20 });
             setCategories(res.data.results || res.data || []);
+            setTotalPages(Math.ceil((res.data.count || 0) / 20));
+            setCurrentPage(page);
         } catch (err) {
             console.error(err);
             toast.error('فشل في جلب الفئات');
@@ -90,7 +95,7 @@ const DashboardCategories = () => {
                 await adminCategoriesApi.create(data);
                 toast.success('تم إنشاء الفئة بنجاح');
             }
-            fetchCategories();
+            fetchCategories(currentPage);
             handleCloseModal();
         } catch (err) {
             console.error(err);
@@ -103,7 +108,7 @@ const DashboardCategories = () => {
             try {
                 await adminCategoriesApi.delete(id);
                 toast.success('تم حذف الفئة');
-                fetchCategories();
+                fetchCategories(currentPage);
             } catch {
                 toast.error('فشل في حذف الفئة');
             }
@@ -179,6 +184,15 @@ const DashboardCategories = () => {
                     </table>
                 </div>
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(p) => {
+                    setCurrentPage(p);
+                    fetchCategories(p);
+                }}
+            />
 
             {/* Modal */}
             {showModal && (

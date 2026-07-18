@@ -14,6 +14,7 @@ urlpatterns = [
     path("api/cms/", include("cms.urls")),
     path("api/marketing/", include("marketing.urls")),
     path("api/recommendations/", include("recommendations.urls")),
+    path("api/backups/", include("backups.urls")),
 ]
 
 if settings.DEBUG:

@@ -15,10 +15,13 @@ import {
     Banknote
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import Pagination from '../../components/common/Pagination';
 
 const DashboardCoupons = () => {
     const [coupons, setCoupons] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [formData, setFormData] = useState({
@@ -33,14 +36,16 @@ const DashboardCoupons = () => {
     });
 
     useEffect(() => {
-        fetchCoupons();
+        fetchCoupons(1);
     }, []);
 
-    const fetchCoupons = async () => {
+    const fetchCoupons = async (page = 1) => {
         setLoading(true);
         try {
-            const res = await marketingApi.list();
+            const res = await marketingApi.list({ page, page_size: 12 });
             setCoupons(res.data.results || res.data || []);
+            setTotalPages(Math.ceil((res.data.count || 0) / 12));
+            setCurrentPage(page);
         } catch {
             toast.error('تعذر تحميل الكوبونات');
         } finally {
@@ -92,7 +97,8 @@ const DashboardCoupons = () => {
         try {
             await marketingApi.delete(code);
             toast.success('تم الحذف بنجاح');
-            fetchCoupons();
+            setCurrentPage(1);
+            fetchCoupons(1);
         } catch {
             toast.error('حدث خطأ أثناء الحذف');
         }
@@ -104,12 +110,15 @@ const DashboardCoupons = () => {
             if (editingItem) {
                 await marketingApi.update(editingItem.code, formData);
                 toast.success('تم التحديث بنجاح');
+                handleCloseModal();
+                fetchCoupons(currentPage);
             } else {
                 await marketingApi.create(formData);
                 toast.success('تم إنشاء الكوبون بنجاح');
+                handleCloseModal();
+                setCurrentPage(1);
+                fetchCoupons(1);
             }
-            handleCloseModal();
-            fetchCoupons();
         } catch (err) {
             console.error(err);
             toast.error(err.response?.data?.code?.[0] || 'حدث خطأ أثناء الحفظ');
@@ -212,6 +221,15 @@ const DashboardCoupons = () => {
                     ))
                 )}
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(p) => {
+                    setCurrentPage(p);
+                    fetchCoupons(p);
+                }}
+            />
 
             {/* Modal */}
             {isModalOpen && (
