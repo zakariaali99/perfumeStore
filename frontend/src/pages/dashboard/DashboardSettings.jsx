@@ -70,7 +70,7 @@ const DashboardSettings = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <div className="w-10 h-10 border-4 border-gold-200 border-t-gold-600 rounded-full animate-spin"></div>
+                <div className="w-10 h-10 border-4 border-gold-300 border-t-gold-600 rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -99,7 +99,7 @@ const DashboardSettings = () => {
             <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 {/* General Settings */}
                 <div className="space-y-8">
-                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm">
                         <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
                             <Settings size={22} className="text-gold-500" />
                             المعلومات الأساسية
@@ -112,7 +112,7 @@ const DashboardSettings = () => {
                                     name="store_name"
                                     value={settings.store_name}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 font-bold"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 font-bold"
                                 />
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -125,7 +125,7 @@ const DashboardSettings = () => {
                                             name="contact_phone"
                                             value={settings.contact_phone}
                                             onChange={handleChange}
-                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-text-primary dark:text-cream-50"
+                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-text-primary dark:text-cream-50"
                                         />
                                     </div>
                                 </div>
@@ -138,7 +138,7 @@ const DashboardSettings = () => {
                                             name="whatsapp"
                                             value={settings.whatsapp}
                                             onChange={handleChange}
-                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-text-primary dark:text-cream-50"
+                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-text-primary dark:text-cream-50"
                                         />
                                     </div>
                                 </div>
@@ -151,14 +151,14 @@ const DashboardSettings = () => {
                                         name="address"
                                         value={settings.address}
                                         onChange={handleChange}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 min-h-[100px] text-text-primary dark:text-cream-50"
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 min-h-[100px] text-text-primary dark:text-cream-50"
                                     ></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm">
                         <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
                             <Truck size={22} className="text-gold-500" />
                             الشحن والتسليم
@@ -172,7 +172,7 @@ const DashboardSettings = () => {
                                         name="shipping_cost"
                                         value={settings.shipping_cost}
                                         onChange={handleChange}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-black text-text-primary dark:text-cream-50"
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-black text-text-primary dark:text-cream-50"
                                     />
                                     <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xs font-bold text-gold-600">دينار ليبي</span>
                                 </div>
@@ -183,7 +183,7 @@ const DashboardSettings = () => {
 
                 {/* Social Networks */}
                 <div className="space-y-8">
-                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm h-full">
+                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm h-full">
                         <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
                             <Globe size={22} className="text-gold-500" />
                             قنوات التواصل الاجتماعي
@@ -199,7 +199,7 @@ const DashboardSettings = () => {
                                     name="facebook_link"
                                     value={settings.facebook_link}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-sm ltr text-text-primary dark:text-cream-50"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-sm ltr text-text-primary dark:text-cream-50"
                                     placeholder="https://facebook.com/yourstore"
                                 />
                             </div>
@@ -213,7 +213,7 @@ const DashboardSettings = () => {
                                     name="instagram_link"
                                     value={settings.instagram_link}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-sm ltr text-text-primary dark:text-cream-50"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-sm ltr text-text-primary dark:text-cream-50"
                                     placeholder="https://instagram.com/yourstore"
                                 />
                             </div>
@@ -227,7 +227,7 @@ const DashboardSettings = () => {
                                     name="tiktok_link"
                                     value={settings.tiktok_link}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-sm ltr text-text-primary dark:text-cream-50"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-sm ltr text-text-primary dark:text-cream-50"
                                     placeholder="https://tiktok.com/@yourstore"
                                 />
                             </div>
@@ -241,15 +241,15 @@ const DashboardSettings = () => {
                                     name="email"
                                     value={settings.email}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-text-primary dark:text-cream-50"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-poppins text-text-primary dark:text-cream-50"
                                     placeholder="admin@yourstore.com"
                                 />
                             </div>
                         </div>
 
-                        <div className="mt-12 p-6 bg-gold-50 dark:bg-dark-900/40 rounded-3xl border border-gold-100 dark:border-dark-600">
+                        <div className="mt-12 p-6 bg-gold-50 dark:bg-dark-900/40 rounded-3xl border border-gold-200 dark:border-dark-600">
                             <div className="flex gap-4">
-                                <div className="bg-white dark:bg-dark-700 p-3 rounded-2xl text-gold-600 shadow-sm border border-gold-100 dark:border-dark-600">
+                                <div className="bg-white dark:bg-dark-700 p-3 rounded-2xl text-gold-600 shadow-sm border border-gold-200 dark:border-dark-600">
                                     <ShieldCheck size={24} />
                                 </div>
                                 <p className="text-xs leading-relaxed text-text-secondary dark:text-gold-400 font-bold">
@@ -262,7 +262,7 @@ const DashboardSettings = () => {
             </form>
 
             {/* Backup Card */}
-            <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+            <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm">
                 <h3 className="text-xl font-black mb-2 flex items-center gap-3 text-text-primary dark:text-cream-50">
                     <HardDrive size={22} className="text-gold-500" />
                     النسخ الاحتياطي

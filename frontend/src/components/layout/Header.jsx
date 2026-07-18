@@ -22,7 +22,7 @@ const Header = () => {
 
     return (
         <>
-            <header className="sticky top-0 z-50 bg-cream-50/80 dark:bg-dark-800/90 backdrop-blur-md border-b border-gold-100 dark:border-dark-600 transition-colors duration-300">
+            <header className="sticky top-0 z-50 bg-cream-50/80 dark:bg-dark-800/90 backdrop-blur-md border-b border-gold-200 dark:border-dark-600 transition-colors duration-300">
                 <div className="container mx-auto px-4 h-20 flex items-center justify-between">
                     {/* Mobile Menu Toggle */}
                     <button

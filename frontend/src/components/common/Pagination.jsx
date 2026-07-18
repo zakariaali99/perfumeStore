@@ -6,7 +6,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     return (
-        <div className="flex items-center justify-between px-8 py-4 bg-white dark:bg-dark-800 border-t border-gold-50 dark:border-dark-600 rounded-b-[32px]">
+        <div className="flex items-center justify-between px-8 py-4 bg-white dark:bg-dark-800 border-t border-gold-100 dark:border-dark-600 rounded-b-[32px]">
             <div className="text-xs text-text-secondary dark:text-gold-400 font-bold">
                 الصفحة <span className="font-poppins">{currentPage}</span> من <span className="font-poppins">{totalPages}</span>
             </div>

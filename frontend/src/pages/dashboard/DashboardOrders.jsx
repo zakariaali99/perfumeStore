@@ -89,7 +89,7 @@ const DashboardOrders = () => {
             </div>
 
             {/* Filters Bar */}
-            <div className="bg-white dark:bg-dark-700 p-4 rounded-3xl border border-gold-100 dark:border-dark-600 flex flex-wrap gap-4 items-center">
+            <div className="bg-white dark:bg-dark-700 p-4 rounded-3xl border border-gold-200 dark:border-dark-600 flex flex-wrap gap-4 items-center">
                 <div className="flex-1 relative min-w-[300px]">
                     <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted dark:text-gold-400" size={18} />
                     <input
@@ -97,13 +97,13 @@ const DashboardOrders = () => {
                         placeholder="ابحث برقم الطلب، اسم العميل أو الهاتف..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 pr-12 pl-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-sm text-text-primary dark:text-cream-50"
+                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 pr-12 pl-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-sm text-text-primary dark:text-cream-50"
                     />
                 </div>
                 <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
+                    className="bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
                 >
                     <option value="">كل الحالات</option>
                     {Object.entries(statusMap).map(([key, value]) => (
@@ -113,7 +113,7 @@ const DashboardOrders = () => {
             </div>
 
             {/* Orders Table */}
-            <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-200 dark:border-dark-600 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-right">
                         <thead className="bg-[#FAF9F6] dark:bg-dark-800 text-text-secondary dark:text-gold-400 text-xs uppercase font-bold">
@@ -214,7 +214,7 @@ const DashboardOrders = () => {
                         animate={{ x: 0 }}
                         className="bg-white dark:bg-dark-700 w-full max-w-2xl h-full shadow-2xl relative z-10 overflow-hidden flex flex-col"
                     >
-                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
+                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
                             <div>
                                 <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">تفاصيل الطلب</h3>
                                 <p className="text-gold-600 font-poppins font-black text-lg">#{selectedOrder.order_number}</p>
@@ -227,7 +227,7 @@ const DashboardOrders = () => {
                         <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
-                                    <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-50 dark:border-dark-600 pb-2">بيانات العميل</h4>
+                                    <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-100 dark:border-dark-600 pb-2">بيانات العميل</h4>
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600"><User size={20} /></div>
@@ -246,8 +246,8 @@ const DashboardOrders = () => {
                                     </div>
                                 </div>
                                 <div className="space-y-4">
-                                    <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-50 dark:border-dark-600 pb-2">ملاحظات الطلب</h4>
-                                    <div className="p-6 bg-cream-50 dark:bg-dark-600 rounded-[32px] border border-gold-50 dark:border-dark-600 min-h-[120px]">
+                                    <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-100 dark:border-dark-600 pb-2">ملاحظات الطلب</h4>
+                                    <div className="p-6 bg-cream-50 dark:bg-dark-600 rounded-[32px] border border-gold-100 dark:border-dark-600 min-h-[120px]">
                                         <p className="text-sm italic text-text-secondary dark:text-gold-400 font-bold">
                                             {selectedOrder.notes || 'لا يوجد ملاحظات خاصة بهذا الطلب.'}
                                         </p>
@@ -256,10 +256,10 @@ const DashboardOrders = () => {
                             </div>
 
                             <div className="space-y-4">
-                                <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-50 dark:border-dark-600 pb-2">تفاصيل المنتجات</h4>
+                                <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-100 dark:border-dark-600 pb-2">تفاصيل المنتجات</h4>
                                 <div className="space-y-3">
                                     {selectedOrder.items?.map((item, idx) => (
-                                        <div key={idx} className="bg-white dark:bg-dark-800 p-4 rounded-3xl border border-gold-50 dark:border-dark-600 flex items-center justify-between">
+                                        <div key={idx} className="bg-white dark:bg-dark-800 p-4 rounded-3xl border border-gold-100 dark:border-dark-600 flex items-center justify-between">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-14 h-14 bg-cream-50 dark:bg-dark-700 rounded-2xl flex items-center justify-center text-gold-300">
                                                     <Package size={24} />

@@ -144,16 +144,16 @@ const DashboardCoupons = () => {
             {/* Coupons List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {loading ? (
-                    [1, 2, 3].map(i => <div key={i} className="h-64 bg-white dark:bg-dark-700 animate-pulse rounded-[40px] border border-gold-100 dark:border-dark-600"></div>)
+                    [1, 2, 3].map(i => <div key={i} className="h-64 bg-white dark:bg-dark-700 animate-pulse rounded-[40px] border border-gold-200 dark:border-dark-600"></div>)
                 ) : coupons.length === 0 ? (
-                    <div className="col-span-full py-20 text-center opacity-50 bg-white dark:bg-dark-700 rounded-[40px] border border-dashed border-gold-200 dark:border-dark-600">
+                    <div className="col-span-full py-20 text-center opacity-50 bg-white dark:bg-dark-700 rounded-[40px] border border-dashed border-gold-300 dark:border-dark-600">
                         <Ticket size={48} className="mx-auto mb-4 text-gold-400" />
                         <p className="font-bold text-xl text-text-primary dark:text-cream-50">لا يوجد كوبونات فعالة حالياً</p>
                         <p className="text-sm mt-2 text-text-secondary dark:text-gold-400">ابدأ بإنشاء أول كوبون لجذب المزيد من العملاء!</p>
                     </div>
                 ) : (
                     coupons.map((coupon) => (
-                        <div key={coupon.id} className="bg-white dark:bg-dark-700 rounded-[40px] border border-gold-100 dark:border-dark-600 overflow-hidden shadow-sm hover:shadow-xl transition-all relative group">
+                        <div key={coupon.id} className="bg-white dark:bg-dark-700 rounded-[40px] border border-gold-200 dark:border-dark-600 overflow-hidden shadow-sm hover:shadow-xl transition-all relative group">
                             {/* Card Background Decoration */}
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gold-50 dark:bg-dark-800 rounded-bl-[100px] -z-10 opacity-50 group-hover:bg-gold-100 dark:group-hover:bg-dark-600 transition-colors"></div>
 
@@ -161,7 +161,7 @@ const DashboardCoupons = () => {
                                 <div className="flex justify-between items-start mb-6">
                                     <div
                                         onClick={() => copyToClipboard(coupon.code)}
-                                        className="bg-cream-50 dark:bg-dark-600 border-2 border-dashed border-gold-200 dark:border-dark-500 px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-gold-50 dark:hover:bg-dark-800 transition-colors group/code"
+                                        className="bg-cream-50 dark:bg-dark-600 border-2 border-dashed border-gold-300 dark:border-dark-500 px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-gold-50 dark:hover:bg-dark-800 transition-colors group/code"
                                     >
                                         <span className="font-black text-lg font-poppins text-gold-700 dark:text-gold-400 uppercase">{coupon.code}</span>
                                         <Copy size={16} className="text-gold-400 group-hover/code:text-gold-600" />
@@ -184,7 +184,7 @@ const DashboardCoupons = () => {
                                     </p>
                                 </div>
 
-                                <div className="space-y-4 pt-6 border-t border-gold-50 dark:border-dark-600">
+                                <div className="space-y-4 pt-6 border-t border-gold-100 dark:border-dark-600">
                                     <div className="flex justify-between items-center text-xs">
                                         <span className="text-text-secondary dark:text-gold-500 flex items-center gap-1 font-bold">
                                             <Activity size={14} />
@@ -235,8 +235,8 @@ const DashboardCoupons = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-xl rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-100 dark:border-dark-600">
-                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
+                    <div className="bg-white dark:bg-dark-700 w-full max-w-xl rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-200 dark:border-dark-600">
+                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
                             <div>
                                 <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">
                                     {editingItem ? 'تعديل الكوبون' : 'إنشاء كوبون جديد'}
@@ -257,7 +257,7 @@ const DashboardCoupons = () => {
                                         required
                                         value={formData.code}
                                         onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-lg font-black font-poppins uppercase tracking-widest text-text-primary dark:text-cream-50"
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-lg font-black font-poppins uppercase tracking-widest text-text-primary dark:text-cream-50"
                                         placeholder="EX: OFF50"
                                         disabled={!!editingItem}
                                     />
@@ -267,7 +267,7 @@ const DashboardCoupons = () => {
                                     <select
                                         value={formData.discount_type}
                                         onChange={(e) => setFormData({ ...formData, discount_type: e.target.value })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-bold"
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-bold"
                                     >
                                         <option value="percentage">نسبة مئوية (%)</option>
                                         <option value="fixed">مبلغ ثابت (د.ل)</option>
@@ -284,7 +284,7 @@ const DashboardCoupons = () => {
                                             required
                                             value={formData.discount_value}
                                             onChange={(e) => setFormData({ ...formData, discount_value: parseFloat(e.target.value) })}
-                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-black"
+                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-black"
                                         />
                                         <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gold-600">
                                             {formData.discount_type === 'percentage' ? <Percent size={18} /> : <Banknote size={18} />}
@@ -298,7 +298,7 @@ const DashboardCoupons = () => {
                                         required
                                         value={formData.min_order_amount}
                                         onChange={(e) => setFormData({ ...formData, min_order_amount: parseFloat(e.target.value) })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-bold"
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-bold"
                                     />
                                 </div>
                             </div>
@@ -311,7 +311,7 @@ const DashboardCoupons = () => {
                                         required
                                         value={formData.valid_from}
                                         onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -321,7 +321,7 @@ const DashboardCoupons = () => {
                                         required
                                         value={formData.valid_to}
                                         onChange={(e) => setFormData({ ...formData, valid_to: e.target.value })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
                                     />
                                 </div>
                             </div>
@@ -333,7 +333,7 @@ const DashboardCoupons = () => {
                                         type="number"
                                         value={formData.usage_limit || ''}
                                         onChange={(e) => setFormData({ ...formData, usage_limit: e.target.value ? parseInt(e.target.value) : null })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
                                         placeholder="اتركه فارغاً للاستخدام غير المحدود"
                                     />
                                 </div>

@@ -99,7 +99,7 @@ const Cart = () => {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
-                                    className="bg-white dark:bg-dark-700 p-4 md:p-6 rounded-3xl border border-gold-100 dark:border-dark-600 flex gap-4 md:gap-6 items-center"
+                                    className="bg-white dark:bg-dark-700 p-4 md:p-6 rounded-3xl border border-gold-200 dark:border-dark-600 flex gap-4 md:gap-6 items-center"
                                 >
                                     <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden bg-cream-50 dark:bg-dark-600 flex-shrink-0">
                                         <img src={item.variant.product_main_image} alt="" className="w-full h-full object-cover" />
@@ -120,7 +120,7 @@ const Cart = () => {
                                         </div>
 
                                         <div className="flex flex-wrap justify-between items-center gap-4">
-                                            <div className="flex items-center border border-gold-100 dark:border-dark-600 rounded-xl p-1 bg-cream-50 dark:bg-dark-600">
+                                            <div className="flex items-center border border-gold-200 dark:border-dark-600 rounded-xl p-1 bg-cream-50 dark:bg-dark-600">
                                                 <button
                                                     onClick={() => updateItem(item.id, Math.max(1, item.quantity - 1))}
                                                     className="p-1.5 hover:bg-white dark:hover:bg-dark-700 rounded-lg transition-colors text-gold-700 dark:text-gold-400 disabled:opacity-30"
@@ -146,7 +146,7 @@ const Cart = () => {
 
                     {/* Summary Sidebar */}
                     <div className="space-y-6">
-                        <div className="bg-white dark:bg-dark-700 p-8 rounded-3xl border border-gold-100 dark:border-dark-600 shadow-sm sticky top-28">
+                        <div className="bg-white dark:bg-dark-700 p-8 rounded-3xl border border-gold-200 dark:border-dark-600 shadow-sm sticky top-28">
                             <h3 className="text-xl font-bold mb-6 text-text-primary dark:text-cream-50">ملخص الطلب</h3>
 
                             <div className="space-y-4 mb-8">
@@ -164,7 +164,7 @@ const Cart = () => {
                                         <span className="font-poppins">-{couponDiscount} د.ل</span>
                                     </div>
                                 )}
-                                <div className="pt-4 border-t border-gold-100 dark:border-dark-600 flex justify-between items-center text-xl font-black">
+                                <div className="pt-4 border-t border-gold-200 dark:border-dark-600 flex justify-between items-center text-xl font-black">
                                     <span className="text-text-primary dark:text-cream-50">الإجمالي</span>
                                     <span className="text-gold-700 dark:text-gold-400 font-poppins">{total} د.ل</span>
                                 </div>
@@ -172,7 +172,7 @@ const Cart = () => {
 
                             {/* Coupon Section */}
                             <div className="mb-8">
-                                <div className="flex gap-2 p-1.5 bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 rounded-2xl">
+                                <div className="flex gap-2 p-1.5 bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 rounded-2xl">
                                     <input
                                         type="text"
                                         placeholder="كود الخصم"

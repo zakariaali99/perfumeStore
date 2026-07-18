@@ -6,7 +6,7 @@ const ProductCard = ({ product }) => {
     return (
         <motion.div
             whileHover={{ y: -10 }}
-            className="group bg-white dark:bg-dark-700 rounded-2xl overflow-hidden border border-gold-100/50 dark:border-dark-600 shadow-sm hover:shadow-xl transition-all duration-500"
+            className="group bg-white dark:bg-dark-700 rounded-2xl overflow-hidden border border-gold-200/50 dark:border-dark-600 shadow-sm hover:shadow-xl transition-all duration-500"
         >
             <Link to={`/product/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden">
                 <img
@@ -28,7 +28,7 @@ const ProductCard = ({ product }) => {
                     <span className="text-xl font-bold text-gold-700 dark:text-gold-400 font-poppins">{product.min_price} د.ل</span>
                 </div>
 
-                <button className="w-full py-3 bg-cream-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white text-gold-600 dark:text-gold-400 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse border border-gold-100 dark:border-dark-600">
+                <button className="w-full py-3 bg-cream-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white text-gold-600 dark:text-gold-400 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse border border-gold-200 dark:border-dark-600">
                     <ShoppingCart size={18} />
                     <span>إضافة للسلة</span>
                 </button>

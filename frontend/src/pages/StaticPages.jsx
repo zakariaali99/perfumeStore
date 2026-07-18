@@ -2,7 +2,7 @@ const StaticPage = ({ title, content }) => {
     return (
         <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-32 pb-20 transition-colors duration-300">
             <div className="container mx-auto px-4 max-w-3xl">
-                <div className="bg-white dark:bg-dark-700 p-10 md:p-16 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                <div className="bg-white dark:bg-dark-700 p-10 md:p-16 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm">
                     <h1 className="text-4xl font-black mb-8 text-text-primary dark:text-cream-50 flex items-center gap-4">
                         <div className="w-3 h-10 bg-gold-500 rounded-full"></div>
                         {title}
@@ -37,11 +37,11 @@ export const Contact = () => (
             <div className="space-y-8">
                 <p>نحن هنا لخدمتكم والإجابة على استفساراتكم في أي وقت.</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 not-prose">
-                    <div className="bg-cream-50 dark:bg-dark-600 p-6 rounded-3xl border border-gold-100 dark:border-dark-600">
+                    <div className="bg-cream-50 dark:bg-dark-600 p-6 rounded-3xl border border-gold-200 dark:border-dark-600">
                         <h4 className="font-bold mb-2 text-text-primary dark:text-cream-50">خدمة العملاء</h4>
                         <p className="text-gold-600 dark:text-gold-400 font-bold" dir="ltr">091-2345678</p>
                     </div>
-                    <div className="bg-cream-50 dark:bg-dark-600 p-6 rounded-3xl border border-gold-100 dark:border-dark-600">
+                    <div className="bg-cream-50 dark:bg-dark-600 p-6 rounded-3xl border border-gold-200 dark:border-dark-600">
                         <h4 className="font-bold mb-2 text-text-primary dark:text-cream-50">البريد الإلكتروني</h4>
                         <p className="text-gold-600 dark:text-gold-400 font-bold">info@almostafas.ly</p>
                     </div>

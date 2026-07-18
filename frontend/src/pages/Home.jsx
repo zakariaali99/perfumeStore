@@ -7,7 +7,7 @@ import { ChevronLeft, Sparkles, TrendingUp, Package, ShieldCheck, Truck } from '
 import { motion } from 'framer-motion';
 
 const FeatureCard = ({ icon: Icon, title, desc }) => (
-    <div className="bg-white dark:bg-dark-700 p-10 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm hover:shadow-xl transition-all group">
+    <div className="bg-white dark:bg-dark-700 p-10 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm hover:shadow-xl transition-all group">
         <div className="w-16 h-16 bg-gold-50 dark:bg-dark-600 rounded-2xl flex items-center justify-center text-gold-500 mb-8 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-white transition-all">
             <Icon size={32} />
         </div>
@@ -84,7 +84,7 @@ const Home = () => {
                         </div>
                         <Link
                             to="/products"
-                            className="text-gold-600 dark:text-gold-400 font-black flex items-center gap-2 group border-b-2 border-gold-100 dark:border-dark-600 pb-2 hover:border-gold-500 transition-all"
+                            className="text-gold-600 dark:text-gold-400 font-black flex items-center gap-2 group border-b-2 border-gold-200 dark:border-dark-600 pb-2 hover:border-gold-500 transition-all"
                         >
                             اكتشف المجموعة الكاملة
                             <ChevronLeft className="group-hover:-translate-x-1 transition-transform" size={20} />

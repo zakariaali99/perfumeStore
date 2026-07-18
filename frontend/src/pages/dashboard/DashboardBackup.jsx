@@ -158,9 +158,9 @@ const DashboardBackup = () => {
                 </button>
             </div>
 
-            <div className="p-6 bg-gold-50 dark:bg-dark-900/40 rounded-3xl border border-gold-100 dark:border-dark-600">
+            <div className="p-6 bg-gold-50 dark:bg-dark-900/40 rounded-3xl border border-gold-200 dark:border-dark-600">
                 <div className="flex gap-4">
-                    <div className="bg-white dark:bg-dark-700 p-3 rounded-2xl text-gold-600 shadow-sm border border-gold-100 dark:border-dark-600">
+                    <div className="bg-white dark:bg-dark-700 p-3 rounded-2xl text-gold-600 shadow-sm border border-gold-200 dark:border-dark-600">
                         <ShieldCheck size={24} />
                     </div>
                     <div className="text-xs leading-relaxed text-text-secondary dark:text-gold-400 font-bold">
@@ -169,7 +169,7 @@ const DashboardBackup = () => {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-200 dark:border-dark-600 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-right">
                         <thead className="bg-cream-50 dark:bg-dark-800 text-text-secondary dark:text-gold-400 text-xs uppercase font-bold">
@@ -267,14 +267,14 @@ const DashboardBackup = () => {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+            <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm">
                 <h3 className="text-xl font-black mb-2 flex items-center gap-3 text-text-primary dark:text-cream-50">
                     <Upload size={22} className="text-gold-500" />
                     استعادة من ملف خارجي
                 </h3>
                 <p className="text-sm text-text-secondary dark:text-gold-400 mb-6">قم بتحميل ملف النسخة الاحتياطية (ZIP) لاستعادة النظام بالكامل.</p>
 
-                <div className="border-2 border-dashed border-gold-200 dark:border-dark-600 rounded-3xl p-8 text-center">
+                <div className="border-2 border-dashed border-gold-300 dark:border-dark-600 rounded-3xl p-8 text-center">
                     <input
                         type="file"
                         accept=".zip"
@@ -317,8 +317,8 @@ const DashboardBackup = () => {
             {confirmRestore && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setConfirmRestore(null)}></div>
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-100 dark:border-dark-600">
-                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
+                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-200 dark:border-dark-600">
+                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
                             <div>
                                 <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">تأكيد الاستعادة</h3>
                                 <p className="text-sm text-text-secondary dark:text-gold-400">هذا الإجراء لا يمكن التراجع عنه</p>
@@ -365,8 +365,8 @@ const DashboardBackup = () => {
             {confirmUploadRestore && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setConfirmUploadRestore(false)}></div>
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-100 dark:border-dark-600">
-                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
+                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-200 dark:border-dark-600">
+                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
                             <div>
                                 <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">تأكيد الاستعادة من ملف خارجي</h3>
                                 <p className="text-sm text-text-secondary dark:text-gold-400">هذا الإجراء لا يمكن التراجع عنه</p>

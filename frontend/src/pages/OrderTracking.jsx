@@ -56,7 +56,7 @@ const OrderTracking = () => {
                 </div>
 
                 {/* Search Form */}
-                <div className="bg-white p-8 rounded-3xl border border-gold-100 shadow-sm mb-10">
+                <div className="bg-white p-8 rounded-3xl border border-gold-200 shadow-sm mb-10">
                     <form onSubmit={handleTrack} className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 space-y-2">
                             <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">رقم الطلب</label>
@@ -65,7 +65,7 @@ const OrderTracking = () => {
                                 value={orderNumber}
                                 onChange={(e) => setOrderNumber(e.target.value)}
                                 placeholder="ORD-2026..."
-                                className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all font-poppins"
+                                className="w-full bg-cream-50 border border-gold-200 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all font-poppins"
                             />
                         </div>
                         <div className="flex-1 space-y-2">
@@ -75,7 +75,7 @@ const OrderTracking = () => {
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                                 placeholder="09XXXXXXXX"
-                                className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all font-poppins"
+                                className="w-full bg-cream-50 border border-gold-200 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all font-poppins"
                             />
                         </div>
                         <div className="flex items-end">
@@ -114,7 +114,7 @@ const OrderTracking = () => {
                             className="space-y-6"
                         >
                             {/* Summary Card */}
-                            <div className="bg-white p-8 rounded-3xl border border-gold-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div className="bg-white p-8 rounded-3xl border border-gold-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
                                 <div className="text-center md:text-right">
                                     <p className="text-sm text-text-secondary mb-1">حالة الطلب الحالية</p>
                                     <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold ${currentStatus?.color} ${currentStatus?.bg}`}>
@@ -135,7 +135,7 @@ const OrderTracking = () => {
                             </div>
 
                             {/* Timeline */}
-                            <div className="bg-white p-8 rounded-3xl border border-gold-100 shadow-sm">
+                            <div className="bg-white p-8 rounded-3xl border border-gold-200 shadow-sm">
                                 <h3 className="text-xl font-bold mb-10">مسار الطلب</h3>
                                 <div className="relative">
                                     <div className="absolute top-0 bottom-0 right-4 w-0.5 bg-gold-100"></div>
@@ -144,7 +144,7 @@ const OrderTracking = () => {
                                             const s = statusMap[h.status];
                                             return (
                                                 <div key={i} className="relative pr-12">
-                                                    <div className={`absolute right-0 top-0 w-8 h-8 rounded-full flex items-center justify-center z-10 ${i === 0 ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'bg-white border-2 border-gold-100 text-gold-300'}`}>
+                                                    <div className={`absolute right-0 top-0 w-8 h-8 rounded-full flex items-center justify-center z-10 ${i === 0 ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'bg-white border-2 border-gold-200 text-gold-300'}`}>
                                                         {s && <s.icon size={16} />}
                                                     </div>
                                                     <div>
@@ -159,7 +159,7 @@ const OrderTracking = () => {
                                         })}
                                         {/* Original order creation */}
                                         <div className="relative pr-12">
-                                            <div className="absolute right-0 top-0 w-8 h-8 rounded-full bg-cream-100 border-2 border-gold-100 flex items-center justify-center z-10 text-gold-300">
+                                            <div className="absolute right-0 top-0 w-8 h-8 rounded-full bg-cream-100 border-2 border-gold-200 flex items-center justify-center z-10 text-gold-300">
                                                 <CheckCircle2 size={16} />
                                             </div>
                                             <div>
@@ -175,7 +175,7 @@ const OrderTracking = () => {
                             </div>
 
                             {/* Items Summary */}
-                            <div className="bg-white p-8 rounded-3xl border border-gold-100 shadow-sm">
+                            <div className="bg-white p-8 rounded-3xl border border-gold-200 shadow-sm">
                                 <h3 className="text-xl font-bold mb-6">محتويات الطلب</h3>
                                 <div className="divide-y divide-gold-50">
                                     {order.items?.map((item, i) => (

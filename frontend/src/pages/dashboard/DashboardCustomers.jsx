@@ -110,7 +110,7 @@ const DashboardCustomers = () => {
             </div>
 
             {/* Filters */}
-            <div className="bg-white dark:bg-dark-700 p-4 rounded-3xl border border-gold-100 dark:border-dark-600 flex flex-wrap gap-4 items-center">
+            <div className="bg-white dark:bg-dark-700 p-4 rounded-3xl border border-gold-200 dark:border-dark-600 flex flex-wrap gap-4 items-center">
                 <div className="flex-1 relative min-w-[280px]">
                     <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted dark:text-gold-400" size={18} />
                     <input
@@ -118,13 +118,13 @@ const DashboardCustomers = () => {
                         placeholder="ابحث بالاسم، الهاتف أو البريد..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 pr-12 pl-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm text-text-primary dark:text-cream-50"
+                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 pr-12 pl-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm text-text-primary dark:text-cream-50"
                     />
                 </div>
                 <select
                     value={filterSegment}
                     onChange={(e) => setFilterSegment(e.target.value)}
-                    className="bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
+                    className="bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
                 >
                     <option value="">كل القطاعات</option>
                     <option value="new">عملاء جدد</option>
@@ -134,7 +134,7 @@ const DashboardCustomers = () => {
             </div>
 
             {/* Table */}
-            <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-200 dark:border-dark-600 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-right">
                         <thead className="bg-cream-50 dark:bg-dark-800 text-text-secondary dark:text-gold-400 text-xs uppercase font-bold">
@@ -217,7 +217,7 @@ const DashboardCustomers = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-end">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedCustomer(null)}></div>
                     <div className="bg-white dark:bg-dark-700 w-full max-w-2xl h-full shadow-2xl relative z-10 overflow-hidden flex flex-col">
-                        <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
+                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
                             <div className="flex items-center gap-4">
                                 <div className="w-14 h-14 bg-gold-100 dark:bg-dark-600 rounded-2xl flex items-center justify-center text-gold-600 text-xl font-black">
                                     {selectedCustomer.name.charAt(0)}
@@ -241,7 +241,7 @@ const DashboardCustomers = () => {
                             ) : customerDetail && (
                                 <>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-gold-50 dark:bg-dark-800 p-6 rounded-[32px] border border-gold-100 dark:border-dark-600">
+                                        <div className="bg-gold-50 dark:bg-dark-800 p-6 rounded-[32px] border border-gold-200 dark:border-dark-600">
                                             <p className="text-[10px] font-black text-gold-600 dark:text-gold-400 uppercase mb-1">إجمالي الإنفاق</p>
                                             <p className="text-xl font-black font-poppins text-gold-700 dark:text-gold-400">{parseFloat(customerDetail.total_spent).toFixed(2)} د.ل</p>
                                         </div>
@@ -263,14 +263,14 @@ const DashboardCustomers = () => {
                                                 placeholder="الموضوع"
                                                 value={interactionForm.subject}
                                                 onChange={(e) => setInteractionForm({ ...interactionForm, subject: e.target.value })}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 p-4 rounded-2xl focus:outline-none text-sm text-text-primary dark:text-cream-50"
+                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 p-4 rounded-2xl focus:outline-none text-sm text-text-primary dark:text-cream-50"
                                             />
                                             <textarea
                                                 required
                                                 placeholder="تفاصيل التفاعل..."
                                                 value={interactionForm.content}
                                                 onChange={(e) => setInteractionForm({ ...interactionForm, content: e.target.value })}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 p-4 rounded-2xl focus:outline-none text-sm min-h-[80px] text-text-primary dark:text-cream-50"
+                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 p-4 rounded-2xl focus:outline-none text-sm min-h-[80px] text-text-primary dark:text-cream-50"
                                             ></textarea>
                                             <button className="w-full bg-gold-600 text-white font-bold py-3 rounded-2xl hover:bg-gold-700 transition-all flex items-center justify-center gap-2">
                                                 <Plus size={18} /> تسجيل التفاعل
@@ -279,7 +279,7 @@ const DashboardCustomers = () => {
 
                                         <div className="space-y-4">
                                             {customerDetail.interactions?.map((int, i) => (
-                                                <div key={i} className="bg-white dark:bg-dark-800 border border-gold-50 dark:border-dark-600 p-5 rounded-[28px]">
+                                                <div key={i} className="bg-white dark:bg-dark-800 border border-gold-100 dark:border-dark-600 p-5 rounded-[28px]">
                                                     <div className="flex justify-between items-center mb-2">
                                                         <span className="text-[10px] font-black bg-gold-50 dark:bg-dark-600 px-2 py-0.5 rounded-full text-gold-700 dark:text-gold-400">{int.interaction_type}</span>
                                                         <span className="text-[10px] text-text-muted font-bold font-poppins">{new Date(int.created_at).toLocaleDateString()}</span>

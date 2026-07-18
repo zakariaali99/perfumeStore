@@ -105,7 +105,7 @@ const Checkout = () => {
                     </motion.div>
                     <h1 className="text-3xl font-black mb-4 text-text-primary dark:text-cream-50">شكراً لطلبك!</h1>
                     <p className="text-text-secondary dark:text-gold-400 mb-2">تم استلام طلبك بنجاح وهو الآن قيد المراجعة.</p>
-                    <div className="bg-white dark:bg-dark-700 p-6 rounded-3xl border border-gold-100 dark:border-dark-600 my-8">
+                    <div className="bg-white dark:bg-dark-700 p-6 rounded-3xl border border-gold-200 dark:border-dark-600 my-8">
                         <p className="text-sm text-text-secondary dark:text-gold-400 mb-1">رقم الطلب</p>
                         <p className="text-2xl font-black text-gold-700 dark:text-gold-400 font-poppins">{orderSuccess.order_number}</p>
                     </div>
@@ -151,7 +151,7 @@ const Checkout = () => {
                     <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gold-100 dark:bg-dark-600 -translate-y-1/2 -z-10"></div>
                     {[1, 2, 3].map((s) => (
                         <div key={s} className="flex flex-col items-center">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${step >= s ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'bg-white dark:bg-dark-700 border-2 border-gold-100 dark:border-dark-600 text-gold-300 dark:text-gold-400'}`}>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${step >= s ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'bg-white dark:bg-dark-700 border-2 border-gold-200 dark:border-dark-600 text-gold-300 dark:text-gold-400'}`}>
                                 {s}
                             </div>
                             <span className={`text-xs mt-2 font-bold ${step >= s ? 'text-gold-600 dark:text-gold-400' : 'text-gold-300 dark:text-gold-400/50'}`}>
@@ -164,7 +164,7 @@ const Checkout = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
                     {/* Form Section */}
-                    <div className="lg:col-span-2 bg-white dark:bg-dark-700 p-8 rounded-3xl border border-gold-100 dark:border-dark-600 shadow-sm min-h-[500px]">
+                    <div className="lg:col-span-2 bg-white dark:bg-dark-700 p-8 rounded-3xl border border-gold-200 dark:border-dark-600 shadow-sm min-h-[500px]">
                         <AnimatePresence mode="wait">
                             {step === 1 && (
                                 <motion.div
@@ -186,7 +186,7 @@ const Checkout = () => {
                                                 name="name"
                                                 value={formData.name}
                                                 onChange={handleChange}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
+                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
                                                 placeholder="أدخل اسمك الكامل"
                                             />
                                         </div>
@@ -197,7 +197,7 @@ const Checkout = () => {
                                                 name="phone"
                                                 value={formData.phone}
                                                 onChange={handleChange}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-left text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
+                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-left text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
                                                 placeholder="09XXXXXXXX"
                                                 dir="ltr"
                                             />
@@ -211,7 +211,7 @@ const Checkout = () => {
                                                     name="birth_day"
                                                     value={formData.birth_day}
                                                     onChange={handleChange}
-                                                    className="bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-4 py-4 rounded-2xl focus:outline-none text-text-primary dark:text-cream-50"
+                                                    className="bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-4 py-4 rounded-2xl focus:outline-none text-text-primary dark:text-cream-50"
                                                 >
                                                     <option value="">اليوم</option>
                                                     {[...Array(31)].map((_, i) => (
@@ -222,7 +222,7 @@ const Checkout = () => {
                                                     name="birth_month"
                                                     value={formData.birth_month}
                                                     onChange={handleChange}
-                                                    className="bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-4 py-4 rounded-2xl focus:outline-none text-text-primary dark:text-cream-50"
+                                                    className="bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-4 py-4 rounded-2xl focus:outline-none text-text-primary dark:text-cream-50"
                                                 >
                                                     <option value="">الشهر</option>
                                                     {[...Array(12)].map((_, i) => (
@@ -233,7 +233,7 @@ const Checkout = () => {
                                                     name="birth_year"
                                                     value={formData.birth_year}
                                                     onChange={handleChange}
-                                                    className="bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-4 py-4 rounded-2xl focus:outline-none text-text-primary dark:text-cream-50"
+                                                    className="bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-4 py-4 rounded-2xl focus:outline-none text-text-primary dark:text-cream-50"
                                                 >
                                                     <option value="">السنة</option>
                                                     {[...Array(100)].map((_, i) => {
@@ -252,7 +252,7 @@ const Checkout = () => {
                                                 name="email"
                                                 value={formData.email}
                                                 onChange={handleChange}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-left text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
+                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-left text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
                                                 placeholder="email@example.com"
                                                 dir="ltr"
                                             />
@@ -280,7 +280,7 @@ const Checkout = () => {
                                                 name="city"
                                                 value={formData.city}
                                                 onChange={handleChange}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all appearance-none text-text-primary dark:text-cream-50"
+                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all appearance-none text-text-primary dark:text-cream-50"
                                             >
                                                 {LIBYAN_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                                             </select>
@@ -292,7 +292,7 @@ const Checkout = () => {
                                                 name="area"
                                                 value={formData.area}
                                                 onChange={handleChange}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
+                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
                                                 placeholder="اسم الحي أو المنطقة"
                                             />
                                         </div>
@@ -303,7 +303,7 @@ const Checkout = () => {
                                                 value={formData.address}
                                                 onChange={handleChange}
                                                 rows="2"
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
+                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
                                                 placeholder="الشارع، رقم المنزل، تفاصيل الشقة..."
                                             />
                                         </div>
@@ -314,7 +314,7 @@ const Checkout = () => {
                                                 value={formData.location_details}
                                                 onChange={handleChange}
                                                 rows="2"
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
+                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
                                                 placeholder="بجانب مسجد فلان، مقابل محطة كذا..."
                                             />
                                         </div>
@@ -334,24 +334,24 @@ const Checkout = () => {
                                         <CheckCircle2 className="text-gold-500" size={20} />
                                         مراجعة نهائية
                                     </h2>
-                                    <div className="bg-cream-50 dark:bg-dark-600 p-6 rounded-3xl border border-gold-50 dark:border-dark-600 space-y-4">
-                                        <div className="flex justify-between border-b border-gold-100 dark:border-dark-600 pb-3">
+                                    <div className="bg-cream-50 dark:bg-dark-600 p-6 rounded-3xl border border-gold-100 dark:border-dark-600 space-y-4">
+                                        <div className="flex justify-between border-b border-gold-200 dark:border-dark-600 pb-3">
                                             <span className="text-text-secondary dark:text-gold-400">الاسم:</span>
                                             <span className="font-bold text-text-primary dark:text-cream-50">{formData.name}</span>
                                         </div>
-                                        <div className="flex justify-between border-b border-gold-100 dark:border-dark-600 pb-3">
+                                        <div className="flex justify-between border-b border-gold-200 dark:border-dark-600 pb-3">
                                             <span className="text-text-secondary dark:text-gold-400">رقم الهاتف:</span>
                                             <span className="font-bold underline text-gold-600 dark:text-gold-400">{formData.phone}</span>
                                         </div>
-                                        <div className="flex justify-between border-b border-gold-100 dark:border-dark-600 pb-3">
+                                        <div className="flex justify-between border-b border-gold-200 dark:border-dark-600 pb-3">
                                             <span className="text-text-secondary dark:text-gold-400">تاريخ الميلاد:</span>
                                             <span className="font-bold text-text-primary dark:text-cream-50">{formData.birth_day}/{formData.birth_month}/{formData.birth_year}</span>
                                         </div>
-                                        <div className="flex justify-between border-b border-gold-100 dark:border-dark-600 pb-3">
+                                        <div className="flex justify-between border-b border-gold-200 dark:border-dark-600 pb-3">
                                             <span className="text-text-secondary dark:text-gold-400">العنوان:</span>
                                             <span className="font-bold text-text-primary dark:text-cream-50">{formData.city}، {formData.area}</span>
                                         </div>
-                                        <div className="flex flex-col gap-1 border-b border-gold-100 dark:border-dark-600 pb-3">
+                                        <div className="flex flex-col gap-1 border-b border-gold-200 dark:border-dark-600 pb-3">
                                             <span className="text-text-secondary dark:text-gold-400">العنوان بالتفصيل:</span>
                                             <span className="font-bold text-text-primary dark:text-cream-50">{formData.address}</span>
                                         </div>
@@ -369,7 +369,7 @@ const Checkout = () => {
                                             value={formData.notes}
                                             onChange={handleChange}
                                             rows="2"
-                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
+                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-200 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50 placeholder:text-text-secondary dark:placeholder:text-gold-400"
                                             placeholder="أي تعليمات خاصة للتوصيل..."
                                         />
                                     </div>
@@ -411,7 +411,7 @@ const Checkout = () => {
 
                     {/* Summary Sidebar */}
                     <div className="space-y-6">
-                        <div className="bg-white dark:bg-dark-700 p-8 rounded-3xl border border-gold-100 dark:border-dark-600 shadow-sm">
+                        <div className="bg-white dark:bg-dark-700 p-8 rounded-3xl border border-gold-200 dark:border-dark-600 shadow-sm">
                             <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-text-primary dark:text-cream-50">
                                 <ShoppingBag size={20} className="text-gold-500" />
                                 سلة التسوق
@@ -431,7 +431,7 @@ const Checkout = () => {
                                 ))}
                             </div>
 
-                            <div className="pt-6 border-t border-gold-50 dark:border-dark-600 space-y-3">
+                            <div className="pt-6 border-t border-gold-100 dark:border-dark-600 space-y-3">
                                 <div className="flex justify-between text-text-secondary dark:text-gold-400 text-sm">
                                     <span>المجموع الفرعي</span>
                                     <span>{cart.total_amount} د.ل</span>
@@ -447,7 +447,7 @@ const Checkout = () => {
                             </div>
                         </div>
 
-                        <div className="bg-gold-50 dark:bg-dark-700 p-6 rounded-3xl border border-gold-100 dark:border-dark-600 flex items-start gap-4">
+                        <div className="bg-gold-50 dark:bg-dark-700 p-6 rounded-3xl border border-gold-200 dark:border-dark-600 flex items-start gap-4">
                             <CreditCard className="text-gold-500 flex-shrink-0" size={24} />
                             <div>
                                 <h4 className="font-bold text-sm mb-1 text-text-primary dark:text-cream-50">الدفع عند الاستلام</h4>

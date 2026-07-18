@@ -13,7 +13,7 @@ import {
 import { Link } from 'react-router-dom';
 
 const StatCard = ({ title, value, icon: Icon, trend, trendValue, color }) => (
-    <div className="bg-white dark:bg-dark-700 p-8 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm relative overflow-hidden group">
+    <div className="bg-white dark:bg-dark-700 p-8 rounded-[32px] border border-gold-200 dark:border-dark-600 shadow-sm relative overflow-hidden group">
         <div className={`absolute top-0 right-0 w-24 h-24 ${color} opacity-5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform`}></div>
         <div className="flex justify-between items-start mb-6">
             <div className={`p-4 rounded-2xl ${color} bg-opacity-10 text-opacity-100`}>
@@ -63,7 +63,7 @@ const DashboardHome = () => {
         <div className="space-y-10 animate-pulse">
             <div className="h-10 w-48 bg-gray-200 dark:bg-dark-700 rounded-xl"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[1, 2, 3, 4].map(i => <div key={i} className="h-40 bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600"></div>)}
+                {[1, 2, 3, 4].map(i => <div key={i} className="h-40 bg-white dark:bg-dark-700 rounded-[32px] border border-gold-200 dark:border-dark-600"></div>)}
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 h-96 bg-white dark:bg-dark-700 rounded-[32px]"></div>
@@ -120,8 +120,8 @@ const DashboardHome = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Recent Orders */}
-                <div className="lg:col-span-2 bg-white dark:bg-dark-700 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm overflow-hidden flex flex-col">
-                    <div className="p-8 border-b border-gold-50 dark:border-dark-600 flex justify-between items-center bg-cream-50/30 dark:bg-dark-800/50">
+                <div className="lg:col-span-2 bg-white dark:bg-dark-700 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm overflow-hidden flex flex-col">
+                    <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50/30 dark:bg-dark-800/50">
                         <h3 className="text-xl font-black flex items-center gap-3 text-text-primary dark:text-cream-50">
                             <Clock size={22} className="text-gold-500" />
                             أحدث الطلبيات
@@ -168,7 +168,7 @@ const DashboardHome = () => {
                 </div>
 
                 {/* Top Products */}
-                <div className="bg-white dark:bg-dark-700 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm p-8 flex flex-col">
+                <div className="bg-white dark:bg-dark-700 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm p-8 flex flex-col">
                     <div className="mb-8">
                         <h3 className="text-xl font-black flex items-center gap-3 text-text-primary dark:text-cream-50 mb-1">
                             <TrendingUp size={22} className="text-gold-500" />
@@ -178,9 +178,9 @@ const DashboardHome = () => {
                     </div>
                     <div className="space-y-5 flex-1 overflow-y-auto custom-scrollbar">
                         {stats?.top_products?.map((product, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-4 rounded-3xl bg-cream-50/50 dark:bg-dark-800/40 border border-transparent hover:border-gold-100 dark:hover:border-dark-600 transition-all group">
+                            <div key={idx} className="flex items-center justify-between p-4 rounded-3xl bg-cream-50/50 dark:bg-dark-800/40 border border-transparent hover:border-gold-200 dark:hover:border-dark-600 transition-all group">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-white dark:bg-dark-700 rounded-2xl flex items-center justify-center font-black text-gold-600 shadow-sm border border-gold-50 dark:border-dark-600 group-hover:bg-gold-600 group-hover:text-white transition-all font-poppins">
+                                    <div className="w-10 h-10 bg-white dark:bg-dark-700 rounded-2xl flex items-center justify-center font-black text-gold-600 shadow-sm border border-gold-100 dark:border-dark-600 group-hover:bg-gold-600 group-hover:text-white transition-all font-poppins">
                                         {idx + 1}
                                     </div>
                                     <div>

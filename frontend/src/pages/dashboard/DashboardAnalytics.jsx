@@ -56,7 +56,7 @@ const DashboardAnalytics = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <div className="w-10 h-10 border-4 border-gold-200 border-t-gold-600 rounded-full animate-spin"></div>
+                <div className="w-10 h-10 border-4 border-gold-300 border-t-gold-600 rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -86,7 +86,7 @@ const DashboardAnalytics = () => {
                     <p className="text-text-secondary dark:text-gold-400 text-sm">نظرة شاملة على أداء المتجر، المبيعات وسلوك العملاء.</p>
                 </div>
                 <div className="flex gap-2">
-                    <div className="flex p-1 bg-white dark:bg-dark-700 rounded-2xl border border-gold-100 dark:border-dark-600">
+                    <div className="flex p-1 bg-white dark:bg-dark-700 rounded-2xl border border-gold-200 dark:border-dark-600">
                         <button
                             onClick={() => setTimeRange('30d')}
                             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${timeRange === '30d' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
@@ -105,7 +105,7 @@ const DashboardAnalytics = () => {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
+                <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-gold-50 dark:bg-dark-800 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
                     <div className="flex justify-between items-start mb-6">
                         <div className="p-3 bg-gold-50 dark:bg-dark-600 rounded-2xl text-gold-600 dark:text-gold-400">
@@ -119,7 +119,7 @@ const DashboardAnalytics = () => {
                     <p className="text-2xl font-black text-text-primary dark:text-cream-50 font-poppins">{summary.total_revenue.toFixed(2)} د.ل</p>
                 </div>
 
-                <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
+                <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-dark-800 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
                     <div className="flex justify-between items-start mb-6">
                         <div className="p-3 bg-blue-50 dark:bg-dark-600 rounded-2xl text-blue-600 dark:text-gold-400">
@@ -133,7 +133,7 @@ const DashboardAnalytics = () => {
                     <p className="text-2xl font-black text-text-primary dark:text-cream-50 font-poppins">{summary.total_orders}</p>
                 </div>
 
-                <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
+                <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-purple-50 dark:bg-dark-800 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
                     <div className="flex justify-between items-start mb-6">
                         <div className="p-3 bg-purple-50 dark:bg-dark-600 rounded-2xl text-purple-600 dark:text-gold-400">
@@ -147,7 +147,7 @@ const DashboardAnalytics = () => {
                     <p className="text-2xl font-black text-text-primary dark:text-cream-50 font-poppins">{summary.total_customers}</p>
                 </div>
 
-                <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
+                <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 dark:bg-dark-800 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
                     <div className="flex justify-between items-start mb-6">
                         <div className="p-3 bg-amber-50 dark:bg-dark-600 rounded-2xl text-amber-600 dark:text-gold-400">
@@ -165,7 +165,7 @@ const DashboardAnalytics = () => {
             {/* Charts Row 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Revenue Growth Chart */}
-                <div className="bg-white dark:bg-dark-700 p-8 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                <div className="bg-white dark:bg-dark-700 p-8 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm">
                     <div className="flex justify-between items-center mb-8">
                         <div>
                             <h3 className="text-lg font-black text-text-primary dark:text-cream-50">نمو المبيعات</h3>
@@ -202,7 +202,7 @@ const DashboardAnalytics = () => {
                 </div>
 
                 {/* City Sales Distribution */}
-                <div className="bg-white dark:bg-dark-700 p-8 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                <div className="bg-white dark:bg-dark-700 p-8 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm">
                     <div className="flex justify-between items-center mb-8">
                         <div>
                             <h3 className="text-lg font-black text-text-primary dark:text-cream-50">مبيعات المدن</h3>
@@ -228,7 +228,7 @@ const DashboardAnalytics = () => {
             {/* Charts Row 2 */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Customer Segments */}
-                <div className="bg-white dark:bg-dark-700 p-8 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                <div className="bg-white dark:bg-dark-700 p-8 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm">
                     <h3 className="text-lg font-black text-text-primary dark:text-cream-50 mb-8">شرائح العملاء</h3>
                     <div className="h-[250px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -255,7 +255,7 @@ const DashboardAnalytics = () => {
                 </div>
 
                 {/* Top Selling Products Table-like */}
-                <div className="lg:col-span-2 bg-white dark:bg-dark-700 p-8 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-sm leading-relaxed">
+                <div className="lg:col-span-2 bg-white dark:bg-dark-700 p-8 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm leading-relaxed">
                     <div className="flex justify-between items-center mb-8">
                         <div>
                             <h3 className="text-lg font-black text-text-primary dark:text-cream-50">أفضل المنتجات مبيعاً</h3>
@@ -264,7 +264,7 @@ const DashboardAnalytics = () => {
                     </div>
                     <div className="space-y-6">
                         {top_products.map((product, idx) => (
-                            <div key={idx} className="flex items-center gap-6 p-4 rounded-3xl hover:bg-gold-50/20 dark:hover:bg-dark-600 transition-all border border-transparent hover:border-gold-50">
+                            <div key={idx} className="flex items-center gap-6 p-4 rounded-3xl hover:bg-gold-50/20 dark:hover:bg-dark-600 transition-all border border-transparent hover:border-gold-100">
                                 <div className="w-12 h-12 bg-cream-50 dark:bg-dark-800 rounded-2xl flex items-center justify-center font-black text-gold-600 font-poppins">
                                     {idx + 1}
                                 </div>

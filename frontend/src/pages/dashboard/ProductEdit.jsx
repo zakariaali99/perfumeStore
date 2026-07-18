@@ -161,7 +161,7 @@ const ProductEdit = () => {
                 <div className="flex gap-4">
                     <button
                         onClick={() => navigate('/dashboard/products')}
-                        className="px-6 py-3 border border-gold-200 rounded-2xl font-bold bg-white hover:bg-gold-50 transition-all"
+                        className="px-6 py-3 border border-gold-300 rounded-2xl font-bold bg-white hover:bg-gold-50 transition-all"
                     >
                         إلغاء
                     </button>
@@ -179,7 +179,7 @@ const ProductEdit = () => {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Info */}
                 <div className="lg:col-span-2 space-y-8">
-                    <div className="bg-white p-8 rounded-[40px] border border-gold-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[40px] border border-gold-200 shadow-sm space-y-6">
                         <div className="flex items-center gap-2 text-gold-600 font-black text-sm mb-4">
                             <Type size={18} />
                             المعلومات الأساسية
@@ -192,7 +192,7 @@ const ProductEdit = () => {
                                     name="name_ar"
                                     value={formData.name_ar}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-bold"
+                                    className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-bold"
                                     required
                                 />
                             </div>
@@ -204,7 +204,7 @@ const ProductEdit = () => {
                                     value={formData.slug}
                                     onChange={handleChange}
                                     placeholder="example-perfume-name"
-                                    className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-bold font-poppins text-left"
+                                    className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-bold font-poppins text-left"
                                     dir="ltr"
                                     required
                                 />
@@ -220,7 +220,7 @@ const ProductEdit = () => {
                                 onChange={handleChange}
                                 rows="4"
                                 placeholder="الوصف المختصر..."
-                                className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 leading-loose mb-4"
+                                className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 leading-loose mb-4"
                             />
                             <textarea
                                 name="story"
@@ -228,7 +228,7 @@ const ProductEdit = () => {
                                 onChange={handleChange}
                                 rows="6"
                                 placeholder="القصة العطرية الكاملة..."
-                                className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 leading-loose"
+                                className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 leading-loose"
                             />
                         </div>
 
@@ -240,7 +240,7 @@ const ProductEdit = () => {
                                     value={formData.occasion}
                                     onChange={handleChange}
                                     placeholder="ليلي، حفلات، كلاسيكي..."
-                                    className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none"
+                                    className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -250,19 +250,19 @@ const ProductEdit = () => {
                                     value={formData.vibe}
                                     onChange={handleChange}
                                     placeholder="قوي، دافئ، رجولي..."
-                                    className="w-full bg-cream-50 border border-gold-50 px-5 py-4 rounded-2xl focus:outline-none"
+                                    className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white p-8 rounded-[40px] border border-gold-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[40px] border border-gold-200 shadow-sm space-y-6">
                         <div className="flex items-center gap-2 text-gold-600 font-black text-sm mb-4">
                             <ImageIcon size={18} />
                             معرض الصور
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <label className="aspect-square bg-cream-50 border-2 border-dashed border-gold-200 rounded-3xl flex flex-col items-center justify-center gap-2 text-gold-400 cursor-pointer hover:bg-gold-50 transition-all relative overflow-hidden">
+                            <label className="aspect-square bg-cream-50 border-2 border-dashed border-gold-300 rounded-3xl flex flex-col items-center justify-center gap-2 text-gold-400 cursor-pointer hover:bg-gold-50 transition-all relative overflow-hidden">
                                 {imagePreview ? (
                                     <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                                 ) : (
@@ -285,7 +285,7 @@ const ProductEdit = () => {
 
                 {/* Sidebar Info */}
                 <div className="space-y-8">
-                    <div className="bg-white p-8 rounded-[40px] border border-gold-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[40px] border border-gold-200 shadow-sm space-y-6">
                         <div className="flex items-center gap-2 text-gold-600 font-black text-sm mb-4">
                             <LayoutGrid size={18} />
                             التصنيفات
@@ -302,7 +302,7 @@ const ProductEdit = () => {
                                         const options = Array.from(e.target.selectedOptions).map(o => String(o.value));
                                         setFormData({ ...formData, categories: options });
                                     }}
-                                    className="w-full bg-cream-50 border border-gold-50 px-4 py-4 rounded-2xl focus:outline-none min-h-[120px]"
+                                    className="w-full bg-cream-50 border border-gold-100 px-4 py-4 rounded-2xl focus:outline-none min-h-[120px]"
                                 >
                                     {categories.map(c => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
                                 </select>
@@ -314,7 +314,7 @@ const ProductEdit = () => {
                                     name="brand"
                                     value={formData.brand}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 border border-gold-50 px-4 py-4 rounded-2xl focus:outline-none"
+                                    className="w-full bg-cream-50 border border-gold-100 px-4 py-4 rounded-2xl focus:outline-none"
                                 >
                                     <option value="">اختر الماركة</option>
                                     {brands.map(b => <option key={b.id} value={b.id}>{b.name_ar}</option>)}
@@ -329,7 +329,7 @@ const ProductEdit = () => {
                                             key={g}
                                             type="button"
                                             onClick={() => setFormData({ ...formData, gender: g })}
-                                            className={`py-3 rounded-xl text-xs font-bold transition-all border ${formData.gender === g ? 'bg-gold-500 text-white border-gold-500 shadow-md shadow-gold-500/20' : 'bg-cream-50 text-text-secondary border-gold-50 hover:bg-gold-50'}`}
+                                            className={`py-3 rounded-xl text-xs font-bold transition-all border ${formData.gender === g ? 'bg-gold-500 text-white border-gold-500 shadow-md shadow-gold-500/20' : 'bg-cream-50 text-text-secondary border-gold-100 hover:bg-gold-50'}`}
                                         >
                                             {g === 'men' ? 'رجالي' : g === 'women' ? 'نسائي' : 'للجنسين'}
                                         </button>
@@ -339,7 +339,7 @@ const ProductEdit = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-8 rounded-[40px] border border-gold-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[40px] border border-gold-200 shadow-sm space-y-6">
                         <div className="flex items-center gap-2 text-gold-600 font-black text-sm mb-4">
                             <Briefcase size={18} />
                             خيارات العرض

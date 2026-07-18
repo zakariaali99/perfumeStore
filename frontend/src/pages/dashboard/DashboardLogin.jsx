@@ -44,7 +44,7 @@ const DashboardLogin = () => {
                     <p className="text-text-secondary dark:text-gold-400">سجل الدخول للمتابعة إلى الإدارة</p>
                 </div>
 
-                <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-100 dark:border-dark-600 shadow-2xl">
+                <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-2xl">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {error && (
                             <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 p-4 rounded-2xl flex items-center gap-3 text-red-600 dark:text-red-400 text-sm font-bold">
@@ -63,7 +63,7 @@ const DashboardLogin = () => {
                                     required
                                     value={credentials.username}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50"
                                     placeholder="أدخل اسم المستخدم"
                                 />
                             </div>
@@ -79,7 +79,7 @@ const DashboardLogin = () => {
                                     required
                                     value={credentials.password}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 pr-12 pl-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-text-primary dark:text-cream-50"
                                     placeholder="••••••••"
                                 />
                             </div>
