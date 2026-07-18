@@ -44,12 +44,11 @@ const DashboardOrders = () => {
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const res = await ordersApi.getAll({
-                search: searchTerm,
-                status: filterStatus,
-                page: currentPage,
-                page_size: 10
-            });
+            const params = { page: currentPage, page_size: 10 };
+            if (searchTerm) params.search = searchTerm;
+            if (filterStatus) params.status = filterStatus;
+
+            const res = await ordersApi.getAll(params);
             setOrders(res.data.results || res.data || []);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
         } catch {

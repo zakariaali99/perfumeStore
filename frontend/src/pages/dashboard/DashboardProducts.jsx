@@ -30,12 +30,11 @@ const DashboardProducts = () => {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const res = await adminProductsApi.getAll({
-                search: searchTerm,
-                categories: filterCategory,
-                page: currentPage,
-                page_size: 10
-            });
+            const params = { page: currentPage, page_size: 10 };
+            if (searchTerm) params.search = searchTerm;
+            if (filterCategory) params.categories = filterCategory;
+            
+            const res = await adminProductsApi.getAll(params);
             setProducts(res.data.results || res.data);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
         } catch {
