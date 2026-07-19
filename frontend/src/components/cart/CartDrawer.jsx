@@ -1,43 +1,26 @@
-import { X, ShoppingBag, Trash2, Plus, Minus } from 'lucide-react';
+import { ShoppingBag, Trash2, Plus, Minus } from 'lucide-react';
 import useCartStore from '../../store/cartStore';
 import { Link } from 'react-router-dom';
+import Modal from '../common/Modal';
 
 const CartDrawer = ({ isOpen, onClose }) => {
     const { cart, updateItem, removeItem } = useCartStore();
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 z-[100] overflow-hidden">
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-
-            <div className="absolute inset-y-0 left-0 w-full max-w-md bg-white dark:bg-dark-800 shadow-2xl flex flex-col transform transition-transform duration-500 ease-in-out">
-                {/* Header */}
-                <div className="p-6 border-b border-gold-200 dark:border-dark-600 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <ShoppingBag className="text-gold-600" size={24} />
-                        <h2 className="text-xl font-black text-text-primary dark:text-cream-50">حقيبة التسوق</h2>
+        <Modal variant="drawer" isOpen={isOpen} onClose={onClose}>
+            <Modal.Header title="حقيبة التسوق" onClose={onClose} />
+            <Modal.Body>
+                {cart.items.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
+                        <ShoppingBag size={64} className="mb-4 text-gold-300" />
+                        <p className="font-bold text-lg">حقيبتك فارغة حالياً</p>
+                        <button onClick={onClose} className="mt-4 text-gold-600 font-bold hover:underline">
+                            استكشف العطور
+                        </button>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-gold-50 dark:hover:bg-dark-700 rounded-full transition-colors text-text-muted dark:text-gold-400">
-                        <X size={24} />
-                    </button>
-                </div>
-
-                {/* Items */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                    {cart.items.length === 0 ? (
-                        <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
-                            <ShoppingBag size={64} className="mb-4 text-gold-300" />
-                            <p className="font-bold text-lg">حقيبتك فارغة حالياً</p>
-                            <button
-                                onClick={onClose}
-                                className="mt-4 text-gold-600 font-bold hover:underline"
-                            >
-                                استكشف العطور
-                            </button>
-                        </div>
-                    ) : (
-                        cart.items.map((item) => (
+                ) : (
+                    <div className="space-y-6">
+                        {cart.items.map((item) => (
                             <div key={item.id} className="flex gap-4 group">
                                 <div className="w-24 h-24 bg-cream-50 dark:bg-dark-700 rounded-2xl overflow-hidden border border-gold-100 dark:border-dark-600 flex-shrink-0">
                                     {item.variant.product_main_image ? (
@@ -85,31 +68,27 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                     </div>
                                 </div>
                             </div>
-                        ))
-                    )}
-                </div>
-
-                {/* Footer */}
-                {cart.items.length > 0 && (
-                    <div className="p-6 border-t border-gold-200 dark:border-dark-600 space-y-4">
-                        <div className="flex justify-between items-center text-lg">
-                            <span className="font-bold text-text-primary dark:text-cream-50">المجموع:</span>
-                            <span className="font-black text-gold-700 dark:text-gold-400">
-                                {cart.total_amount} د.ل
-                            </span>
-                        </div>
-                        <p className="text-xs text-text-secondary text-center">شامل ضريبة القيمة المضافة (في حال انطباقها)</p>
-                        <Link
-                            to="/checkout"
-                            onClick={onClose}
-                            className="block w-full bg-gold-600 hover:bg-gold-700 text-white text-center py-4 rounded-2xl font-black text-lg shadow-lg shadow-gold-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        >
-                            إتمام الطلب
-                        </Link>
+                        ))}
                     </div>
                 )}
-            </div>
-        </div>
+            </Modal.Body>
+            {cart.items.length > 0 && (
+                <Modal.Footer className="space-y-4">
+                    <div className="flex justify-between items-center text-lg">
+                        <span className="font-bold text-text-primary dark:text-cream-50">المجموع:</span>
+                        <span className="font-black text-gold-700 dark:text-gold-400">{cart.total_amount} د.ل</span>
+                    </div>
+                    <p className="text-xs text-text-secondary text-center">شامل ضريبة القيمة المضافة (في حال انطباقها)</p>
+                    <Link
+                        to="/checkout"
+                        onClick={onClose}
+                        className="block w-full bg-gold-600 hover:bg-gold-700 text-white text-center py-4 rounded-2xl font-black text-lg shadow-lg shadow-gold-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                        إتمام الطلب
+                    </Link>
+                </Modal.Footer>
+            )}
+        </Modal>
     );
 };
 

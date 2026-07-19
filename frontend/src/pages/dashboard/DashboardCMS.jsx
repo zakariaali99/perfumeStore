@@ -8,11 +8,11 @@ import {
     Layout,
     Layers,
     ExternalLink,
-    X,
     Save,
     Upload
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import Modal from '../../components/common/Modal';
 
 const DashboardCMS = () => {
     const [slides, setSlides] = useState([]);
@@ -239,168 +239,155 @@ const DashboardCMS = () => {
                 )}
             </div>
 
-            {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-2xl rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-200 dark:border-dark-600">
-                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
-                            <div>
-                                <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">
-                                    {editingItem ? 'تعديل العنصر' : 'إضافة عنصر جديد'}
-                                </h3>
-                                <p className="text-sm text-text-secondary dark:text-gold-400">
-                                    سيتم إضافته إلى {activeTab === 'slides' ? 'السلايدر الرئيسي' : 'البانرات الإعلانية'}
-                                </p>
-                            </div>
-                            <button onClick={handleCloseModal} className="p-2 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-full transition-all">
-                                <X size={24} />
-                            </button>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-                            {/* Image Upload Area */}
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400">صورة العنصر</label>
-                                <div className="relative group aspect-[21/9] rounded-3xl overflow-hidden bg-cream-50 dark:bg-dark-800 border-2 border-dashed border-gold-300 dark:border-dark-600 flex flex-col items-center justify-center transition-all hover:border-gold-400">
-                                    {imagePreview ? (
-                                        <>
-                                            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
-                                                <div className="bg-white p-3 rounded-full text-gold-600 shadow-xl">
-                                                    <Upload size={24} />
-                                                </div>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="text-center">
-                                            <ImageIcon size={48} className="mx-auto text-gold-300 mb-2" />
-                                            <p className="text-xs font-bold text-text-muted">انقر لاختيار صورة</p>
-                                        </div>
-                                    )}
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        className="absolute inset-0 opacity-0 cursor-pointer"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">العنوان الرئيسي</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={formData.title}
-                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">العنوان الفرعي</label>
-                                    <input
-                                        type="text"
-                                        value={formData.subtitle}
-                                        onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الرابط (اختياري)</label>
-                                    <input
-                                        type="text"
-                                        value={formData.link}
-                                        onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm font-poppins ltr text-text-primary dark:text-cream-50"
-                                        placeholder="/products/perfumes"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الترتيب</label>
-                                    <input
-                                        type="number"
-                                        required
-                                        value={formData.order}
-                                        onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                    />
-                                </div>
-                                {activeTab === 'slides' ? (
+            <Modal isOpen={isModalOpen} onClose={handleCloseModal} maxWidth="max-w-2xl">
+                <Modal.Header
+                    title={editingItem ? 'تعديل العنصر' : 'إضافة عنصر جديد'}
+                    subtitle={`سيتم إضافته إلى ${activeTab === 'slides' ? 'السلايدر الرئيسي' : 'البانرات الإعلانية'}`}
+                    onClose={handleCloseModal}
+                />
+                <form onSubmit={handleSubmit}>
+                    <Modal.Body className="space-y-6">
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-text-secondary dark:text-gold-400">صورة العنصر</label>
+                            <div className="relative group aspect-[21/9] rounded-3xl overflow-hidden bg-cream-50 dark:bg-dark-800 border-2 border-dashed border-gold-300 dark:border-dark-600 flex flex-col items-center justify-center transition-all hover:border-gold-400">
+                                {imagePreview ? (
                                     <>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">نص الزر</label>
-                                            <input
-                                                type="text"
-                                                value={formData.button_text}
-                                                onChange={(e) => setFormData({ ...formData, button_text: e.target.value })}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                                placeholder="تسوق الآن"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">رابط الزر</label>
-                                            <input
-                                                type="text"
-                                                value={formData.button_link}
-                                                onChange={(e) => setFormData({ ...formData, button_link: e.target.value })}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm font-poppins ltr text-text-primary dark:text-cream-50"
-                                                placeholder="/products/new-arrival"
-                                            />
+                                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                                            <div className="bg-white p-3 rounded-full text-gold-600 shadow-xl">
+                                                <Upload size={24} />
+                                            </div>
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="space-y-2 col-span-2">
-                                        <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">مكان البانر</label>
-                                        <select
-                                            value={formData.position}
-                                            onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                        >
-                                            <option value="home_top">الرئيسية - أعلى</option>
-                                            <option value="home_middle">الرئيسية - وسط</option>
-                                            <option value="products_top">المنتجات - أعلى</option>
-                                            <option value="sidebar">الشريط الجانبي</option>
-                                        </select>
+                                    <div className="text-center">
+                                        <ImageIcon size={48} className="mx-auto text-gold-300 mb-2" />
+                                        <p className="text-xs font-bold text-text-muted">انقر لاختيار صورة</p>
                                     </div>
                                 )}
-                            </div>
-
-                            <div className="flex items-center gap-3 bg-cream-50 dark:bg-dark-800 p-4 rounded-2xl border border-gold-100 dark:border-dark-600">
                                 <input
-                                    type="checkbox"
-                                    id="is_active"
-                                    checked={formData.is_active}
-                                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                                    className="w-5 h-5 accent-gold-600"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="absolute inset-0 opacity-0 cursor-pointer"
                                 />
-                                <label htmlFor="is_active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">تفعيل المحتوى والظهور في واجهة المتجر</label>
                             </div>
+                        </div>
 
-                            <div className="pt-6 flex gap-4">
-                                <button
-                                    type="submit"
-                                    className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-gold-600/20 transition-all"
-                                >
-                                    <Save size={20} />
-                                    حفظ التغييرات
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleCloseModal}
-                                    className="px-8 py-4 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-500 transition-all"
-                                >
-                                    إلغاء
-                                </button>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">العنوان الرئيسي</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                />
                             </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">العنوان الفرعي</label>
+                                <input
+                                    type="text"
+                                    value={formData.subtitle}
+                                    onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الرابط (اختياري)</label>
+                                <input
+                                    type="text"
+                                    value={formData.link}
+                                    onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm font-poppins ltr text-text-primary dark:text-cream-50"
+                                    placeholder="/products/perfumes"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الترتيب</label>
+                                <input
+                                    type="number"
+                                    required
+                                    value={formData.order}
+                                    onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                />
+                            </div>
+                            {activeTab === 'slides' ? (
+                                <>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">نص الزر</label>
+                                        <input
+                                            type="text"
+                                            value={formData.button_text}
+                                            onChange={(e) => setFormData({ ...formData, button_text: e.target.value })}
+                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                            placeholder="تسوق الآن"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">رابط الزر</label>
+                                        <input
+                                            type="text"
+                                            value={formData.button_link}
+                                            onChange={(e) => setFormData({ ...formData, button_link: e.target.value })}
+                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm font-poppins ltr text-text-primary dark:text-cream-50"
+                                            placeholder="/products/new-arrival"
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="space-y-2 col-span-2">
+                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">مكان البانر</label>
+                                    <select
+                                        value={formData.position}
+                                        onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                    >
+                                        <option value="home_top">الرئيسية - أعلى</option>
+                                        <option value="home_middle">الرئيسية - وسط</option>
+                                        <option value="products_top">المنتجات - أعلى</option>
+                                        <option value="sidebar">الشريط الجانبي</option>
+                                    </select>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-3 bg-cream-50 dark:bg-dark-800 p-4 rounded-2xl border border-gold-100 dark:border-dark-600">
+                            <input
+                                type="checkbox"
+                                id="is_active"
+                                checked={formData.is_active}
+                                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                className="w-5 h-5 accent-gold-600"
+                            />
+                            <label htmlFor="is_active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">تفعيل المحتوى والظهور في واجهة المتجر</label>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <div className="flex gap-4">
+                            <button
+                                type="submit"
+                                className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-gold-600/20 transition-all"
+                            >
+                                <Save size={20} />
+                                حفظ التغييرات
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleCloseModal}
+                                className="px-8 py-4 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-500 transition-all"
+                            >
+                                إلغاء
+                            </button>
+                        </div>
+                    </Modal.Footer>
+                </form>
+            </Modal>
         </div>
     );
 };

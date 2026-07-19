@@ -3,8 +3,9 @@ import { useSearchParams } from 'react-router-dom';
 import { productsApi } from '../services/api';
 import ProductCard from '../components/products/ProductCard';
 import Pagination from '../components/common/Pagination';
-import { Filter, ChevronDown, X, SlidersHorizontal } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Filter, ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Modal from '../components/common/Modal';
 
 const FilterSection = ({ filters, categories, brands, handleFilterChange }) => (
     <div className="space-y-8">
@@ -244,46 +245,23 @@ const Products = () => {
                 </div>
             </div>
 
-            {/* Mobile Filters Drawer */}
-            <AnimatePresence>
-                {showMobileFilters && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setShowMobileFilters(false)}
-                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
-                        />
-                        <motion.div
-                            initial={{ x: '100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 right-0 w-[80%] max-w-sm bg-white dark:bg-dark-800 z-50 p-6 shadow-2xl overflow-y-auto"
-                        >
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-xl font-bold text-text-primary dark:text-cream-50">تصفية المنتجات</h2>
-                                <button onClick={() => setShowMobileFilters(false)} className="p-2 hover:bg-cream-50 dark:hover:bg-dark-600 rounded-full transition-colors text-text-primary dark:text-cream-50">
-                                    <X size={24} />
-                                </button>
-                            </div>
-                            <FilterSection
-                                filters={filters}
-                                categories={categories}
-                                brands={brands}
-                                handleFilterChange={handleFilterChange}
-                            />
-                            <button
-                                onClick={() => setShowMobileFilters(false)}
-                                className="w-full mt-10 py-4 bg-gold-500 text-white rounded-xl font-bold shadow-lg shadow-gold-500/20"
-                            >
-                                عرض النتائج
-                            </button>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+            <Modal variant="drawer" isOpen={showMobileFilters} onClose={() => setShowMobileFilters(false)}>
+                <div className="p-6 space-y-8">
+                    <h2 className="text-xl font-bold text-text-primary dark:text-cream-50">تصفية المنتجات</h2>
+                    <FilterSection
+                        filters={filters}
+                        categories={categories}
+                        brands={brands}
+                        handleFilterChange={handleFilterChange}
+                    />
+                    <button
+                        onClick={() => setShowMobileFilters(false)}
+                        className="w-full py-4 bg-gold-500 text-white rounded-xl font-bold shadow-lg shadow-gold-500/20"
+                    >
+                        عرض النتائج
+                    </button>
+                </div>
+            </Modal>
         </div>
     );
 };

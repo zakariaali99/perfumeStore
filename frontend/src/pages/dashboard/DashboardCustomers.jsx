@@ -9,13 +9,13 @@ import {
     TrendingUp,
     MessageSquare,
     ChevronLeft,
-    X,
     Clock,
     Tag as TagIcon,
     Plus
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Pagination from '../../components/common/Pagination';
+import Modal from '../../components/common/Modal';
 
 const DashboardCustomers = () => {
     const [customers, setCustomers] = useState([]);
@@ -212,111 +212,95 @@ const DashboardCustomers = () => {
                 />
             </div>
 
-            {/* Customer Detail Drawer */}
-            {selectedCustomer && (
-                <div className="fixed inset-0 z-50 flex items-center justify-end">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedCustomer(null)}></div>
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-2xl h-full shadow-2xl relative z-10 overflow-hidden flex flex-col">
-                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
-                            <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 bg-gold-100 dark:bg-dark-600 rounded-2xl flex items-center justify-center text-gold-600 text-xl font-black">
-                                    {selectedCustomer.name.charAt(0)}
+            <Modal variant="drawer" isOpen={!!selectedCustomer} onClose={() => setSelectedCustomer(null)} maxWidth="max-w-2xl">
+                <Modal.Header
+                    title={selectedCustomer?.name || ''}
+                    subtitle={selectedCustomer?.phone}
+                    onClose={() => setSelectedCustomer(null)}
+                />
+                <Modal.Body className="space-y-8 custom-scrollbar">
+                    {detailLoading ? (
+                        <div className="space-y-6 animate-pulse">
+                            <div className="h-24 bg-cream-50 dark:bg-dark-800 rounded-3xl"></div>
+                            <div className="h-48 bg-cream-50 dark:bg-dark-800 rounded-3xl"></div>
+                        </div>
+                    ) : customerDetail && (
+                        <>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-gold-50 dark:bg-dark-800 p-6 rounded-[32px] border border-gold-200 dark:border-dark-600">
+                                    <p className="text-[10px] font-black text-gold-600 dark:text-gold-400 uppercase mb-1">إجمالي الإنفاق</p>
+                                    <p className="text-xl font-black font-poppins text-gold-700 dark:text-gold-400">{parseFloat(customerDetail.total_spent).toFixed(2)} د.ل</p>
                                 </div>
-                                <div>
-                                    <h3 className="text-xl font-black text-text-primary dark:text-cream-50">{selectedCustomer.name}</h3>
-                                    <p className="text-sm text-text-secondary dark:text-gold-400 font-poppins">{selectedCustomer.phone}</p>
+                                <div className="bg-blue-50 dark:bg-dark-800 p-6 rounded-[32px] border border-blue-100 dark:border-dark-600">
+                                    <p className="text-[10px] font-black text-blue-600 dark:text-gold-400 uppercase mb-1">الطلبات</p>
+                                    <p className="text-xl font-black font-poppins text-blue-700">{customerDetail.total_orders}</p>
                                 </div>
                             </div>
-                            <button onClick={() => setSelectedCustomer(null)} className="p-2 hover:bg-gold-100 rounded-xl transition-all text-text-primary dark:text-cream-50">
-                                <X size={24} />
-                            </button>
-                        </div>
 
-                        <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
-                            {detailLoading ? (
-                                <div className="space-y-6 animate-pulse">
-                                    <div className="h-24 bg-cream-50 dark:bg-dark-800 rounded-3xl"></div>
-                                    <div className="h-48 bg-cream-50 dark:bg-dark-800 rounded-3xl"></div>
+                            <div className="space-y-6">
+                                <h4 className="font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
+                                    <MessageSquare size={18} className="text-gold-500" />
+                                    سجل التفاعلات
+                                </h4>
+                                <form onSubmit={handleAddInteraction} className="space-y-3">
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="الموضوع"
+                                        value={interactionForm.subject}
+                                        onChange={(e) => setInteractionForm({ ...interactionForm, subject: e.target.value })}
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 p-4 rounded-2xl focus:outline-none text-sm text-text-primary dark:text-cream-50"
+                                    />
+                                    <textarea
+                                        required
+                                        placeholder="تفاصيل التفاعل..."
+                                        value={interactionForm.content}
+                                        onChange={(e) => setInteractionForm({ ...interactionForm, content: e.target.value })}
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 p-4 rounded-2xl focus:outline-none text-sm min-h-[80px] text-text-primary dark:text-cream-50"
+                                    ></textarea>
+                                    <button className="w-full bg-gold-600 text-white font-bold py-3 rounded-2xl hover:bg-gold-700 transition-all flex items-center justify-center gap-2">
+                                        <Plus size={18} /> تسجيل التفاعل
+                                    </button>
+                                </form>
+
+                                <div className="space-y-4">
+                                    {customerDetail.interactions?.map((int, i) => (
+                                        <div key={i} className="bg-white dark:bg-dark-800 border border-gold-100 dark:border-dark-600 p-5 rounded-[28px]">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-[10px] font-black bg-gold-50 dark:bg-dark-600 px-2 py-0.5 rounded-full text-gold-700 dark:text-gold-400">{int.interaction_type}</span>
+                                                <span className="text-[10px] text-text-muted font-bold font-poppins">{new Date(int.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                            <h5 className="text-sm font-bold text-text-primary dark:text-cream-50 mb-1">{int.subject}</h5>
+                                            <p className="text-xs text-text-secondary dark:text-gold-400 leading-relaxed">{int.content}</p>
+                                        </div>
+                                    ))}
                                 </div>
-                            ) : customerDetail && (
-                                <>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-gold-50 dark:bg-dark-800 p-6 rounded-[32px] border border-gold-200 dark:border-dark-600">
-                                            <p className="text-[10px] font-black text-gold-600 dark:text-gold-400 uppercase mb-1">إجمالي الإنفاق</p>
-                                            <p className="text-xl font-black font-poppins text-gold-700 dark:text-gold-400">{parseFloat(customerDetail.total_spent).toFixed(2)} د.ل</p>
-                                        </div>
-                                        <div className="bg-blue-50 dark:bg-dark-800 p-6 rounded-[32px] border border-blue-100 dark:border-dark-600">
-                                            <p className="text-[10px] font-black text-blue-600 dark:text-gold-400 uppercase mb-1">الطلبات</p>
-                                            <p className="text-xl font-black font-poppins text-blue-700">{customerDetail.total_orders}</p>
-                                        </div>
-                                    </div>
+                            </div>
 
-                                    <div className="space-y-6">
-                                        <h4 className="font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
-                                            <MessageSquare size={18} className="text-gold-500" />
-                                            سجل التفاعلات
-                                        </h4>
-                                        <form onSubmit={handleAddInteraction} className="space-y-3">
-                                            <input
-                                                type="text"
-                                                required
-                                                placeholder="الموضوع"
-                                                value={interactionForm.subject}
-                                                onChange={(e) => setInteractionForm({ ...interactionForm, subject: e.target.value })}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 p-4 rounded-2xl focus:outline-none text-sm text-text-primary dark:text-cream-50"
-                                            />
-                                            <textarea
-                                                required
-                                                placeholder="تفاصيل التفاعل..."
-                                                value={interactionForm.content}
-                                                onChange={(e) => setInteractionForm({ ...interactionForm, content: e.target.value })}
-                                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 p-4 rounded-2xl focus:outline-none text-sm min-h-[80px] text-text-primary dark:text-cream-50"
-                                            ></textarea>
-                                            <button className="w-full bg-gold-600 text-white font-bold py-3 rounded-2xl hover:bg-gold-700 transition-all flex items-center justify-center gap-2">
-                                                <Plus size={18} /> تسجيل التفاعل
-                                            </button>
-                                        </form>
-
-                                        <div className="space-y-4">
-                                            {customerDetail.interactions?.map((int, i) => (
-                                                <div key={i} className="bg-white dark:bg-dark-800 border border-gold-100 dark:border-dark-600 p-5 rounded-[28px]">
-                                                    <div className="flex justify-between items-center mb-2">
-                                                        <span className="text-[10px] font-black bg-gold-50 dark:bg-dark-600 px-2 py-0.5 rounded-full text-gold-700 dark:text-gold-400">{int.interaction_type}</span>
-                                                        <span className="text-[10px] text-text-muted font-bold font-poppins">{new Date(int.created_at).toLocaleDateString()}</span>
-                                                    </div>
-                                                    <h5 className="text-sm font-bold text-text-primary dark:text-cream-50 mb-1">{int.subject}</h5>
-                                                    <p className="text-xs text-text-secondary dark:text-gold-400 leading-relaxed">{int.content}</p>
-                                                </div>
-                                            ))}
+                            <div className="space-y-6">
+                                <h4 className="font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
+                                    <ShoppingBag size={18} className="text-gold-500" />
+                                    سجل الطلبات
+                                </h4>
+                                <div className="space-y-3">
+                                    {customerDetail.orders?.map((order) => (
+                                        <div key={order.order_number} className="bg-gray-50 dark:bg-dark-800 p-5 rounded-[28px] border border-gray-100 dark:border-dark-600 flex justify-between items-center">
+                                            <div>
+                                                <p className="font-black font-poppins text-sm text-text-primary dark:text-cream-50">#{order.order_number}</p>
+                                                <p className="text-[10px] text-text-muted font-bold">{new Date(order.created_at).toLocaleDateString()}</p>
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="font-black font-poppins text-gold-700 dark:text-gold-400">{order.total} د.ل</p>
+                                                <span className="text-[8px] font-black uppercase text-green-600">{order.status}</span>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div className="space-y-6">
-                                        <h4 className="font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
-                                            <ShoppingBag size={18} className="text-gold-500" />
-                                            سجل الطلبات
-                                        </h4>
-                                        <div className="space-y-3">
-                                            {customerDetail.orders?.map((order) => (
-                                                <div key={order.order_number} className="bg-gray-50 dark:bg-dark-800 p-5 rounded-[28px] border border-gray-100 dark:border-dark-600 flex justify-between items-center">
-                                                    <div>
-                                                        <p className="font-black font-poppins text-sm text-text-primary dark:text-cream-50">#{order.order_number}</p>
-                                                        <p className="text-[10px] text-text-muted font-bold">{new Date(order.created_at).toLocaleDateString()}</p>
-                                                    </div>
-                                                    <div className="text-left">
-                                                        <p className="font-black font-poppins text-gold-700 dark:text-gold-400">{order.total} د.ل</p>
-                                                        <span className="text-[8px] font-black uppercase text-green-600">{order.status}</span>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Search, Menu, Sun, Moon, X } from 'lucide-react';
+import { ShoppingBag, Search, Menu, Sun, Moon } from 'lucide-react';
 import useCartStore from '../../store/cartStore';
 import useThemeStore from '../../store/themeStore';
 import CartDrawer from '../cart/CartDrawer';
+import Modal from '../common/Modal';
 
 const Header = () => {
     const { cart } = useCartStore();
@@ -73,35 +74,25 @@ const Header = () => {
                 </div>
             </header>
 
-            {/* Mobile Menu Sidebar */}
-            {isMobileMenuOpen && (
-                <div className="fixed inset-0 z-[100] lg:hidden">
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
-                    <div className="absolute inset-y-0 right-0 w-3/4 max-w-sm bg-white dark:bg-dark-800 shadow-2xl flex flex-col p-6 animate-slide-in-right">
-                        <div className="flex justify-between items-center mb-10">
-                            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-gold-600">
-                                ALMOSTAFAS
-                            </Link>
-                            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-gold-50 dark:hover:bg-dark-700 rounded-full">
-                                <X size={24} />
-                            </button>
-                        </div>
-                        <nav className="flex flex-col space-y-6">
-                            {navLinks.map((link) => (
-                                <Link
-                                    key={link.path}
-                                    to={link.path}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-lg font-bold text-text-primary dark:text-cream-50 hover:text-gold-600 transition-colors"
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
-
-                        </nav>
-                    </div>
+            <Modal variant="drawer" isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
+                <div className="flex justify-between items-center p-6 border-b border-gold-100 dark:border-dark-600">
+                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold text-gold-600">
+                        ALMOSTAFAS
+                    </Link>
                 </div>
-            )}
+                <nav className="flex flex-col space-y-6 p-6">
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.path}
+                            to={link.path}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-lg font-bold text-text-primary dark:text-cream-50 hover:text-gold-600 transition-colors"
+                        >
+                            {link.name}
+                        </Link>
+                    ))}
+                </nav>
+            </Modal>
 
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
         </>

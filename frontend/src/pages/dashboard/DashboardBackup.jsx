@@ -7,7 +7,6 @@ import {
     Upload,
     ShieldCheck,
     AlertTriangle,
-    X,
     Package,
     Clock,
     CheckCircle2,
@@ -16,6 +15,7 @@ import {
     Trash2,
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import Modal from '../../components/common/Modal';
 
 const statusMap = {
     creating: { label: 'جاري الإنشاء', color: 'text-amber-600', bg: 'bg-amber-50', icon: Clock },
@@ -314,98 +314,66 @@ const DashboardBackup = () => {
                 </button>
             </div>
 
-            {confirmRestore && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setConfirmRestore(null)}></div>
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-200 dark:border-dark-600">
-                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
-                            <div>
-                                <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">تأكيد الاستعادة</h3>
-                                <p className="text-sm text-text-secondary dark:text-gold-400">هذا الإجراء لا يمكن التراجع عنه</p>
-                            </div>
-                            <button
-                                onClick={() => setConfirmRestore(null)}
-                                className="p-2 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-full transition-all"
-                            >
-                                <X size={24} />
-                            </button>
+            <Modal isOpen={confirmRestore !== null} onClose={() => setConfirmRestore(null)} maxWidth="max-w-lg">
+                <Modal.Header title="تأكيد الاستعادة" subtitle="هذا الإجراء لا يمكن التراجع عنه" onClose={() => setConfirmRestore(null)} />
+                <Modal.Body className="space-y-6">
+                    <div className="flex gap-4 p-6 bg-red-50 dark:bg-red-900/20 rounded-3xl border border-red-100 dark:border-red-900/30">
+                        <div className="bg-white dark:bg-dark-700 p-3 rounded-2xl text-red-500 shadow-sm border border-red-100 dark:border-dark-600">
+                            <AlertTriangle size={24} />
                         </div>
-                        <div className="p-8 space-y-6">
-                            <div className="flex gap-4 p-6 bg-red-50 dark:bg-red-900/20 rounded-3xl border border-red-100 dark:border-red-900/30">
-                                <div className="bg-white dark:bg-dark-700 p-3 rounded-2xl text-red-500 shadow-sm border border-red-100 dark:border-dark-600">
-                                    <AlertTriangle size={24} />
-                                </div>
-                                <div className="text-sm leading-relaxed font-bold text-red-700 dark:text-red-400">
-                                    تحذير: ستؤدي الاستعادة إلى استبدال جميع البيانات الحالية بالكامل (قاعدة البيانات، الصور، الملفات). لا يمكن التراجع عن هذا الإجراء.
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={() => {
-                                        const backup = backups.find(b => b.id === confirmRestore);
-                                        if (backup) handleRestore(backup);
-                                    }}
-                                    className="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-red-600/20 transition-all"
-                                >
-                                    <RotateCcw size={20} />
-                                    تأكيد الاستعادة
-                                </button>
-                                <button
-                                    onClick={() => setConfirmRestore(null)}
-                                    className="px-8 py-4 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-500 transition-all"
-                                >
-                                    إلغاء
-                                </button>
-                            </div>
+                        <div className="text-sm leading-relaxed font-bold text-red-700 dark:text-red-400">
+                            تحذير: ستؤدي الاستعادة إلى استبدال جميع البيانات الحالية بالكامل (قاعدة البيانات، الصور، الملفات). لا يمكن التراجع عن هذا الإجراء.
                         </div>
                     </div>
-                </div>
-            )}
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => {
+                                const backup = backups.find(b => b.id === confirmRestore);
+                                if (backup) handleRestore(backup);
+                            }}
+                            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-red-600/20 transition-all"
+                        >
+                            <RotateCcw size={20} />
+                            تأكيد الاستعادة
+                        </button>
+                        <button
+                            onClick={() => setConfirmRestore(null)}
+                            className="px-8 py-4 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-500 transition-all"
+                        >
+                            إلغاء
+                        </button>
+                    </div>
+                </Modal.Body>
+            </Modal>
 
-            {confirmUploadRestore && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setConfirmUploadRestore(false)}></div>
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-200 dark:border-dark-600">
-                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
-                            <div>
-                                <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">تأكيد الاستعادة من ملف خارجي</h3>
-                                <p className="text-sm text-text-secondary dark:text-gold-400">هذا الإجراء لا يمكن التراجع عنه</p>
-                            </div>
-                            <button
-                                onClick={() => setConfirmUploadRestore(false)}
-                                className="p-2 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-full transition-all"
-                            >
-                                <X size={24} />
-                            </button>
+            <Modal isOpen={confirmUploadRestore} onClose={() => setConfirmUploadRestore(false)} maxWidth="max-w-lg">
+                <Modal.Header title="تأكيد الاستعادة من ملف خارجي" subtitle="هذا الإجراء لا يمكن التراجع عنه" onClose={() => setConfirmUploadRestore(false)} />
+                <Modal.Body className="space-y-6">
+                    <div className="flex gap-4 p-6 bg-red-50 dark:bg-red-900/20 rounded-3xl border border-red-100 dark:border-red-900/30">
+                        <div className="bg-white dark:bg-dark-700 p-3 rounded-2xl text-red-500 shadow-sm border border-red-100 dark:border-dark-600">
+                            <AlertTriangle size={24} />
                         </div>
-                        <div className="p-8 space-y-6">
-                            <div className="flex gap-4 p-6 bg-red-50 dark:bg-red-900/20 rounded-3xl border border-red-100 dark:border-red-900/30">
-                                <div className="bg-white dark:bg-dark-700 p-3 rounded-2xl text-red-500 shadow-sm border border-red-100 dark:border-dark-600">
-                                    <AlertTriangle size={24} />
-                                </div>
-                                <div className="text-sm leading-relaxed font-bold text-red-700 dark:text-red-400">
-                                    تحذير: ستؤدي الاستعادة من الملف الخارجي إلى استبدال جميع البيانات الحالية بالكامل (قاعدة البيانات، الصور، الملفات). لا يمكن التراجع عن هذا الإجراء.
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={executeUploadRestore}
-                                    className="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-red-600/20 transition-all"
-                                >
-                                    <RotateCcw size={20} />
-                                    تأكيد الاستعادة
-                                </button>
-                                <button
-                                    onClick={() => setConfirmUploadRestore(false)}
-                                    className="px-8 py-4 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-500 transition-all"
-                                >
-                                    إلغاء
-                                </button>
-                            </div>
+                        <div className="text-sm leading-relaxed font-bold text-red-700 dark:text-red-400">
+                            تحذير: ستؤدي الاستعادة من الملف الخارجي إلى استبدال جميع البيانات الحالية بالكامل (قاعدة البيانات، الصور، الملفات). لا يمكن التراجع عن هذا الإجراء.
                         </div>
                     </div>
-                </div>
-            )}
+                    <div className="flex gap-4">
+                        <button
+                            onClick={executeUploadRestore}
+                            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-red-600/20 transition-all"
+                        >
+                            <RotateCcw size={20} />
+                            تأكيد الاستعادة
+                        </button>
+                        <button
+                            onClick={() => setConfirmUploadRestore(false)}
+                            className="px-8 py-4 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-500 transition-all"
+                        >
+                            إلغاء
+                        </button>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };

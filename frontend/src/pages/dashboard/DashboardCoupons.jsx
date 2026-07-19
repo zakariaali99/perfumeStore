@@ -9,13 +9,13 @@ import {
     Activity,
     Copy,
     CheckCircle2,
-    X,
     Save,
     Percent,
     Banknote
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Pagination from '../../components/common/Pagination';
+import Modal from '../../components/common/Modal';
 
 const DashboardCoupons = () => {
     const [coupons, setCoupons] = useState([]);
@@ -231,144 +231,134 @@ const DashboardCoupons = () => {
                 }}
             />
 
-            {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-12">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-xl rounded-[48px] shadow-2xl relative z-10 overflow-hidden border border-gold-200 dark:border-dark-600">
-                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
-                            <div>
-                                <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">
-                                    {editingItem ? 'تعديل الكوبون' : 'إنشاء كوبون جديد'}
-                                </h3>
-                                <p className="text-sm text-text-secondary dark:text-gold-400">أدخل تفاصيل الخصم وقيود الاستخدام.</p>
+            <Modal isOpen={isModalOpen} onClose={handleCloseModal} maxWidth="max-w-xl">
+                <Modal.Header
+                    title={editingItem ? 'تعديل الكوبون' : 'إنشاء كوبون جديد'}
+                    subtitle="أدخل تفاصيل الخصم وقيود الاستخدام."
+                    onClose={handleCloseModal}
+                />
+                <form onSubmit={handleSubmit}>
+                    <Modal.Body className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">كود الخصم</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.code}
+                                    onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-lg font-black font-poppins uppercase tracking-widest text-text-primary dark:text-cream-50"
+                                    placeholder="EX: OFF50"
+                                    disabled={!!editingItem}
+                                />
                             </div>
-                            <button onClick={handleCloseModal} className="p-2 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-full transition-all">
-                                <X size={24} />
-                            </button>
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">نوع الخصم</label>
+                                <select
+                                    value={formData.discount_type}
+                                    onChange={(e) => setFormData({ ...formData, discount_type: e.target.value })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-bold"
+                                >
+                                    <option value="percentage">نسبة مئوية (%)</option>
+                                    <option value="fixed">مبلغ ثابت (د.ل)</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">كود الخصم</label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">قيمة الخصم</label>
+                                <div className="relative">
                                     <input
-                                        type="text"
+                                        type="number"
                                         required
-                                        value={formData.code}
-                                        onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-lg font-black font-poppins uppercase tracking-widest text-text-primary dark:text-cream-50"
-                                        placeholder="EX: OFF50"
-                                        disabled={!!editingItem}
+                                        value={formData.discount_value}
+                                        onChange={(e) => setFormData({ ...formData, discount_value: parseFloat(e.target.value) })}
+                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-black"
                                     />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">نوع الخصم</label>
-                                    <select
-                                        value={formData.discount_type}
-                                        onChange={(e) => setFormData({ ...formData, discount_type: e.target.value })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-bold"
-                                    >
-                                        <option value="percentage">نسبة مئوية (%)</option>
-                                        <option value="fixed">مبلغ ثابت (د.ل)</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">قيمة الخصم</label>
-                                    <div className="relative">
-                                        <input
-                                            type="number"
-                                            required
-                                            value={formData.discount_value}
-                                            onChange={(e) => setFormData({ ...formData, discount_value: parseFloat(e.target.value) })}
-                                            className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-black"
-                                        />
-                                        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gold-600">
-                                            {formData.discount_type === 'percentage' ? <Percent size={18} /> : <Banknote size={18} />}
-                                        </div>
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gold-600">
+                                        {formData.discount_type === 'percentage' ? <Percent size={18} /> : <Banknote size={18} />}
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الحد الأدنى للطلب</label>
-                                    <input
-                                        type="number"
-                                        required
-                                        value={formData.min_order_amount}
-                                        onChange={(e) => setFormData({ ...formData, min_order_amount: parseFloat(e.target.value) })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-bold"
-                                    />
-                                </div>
                             </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">الحد الأدنى للطلب</label>
+                                <input
+                                    type="number"
+                                    required
+                                    value={formData.min_order_amount}
+                                    onChange={(e) => setFormData({ ...formData, min_order_amount: parseFloat(e.target.value) })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50 font-bold"
+                                />
+                            </div>
+                        </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">تاريخ البدء</label>
-                                    <input
-                                        type="date"
-                                        required
-                                        value={formData.valid_from}
-                                        onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">تاريخ الانتهاء</label>
-                                    <input
-                                        type="date"
-                                        required
-                                        value={formData.valid_to}
-                                        onChange={(e) => setFormData({ ...formData, valid_to: e.target.value })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                    />
-                                </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">تاريخ البدء</label>
+                                <input
+                                    type="date"
+                                    required
+                                    value={formData.valid_from}
+                                    onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                />
                             </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">تاريخ الانتهاء</label>
+                                <input
+                                    type="date"
+                                    required
+                                    value={formData.valid_to}
+                                    onChange={(e) => setFormData({ ...formData, valid_to: e.target.value })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                />
+                            </div>
+                        </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">عدد مرات الاستخدام</label>
-                                    <input
-                                        type="number"
-                                        value={formData.usage_limit || ''}
-                                        onChange={(e) => setFormData({ ...formData, usage_limit: e.target.value ? parseInt(e.target.value) : null })}
-                                        className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                        placeholder="اتركه فارغاً للاستخدام غير المحدود"
-                                    />
-                                </div>
-                                <div className="flex items-center gap-3 pt-8">
-                                    <input
-                                        type="checkbox"
-                                        id="active"
-                                        checked={formData.is_active}
-                                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                                        className="w-5 h-5 accent-gold-600"
-                                    />
-                                    <label htmlFor="active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">تفعيل الكوبون الآن</label>
-                                </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">عدد مرات الاستخدام</label>
+                                <input
+                                    type="number"
+                                    value={formData.usage_limit || ''}
+                                    onChange={(e) => setFormData({ ...formData, usage_limit: e.target.value ? parseInt(e.target.value) : null })}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                    placeholder="اتركه فارغاً للاستخدام غير المحدود"
+                                />
                             </div>
-
-                            <div className="pt-6 flex gap-4">
-                                <button
-                                    type="submit"
-                                    className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-gold-600/20 transition-all"
-                                >
-                                    <Save size={20} />
-                                    {editingItem ? 'تحديث الكوبون' : 'إنشاء الكوبون'}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleCloseModal}
-                                    className="px-8 py-4 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-500 transition-all"
-                                >
-                                    إلغاء
-                                </button>
+                            <div className="flex items-center gap-3 pt-8">
+                                <input
+                                    type="checkbox"
+                                    id="active"
+                                    checked={formData.is_active}
+                                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                    className="w-5 h-5 accent-gold-600"
+                                />
+                                <label htmlFor="active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">تفعيل الكوبون الآن</label>
                             </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <div className="flex gap-4">
+                            <button
+                                type="submit"
+                                className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg shadow-gold-600/20 transition-all"
+                            >
+                                <Save size={20} />
+                                {editingItem ? 'تحديث الكوبون' : 'إنشاء الكوبون'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleCloseModal}
+                                className="px-8 py-4 bg-gray-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 font-bold rounded-2xl hover:bg-gray-100 dark:hover:bg-dark-500 transition-all"
+                            >
+                                إلغاء
+                            </button>
+                        </div>
+                    </Modal.Footer>
+                </form>
+            </Modal>
         </div>
     );
 };

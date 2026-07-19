@@ -11,12 +11,11 @@ import {
     Phone,
     Package,
     ShoppingBag,
-    Eye,
-    X
+    Eye
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 import Pagination from '../../components/common/Pagination';
+import Modal from '../../components/common/Modal';
 
 const DashboardOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -205,96 +204,77 @@ const DashboardOrders = () => {
                 />
             </div>
 
-            {/* Order Detail Side Drawer */}
-            {selectedOrder && (
-                <div className="fixed inset-0 z-50 flex items-center justify-end">
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedOrder(null)}></div>
-                    <motion.div
-                        initial={{ x: '100%' }}
-                        animate={{ x: 0 }}
-                        className="bg-white dark:bg-dark-700 w-full max-w-2xl h-full shadow-2xl relative z-10 overflow-hidden flex flex-col"
-                    >
-                        <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
-                            <div>
-                                <h3 className="text-2xl font-black text-text-primary dark:text-cream-50">تفاصيل الطلب</h3>
-                                <p className="text-gold-600 font-poppins font-black text-lg">#{selectedOrder.order_number}</p>
-                            </div>
-                            <button onClick={() => setSelectedOrder(null)} className="p-3 hover:bg-gold-100 rounded-2xl transition-all text-text-primary dark:text-cream-50">
-                                <X size={24} />
-                            </button>
-                        </div>
-
-                        <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-4">
-                                    <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-100 dark:border-dark-600 pb-2">بيانات العميل</h4>
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600"><User size={20} /></div>
-                                            <div>
-                                                <p className="font-bold text-text-primary dark:text-cream-50">{selectedOrder.customer_name}</p>
-                                                <p className="text-xs text-text-secondary dark:text-gold-400 font-poppins">{selectedOrder.customer_phone}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3">
-                                            <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600 shrink-0"><MapPin size={20} /></div>
-                                            <p className="text-sm text-text-primary dark:text-cream-50 leading-relaxed font-bold">
-                                                {selectedOrder.city}, {selectedOrder.area}<br />
-                                                {selectedOrder.address}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="space-y-4">
-                                    <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-100 dark:border-dark-600 pb-2">ملاحظات الطلب</h4>
-                                    <div className="p-6 bg-cream-50 dark:bg-dark-600 rounded-[32px] border border-gold-100 dark:border-dark-600 min-h-[120px]">
-                                        <p className="text-sm italic text-text-secondary dark:text-gold-400 font-bold">
-                                            {selectedOrder.notes || 'لا يوجد ملاحظات خاصة بهذا الطلب.'}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
+            <Modal variant="drawer" isOpen={!!selectedOrder} onClose={() => setSelectedOrder(null)} maxWidth="max-w-2xl">
+                <Modal.Header title="تفاصيل الطلب" subtitle={`#${selectedOrder?.order_number}`} onClose={() => setSelectedOrder(null)} />
+                <Modal.Body className="space-y-10 custom-scrollbar">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-4">
+                            <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-100 dark:border-dark-600 pb-2">بيانات العميل</h4>
                             <div className="space-y-4">
-                                <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-100 dark:border-dark-600 pb-2">تفاصيل المنتجات</h4>
-                                <div className="space-y-3">
-                                    {selectedOrder.items?.map((item, idx) => (
-                                        <div key={idx} className="bg-white dark:bg-dark-800 p-4 rounded-3xl border border-gold-100 dark:border-dark-600 flex items-center justify-between">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-14 h-14 bg-cream-50 dark:bg-dark-700 rounded-2xl flex items-center justify-center text-gold-300">
-                                                    <Package size={24} />
-                                                </div>
-                                                <div>
-                                                    <p className="font-black text-sm text-text-primary dark:text-cream-50">{item.product_name}</p>
-                                                    <p className="text-[10px] text-text-secondary dark:text-gold-400 font-bold">{item.variant_size}مل × {item.quantity}</p>
-                                                </div>
-                                            </div>
-                                            <span className="font-black font-poppins text-text-primary dark:text-cream-50">{item.total_price} د.ل</span>
-                                        </div>
-                                    ))}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600"><User size={20} /></div>
+                                    <div>
+                                        <p className="font-bold text-text-primary dark:text-cream-50">{selectedOrder?.customer_name}</p>
+                                        <p className="text-xs text-text-secondary dark:text-gold-400 font-poppins">{selectedOrder?.customer_phone}</p>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div className="p-8 bg-gold-600 rounded-[40px] text-white shadow-xl shadow-gold-600/20">
-                                <div className="space-y-3">
-                                    <div className="flex justify-between text-sm opacity-80">
-                                        <span>المجموع الفرعي</span>
-                                        <span className="font-poppins">{selectedOrder.subtotal} د.ل</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm opacity-80">
-                                        <span>رسوم التوصيل</span>
-                                        <span className="font-poppins">{selectedOrder.shipping_cost} د.ل</span>
-                                    </div>
-                                    <div className="pt-4 border-t border-white/20 flex justify-between items-end">
-                                        <span className="text-lg font-black">إجمالي الطلب</span>
-                                        <span className="text-3xl font-black font-poppins">{selectedOrder.total} د.ل</span>
-                                    </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-10 h-10 bg-gold-50 dark:bg-dark-600 rounded-full flex items-center justify-center text-gold-600 shrink-0"><MapPin size={20} /></div>
+                                    <p className="text-sm text-text-primary dark:text-cream-50 leading-relaxed font-bold">
+                                        {selectedOrder?.city}, {selectedOrder?.area}<br />
+                                        {selectedOrder?.address}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                    </motion.div>
-                </div>
-            )}
+                        <div className="space-y-4">
+                            <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-100 dark:border-dark-600 pb-2">ملاحظات الطلب</h4>
+                            <div className="p-6 bg-cream-50 dark:bg-dark-600 rounded-[32px] border border-gold-100 dark:border-dark-600 min-h-[120px]">
+                                <p className="text-sm italic text-text-secondary dark:text-gold-400 font-bold">
+                                    {selectedOrder?.notes || 'لا يوجد ملاحظات خاصة بهذا الطلب.'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-bold text-sm text-text-muted dark:text-gold-400 uppercase border-b border-gold-100 dark:border-dark-600 pb-2">تفاصيل المنتجات</h4>
+                        <div className="space-y-3">
+                            {selectedOrder?.items?.map((item, idx) => (
+                                <div key={idx} className="bg-white dark:bg-dark-800 p-4 rounded-3xl border border-gold-100 dark:border-dark-600 flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-14 h-14 bg-cream-50 dark:bg-dark-700 rounded-2xl flex items-center justify-center text-gold-300">
+                                            <Package size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-sm text-text-primary dark:text-cream-50">{item.product_name}</p>
+                                            <p className="text-[10px] text-text-secondary dark:text-gold-400 font-bold">{item.variant_size}مل × {item.quantity}</p>
+                                        </div>
+                                    </div>
+                                    <span className="font-black font-poppins text-text-primary dark:text-cream-50">{item.total_price} د.ل</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="p-8 bg-gold-600 rounded-[40px] text-white shadow-xl shadow-gold-600/20">
+                        <div className="space-y-3">
+                            <div className="flex justify-between text-sm opacity-80">
+                                <span>المجموع الفرعي</span>
+                                <span className="font-poppins">{selectedOrder?.subtotal} د.ل</span>
+                            </div>
+                            <div className="flex justify-between text-sm opacity-80">
+                                <span>رسوم التوصيل</span>
+                                <span className="font-poppins">{selectedOrder?.shipping_cost} د.ل</span>
+                            </div>
+                            <div className="pt-4 border-t border-white/20 flex justify-between items-end">
+                                <span className="text-lg font-black">إجمالي الطلب</span>
+                                <span className="text-3xl font-black font-poppins">{selectedOrder?.total} د.ل</span>
+                            </div>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };

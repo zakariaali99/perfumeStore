@@ -10,7 +10,6 @@ import {
     Settings,
     HardDrive,
     Menu,
-    X,
     LogOut,
     Bell,
     ExternalLink,
@@ -20,8 +19,8 @@ import {
     LayoutGrid,
     Briefcase
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import useThemeStore from '../../store/themeStore';
+import Modal from '../common/Modal';
 
 const SidebarLink = ({ to, icon: Icon, label, active, onClick }) => (
     <Link
@@ -141,55 +140,32 @@ const DashboardLayout = () => {
                 </main>
             </div>
 
-            {/* Mobile Sidebar Overlay */}
-            <AnimatePresence>
-                {isSidebarOpen && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
+            <Modal variant="drawer" isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
+                <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gold-500 rounded-xl flex items-center justify-center text-white font-black text-xl">M</div>
+                        <h2 className="font-black text-lg leading-none text-text-primary dark:text-cream-50">لوحة التحكم</h2>
+                    </div>
+                </div>
+                <nav className="flex-1 p-6 space-y-2">
+                    {menuItems.map((item) => (
+                        <SidebarLink
+                            key={item.to}
+                            to={item.to}
+                            icon={item.icon}
+                            label={item.label}
+                            active={item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to)}
                             onClick={() => setIsSidebarOpen(false)}
-                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
                         />
-                        <motion.aside
-                            initial={{ x: '100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 right-0 w-72 bg-white dark:bg-dark-800 z-50 lg:hidden flex flex-col"
-                        >
-                            <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-gold-500 rounded-xl flex items-center justify-center text-white font-black text-xl">M</div>
-                                    <h2 className="font-black text-lg leading-none text-text-primary dark:text-cream-50">لوحة التحكم</h2>
-                                </div>
-                                <button onClick={() => setIsSidebarOpen(false)} className="text-text-primary dark:text-cream-50">
-                                    <X size={24} />
-                                </button>
-                            </div>
-                            <nav className="flex-1 p-6 space-y-2">
-                                {menuItems.map((item) => (
-                                    <SidebarLink
-                                        key={item.to}
-                                        to={item.to}
-                                        icon={item.icon}
-                                        label={item.label}
-                                        active={item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to)}
-                                        onClick={() => setIsSidebarOpen(false)}
-                                    />
-                                ))}
-                            </nav>
-                            <div className="p-6 border-t border-gold-100 dark:border-dark-600">
-                                <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 w-full text-red-500 font-bold">
-                                    <LogOut size={20} />
-                                    خروج
-                                </button>
-                            </div>
-                        </motion.aside>
-                    </>
-                )}
-            </AnimatePresence>
+                    ))}
+                </nav>
+                <div className="p-6 border-t border-gold-100 dark:border-dark-600">
+                    <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 w-full text-red-500 font-bold">
+                        <LogOut size={20} />
+                        خروج
+                    </button>
+                </div>
+            </Modal>
         </div>
     );
 };
