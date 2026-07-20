@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { crmApi } from '../../services/api';
 import {
     Search,
@@ -25,7 +26,8 @@ const DashboardCustomers = () => {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [customerDetail, setCustomerDetail] = useState(null);
     const [detailLoading, setDetailLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const currentPage = Number(searchParams.get('page')) || 1;
     const [totalPages, setTotalPages] = useState(1);
     const [interactionForm, setInteractionForm] = useState({
         interaction_type: 'call',
@@ -68,10 +70,19 @@ const DashboardCustomers = () => {
         }
     };
 
+    const setPage = (page) => {
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            if (page > 1) newParams.set('page', String(page));
+            else newParams.delete('page');
+            return newParams;
+        }, { replace: true });
+    };
+
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             if (currentPage !== 1) {
-                setCurrentPage(1);
+                setPage(1);
             } else {
                 fetchCustomers();
             }
@@ -208,7 +219,7 @@ const DashboardCustomers = () => {
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    onPageChange={setCurrentPage}
+                    onPageChange={setPage}
                 />
             </div>
 

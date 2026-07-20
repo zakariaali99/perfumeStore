@@ -69,17 +69,22 @@ const DashboardCMS = () => {
     const fetchCMSData = async () => {
         setLoading(true);
         try {
-            const [slidesRes, bannersRes, hpcRes] = await Promise.all([
+            const [slidesRes, bannersRes] = await Promise.all([
                 cmsApi.getSlides(),
-                cmsApi.getBanners(),
-                cmsApi.getHPC()
+                cmsApi.getBanners()
             ]);
             setSlides(slidesRes.data.results || slidesRes.data);
             setBanners(bannersRes.data.results || bannersRes.data);
+        } catch {
+            toast.error('تعذر تحميل بيانات المحتوى');
+        }
+
+        try {
+            const hpcRes = await cmsApi.getHPC();
             const sortedHpc = (hpcRes.data.results || hpcRes.data || []).sort((a, b) => a.order - b.order);
             setHpc(sortedHpc);
         } catch {
-            toast.error('تعذر تحميل بيانات المحتوى');
+            console.warn('Failed to load HPC sections');
         } finally {
             setLoading(false);
         }

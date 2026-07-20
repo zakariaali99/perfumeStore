@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { productsApi, adminProductsApi } from '../../services/api';
 import {
     Plus,
@@ -9,7 +10,6 @@ import {
     ExternalLink,
     Package
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Pagination from '../../components/common/Pagination';
 
@@ -19,8 +19,18 @@ const DashboardProducts = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterCategory, setFilterCategory] = useState('');
     const [categories, setCategories] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const currentPage = Number(searchParams.get('page')) || 1;
     const [totalPages, setTotalPages] = useState(1);
+
+    const setPage = (page) => {
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            if (page > 1) newParams.set('page', String(page));
+            else newParams.delete('page');
+            return newParams;
+        }, { replace: true });
+    };
 
     useEffect(() => {
         fetchProducts();
@@ -67,7 +77,7 @@ const DashboardProducts = () => {
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             if (currentPage !== 1) {
-                setCurrentPage(1);
+                setPage(1);
             } else {
                 fetchProducts();
             }
@@ -204,7 +214,7 @@ const DashboardProducts = () => {
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    onPageChange={setCurrentPage}
+                    onPageChange={setPage}
                 />
             </div>
         </div>

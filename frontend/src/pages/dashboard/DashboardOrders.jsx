@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ordersApi } from '../../services/api';
 import {
     Search,
@@ -23,8 +24,18 @@ const DashboardOrders = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const currentPage = Number(searchParams.get('page')) || 1;
     const [totalPages, setTotalPages] = useState(1);
+
+    const setPage = (page) => {
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            if (page > 1) newParams.set('page', String(page));
+            else newParams.delete('page');
+            return newParams;
+        }, { replace: true });
+    };
 
     const statusMap = {
         'pending': { label: 'في الانتظار', color: 'text-amber-600', bg: 'bg-amber-50', icon: Clock },
@@ -70,7 +81,7 @@ const DashboardOrders = () => {
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             if (currentPage !== 1) {
-                setCurrentPage(1);
+                setPage(1);
             } else {
                 fetchOrders();
             }
@@ -200,7 +211,7 @@ const DashboardOrders = () => {
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    onPageChange={setCurrentPage}
+                    onPageChange={setPage}
                 />
             </div>
 
