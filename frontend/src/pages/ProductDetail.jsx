@@ -116,7 +116,7 @@ const ProductDetail = () => {
 
                     {/* Left: Images */}
                     <div className="space-y-6">
-                        <div className="aspect-square bg-cream-50 dark:bg-dark-700 rounded-[40px] overflow-hidden border border-gold-100/50 dark:border-dark-600 shadow-sm relative group flex items-center justify-center p-4">
+                        <div className="aspect-square bg-cream-50 dark:bg-dark-700 rounded-[40px] overflow-hidden border border-gold-100/50 dark:border-dark-500 shadow-sm relative group flex items-center justify-center p-4">
                             <motion.img
                                 key={selectedImage}
                                 initial={{ opacity: 0 }}
@@ -126,23 +126,23 @@ const ProductDetail = () => {
                                 className="w-full h-full object-contain"
                             />
                             <div className="absolute top-6 left-6 space-y-3">
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowComingSoon(true)}
-                                        className="p-4 bg-white/80 dark:bg-dark-600/80 backdrop-blur-md rounded-full text-text-primary dark:text-cream-50 hover:bg-gold-500 hover:text-white transition-all shadow-lg"
+                            <div className="relative">
+                                <button
+                                    onClick={() => setShowComingSoon(true)}
+                                    className="p-4 bg-white/80 dark:bg-dark-600/80 backdrop-blur-md rounded-full text-text-primary dark:text-cream-50 hover:bg-gold-500 hover:text-white transition-all shadow-lg"
+                                >
+                                    <Heart size={20} />
+                                </button>
+                                {showComingSoon && (
+                                    <div
+                                        ref={comingSoonRef}
+                                        className="absolute top-full mt-4 left-1/2 -translate-x-1/2 bg-white dark:bg-dark-800 text-text-primary dark:text-cream-50 px-6 py-3 rounded-2xl shadow-2xl border border-gold-100 dark:border-dark-500 whitespace-nowrap text-sm font-bold z-50"
                                     >
-                                        <Heart size={20} />
-                                    </button>
-                                    {showComingSoon && (
-                                        <div
-                                            ref={comingSoonRef}
-                                            className="absolute top-0 right-full mr-4 bg-white dark:bg-dark-800 text-text-primary dark:text-cream-50 px-6 py-3 rounded-2xl shadow-2xl border border-gold-100 dark:border-dark-600 whitespace-nowrap text-sm font-bold z-50"
-                                        >
-                                            قريباً 🚀
-                                            <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-3 bg-white dark:bg-dark-800 rotate-45 border-t border-l border-gold-100 dark:border-dark-600"></div>
-                                        </div>
-                                    )}
-                                </div>
+                                        قريباً 🚀
+                                        <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white dark:bg-dark-800 rotate-45 border-t border-l border-gold-100 dark:border-dark-500"></div>
+                                    </div>
+                                )}
+                            </div>
                                 <button
                                     onClick={() => {
                                         navigator.clipboard.writeText(window.location.href);
@@ -181,7 +181,7 @@ const ProductDetail = () => {
                     <div className="space-y-10">
                         <div>
                             <div className="flex items-center space-x-2 space-x-reverse mb-4">
-                                <span className="text-gold-600 dark:text-gold-400 font-black tracking-widest uppercase text-xs bg-gold-50 dark:bg-dark-700 px-3 py-1.5 rounded-lg border border-gold-100 dark:border-dark-600">{product.brand?.name_ar}</span>
+                                <span className="text-gold-600 dark:text-gold-400 font-black tracking-widest uppercase text-xs bg-gold-50 dark:bg-dark-700 px-3 py-1.5 rounded-lg border border-gold-100 dark:border-dark-500">{product.brand?.name_ar}</span>
                                 <span className="text-text-secondary dark:text-gold-400 text-sm font-bold">{product.category?.name_ar}</span>
                             </div>
                             <h1 className="text-2xl md:text-5xl font-black text-text-primary dark:text-cream-50 mb-6 leading-tight">{product.name_ar}</h1>
@@ -243,7 +243,7 @@ const ProductDetail = () => {
                                     <button
                                         key={variant.id}
                                         onClick={() => setSelectedVariant(variant)}
-                                        className={`px-6 py-5 rounded-3xl border-2 transition-all flex flex-col items-center gap-1 ${selectedVariant?.id === variant.id ? 'border-gold-500 bg-white dark:bg-dark-700 shadow-xl shadow-gold-500/10' : 'border-gold-100 dark:border-dark-600 bg-cream-50 dark:bg-dark-800 hover:border-gold-300'}`}
+                                        className={`px-6 py-5 rounded-3xl border-2 transition-all flex flex-col items-center gap-1 ${selectedVariant?.id === variant.id ? 'border-gold-500 bg-white dark:bg-dark-700 shadow-xl shadow-gold-500/10' : 'border-gold-100 dark:border-dark-500 bg-cream-50 dark:bg-dark-800 hover:border-gold-300'}`}
                                     >
                                         <span className={`text-2xl font-black ${selectedVariant?.id === variant.id ? 'text-gold-700 dark:text-gold-400' : 'text-text-primary dark:text-cream-50'}`}>{variant.size_ml} مل</span>
                                         <span className="text-sm font-bold text-text-secondary dark:text-gold-400">{variant.current_price} د.ل</span>
@@ -253,7 +253,7 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Price & Add to Cart */}
-                        <div className="p-10 bg-white dark:bg-dark-700 rounded-[40px] border border-gold-100 dark:border-dark-600 shadow-2xl space-y-8 relative overflow-hidden">
+                        <div className="p-10 bg-white dark:bg-dark-700 rounded-[40px] border border-gold-100 dark:border-dark-500 shadow-2xl space-y-8 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gold-50 dark:bg-gold-500/10 rounded-bl-[100px] -z-10 opacity-40"></div>
 
                             <div className="flex items-center justify-between">
@@ -280,7 +280,7 @@ const ProductDetail = () => {
                             </div>
 
                             <div className="flex flex-col sm:flex-row items-center gap-6">
-                                <div className="flex items-center bg-cream-50 dark:bg-dark-600 rounded-[20px] p-2 border border-gold-100 dark:border-dark-600 w-full sm:w-auto">
+                                <div className="flex items-center bg-cream-50 dark:bg-dark-600 rounded-[20px] p-2 border border-gold-100 dark:border-dark-500 w-full sm:w-auto">
                                     <button
                                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
                                         className="p-4 hover:bg-white dark:hover:bg-dark-700 rounded-xl transition-all text-gold-700 dark:text-gold-400"
@@ -317,7 +317,7 @@ const ProductDetail = () => {
                                 { icon: ShieldCheck, title: 'ضمان الجودة', desc: 'عطور أصلية ومضمونة' },
                                 { icon: RotateCcw, title: 'سياسة الاستبدال', desc: 'مرونة في التعامل' },
                             ].map((f, i) => (
-                                <div key={i} className="flex flex-col items-center text-center p-8 bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-600 shadow-sm">
+                                <div key={i} className="flex flex-col items-center text-center p-8 bg-white dark:bg-dark-700 rounded-[32px] border border-gold-100 dark:border-dark-500 shadow-sm">
                                     <div className="p-4 bg-gold-50 dark:bg-dark-600 rounded-2xl mb-4">
                                         <f.icon className="text-gold-600 dark:text-gold-400" size={28} />
                                     </div>
@@ -331,7 +331,7 @@ const ProductDetail = () => {
 
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (
-                    <section className="mt-32 pt-20 border-t border-gold-100 dark:border-dark-600">
+                    <section className="mt-32 pt-20 border-t border-gold-100 dark:border-dark-500">
                         <div className="flex items-center justify-between mb-12">
                             <div>
                                 <h2 className="text-4xl font-black text-text-primary dark:text-cream-50 mb-2">عطور قد تنال إعجابك</h2>

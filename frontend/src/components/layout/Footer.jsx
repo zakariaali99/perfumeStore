@@ -64,9 +64,7 @@ const Footer = () => {
                         <p className="text-sm text-gray-500">
                             &copy; 2026 جميع الحقوق محفوظة لمتجر عطور مصطفى
                         </p>
-                        <span className="text-gold-600/60 text-xs font-bold hidden sm:inline border-r border-dark-600 pr-3 mr-1">
-                            رمضان كريم 🌙
-                        </span>
+
                     </div>
                     <div className="flex gap-6 text-xs text-gray-500">
                         <Link to="/terms" className="hover:text-gold-500 transition-colors">الشروط والأحكام</Link>

@@ -101,6 +101,8 @@ export const cmsApi = {
     deleteBanner: (id) => api.delete(`cms/banners/${id}/`),
     getSettings: () => api.get('cms/settings/'),
     updateSettings: (id, data) => api.patch(`cms/settings/${id}/`, data),
+    getHPC: () => api.get('cms/hpc/'),
+    updateHPC: (id, data) => api.patch(`cms/hpc/${id}/`, data),
 };
 
 export const marketingApi = {

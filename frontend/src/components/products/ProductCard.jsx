@@ -6,7 +6,7 @@ const ProductCard = ({ product }) => {
     return (
         <motion.div
             whileHover={{ y: -10 }}
-            className="group bg-white dark:bg-dark-700 rounded-2xl overflow-hidden border border-gold-100/50 dark:border-dark-600 shadow-sm hover:shadow-xl transition-all duration-500"
+            className="group bg-white dark:bg-dark-700 rounded-2xl overflow-hidden border border-gold-100/50 dark:border-dark-500 shadow-sm hover:shadow-xl transition-all duration-500"
         >
             <Link to={`/product/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden">
                 <img
@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
 
                 <Link
                     to={`/product/${product.slug}`}
-                    className="w-full py-3 bg-cream-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white text-gold-600 dark:text-gold-400 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse border border-gold-100 dark:border-dark-600 text-xs md:text-sm"
+                    className="w-full py-3 bg-cream-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white text-gold-600 dark:text-gold-400 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse border border-gold-100 dark:border-dark-500 text-xs md:text-sm"
                 >
                     <ShoppingCart size={16} className="md:w-[18px] md:h-[18px]" />
                     <span>التفاصيل</span>

@@ -29,6 +29,8 @@ const DashboardSettings = () => {
         instagram_link: '',
         tiktok_link: '',
         shipping_cost: 25.0,
+        top_banner_text: '',
+        top_banner_is_active: false,
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -176,6 +178,39 @@ const DashboardSettings = () => {
                                     />
                                     <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xs font-bold text-gold-600">دينار ليبي</span>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white dark:bg-dark-700 p-10 rounded-[48px] border border-gold-200 dark:border-dark-600 shadow-sm">
+                        <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-text-primary dark:text-cream-50">
+                            <Bell size={22} className="text-gold-500" />
+                            البانر العلوي
+                        </h3>
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-text-secondary dark:text-gold-400 pr-1">نص البانر</label>
+                                <input
+                                    type="text"
+                                    name="top_banner_text"
+                                    value={settings.top_banner_text}
+                                    onChange={handleChange}
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                    placeholder="خصم 20% على أول طلب"
+                                />
+                            </div>
+                            <div className="flex items-center gap-3 bg-cream-50 dark:bg-dark-800 p-5 rounded-2xl border border-gold-100 dark:border-dark-600">
+                                <input
+                                    type="checkbox"
+                                    id="top_banner_is_active"
+                                    name="top_banner_is_active"
+                                    checked={settings.top_banner_is_active}
+                                    onChange={(e) => setSettings({ ...settings, top_banner_is_active: e.target.checked })}
+                                    className="w-5 h-5 accent-gold-600"
+                                />
+                                <label htmlFor="top_banner_is_active" className="text-sm font-bold text-text-primary dark:text-cream-50 cursor-pointer select-none">
+                                    تفعيل البانر العلوي
+                                </label>
                             </div>
                         </div>
                     </div>

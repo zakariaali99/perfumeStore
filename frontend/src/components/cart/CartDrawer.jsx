@@ -39,7 +39,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                         className="absolute inset-y-0 left-0 w-3/4 max-w-lg bg-white dark:bg-dark-800 shadow-2xl flex flex-col"
                     >
-                        <div className="p-6 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between">
+                        <div className="p-6 border-b border-gold-100 dark:border-dark-500 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <ShoppingBag className="text-gold-600" size={24} />
                                 <h2 className="text-xl font-black text-text-primary dark:text-cream-50">حقيبة التسوق</h2>
@@ -54,17 +54,18 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                 <div className="h-full flex flex-col items-center justify-center text-center opacity-50 text-text-primary dark:text-cream-50">
                                     <ShoppingBag size={64} className="mb-4 text-gold-300" />
                                     <p className="font-bold text-lg">حقيبتك فارغة حالياً</p>
-                                    <button
+                                    <Link
+                                        to="/products"
                                         onClick={onClose}
-                                        className="mt-4 text-gold-600 font-bold hover:underline"
+                                        className="mt-4 text-gold-600 font-bold hover:underline block"
                                     >
                                         استكشف العطور
-                                    </button>
+                                    </Link>
                                 </div>
                             ) : (
                                 cart.items.map((item) => (
                                     <div key={item.id} className="flex gap-4 group">
-                                        <div className="w-24 h-24 bg-cream-50 dark:bg-dark-700 rounded-2xl overflow-hidden border border-gold-50 dark:border-dark-600 flex-shrink-0">
+                                        <div className="w-24 h-24 bg-cream-50 dark:bg-dark-700 rounded-2xl overflow-hidden border border-gold-50 dark:border-dark-500 flex-shrink-0">
                                             {item.variant.product_main_image ? (
                                                 <img
                                                     src={item.variant.product_main_image}
@@ -88,7 +89,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                             <p className="text-xs text-text-secondary dark:text-gold-400 mb-3">حجم {item.variant.size_ml} مل</p>
 
                                             <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-3 bg-cream-50 dark:bg-dark-700 rounded-xl px-3 py-2 border border-gold-50 dark:border-dark-600 text-text-primary dark:text-cream-50">
+                                                <div className="flex items-center gap-3 bg-cream-50 dark:bg-dark-700 rounded-xl px-3 py-2 border border-gold-50 dark:border-dark-500 text-text-primary dark:text-cream-50">
                                                     <button
                                                         onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
                                                         disabled={item.quantity <= 1}
@@ -115,7 +116,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         </div>
 
                         {cart.items.length > 0 && (
-                            <div className="p-6 border-t border-gold-100 dark:border-dark-600 space-y-4">
+                            <div className="p-6 border-t border-gold-100 dark:border-dark-500 space-y-4">
                                 <div className="flex justify-between items-center text-lg">
                                     <span className="font-bold text-text-primary dark:text-cream-50">المجموع:</span>
                                     <span className="font-black text-gold-700 dark:text-gold-400">

@@ -127,7 +127,7 @@ const Checkout = () => {
                             ))}
                         </div>
 
-                        <div className="bg-white dark:bg-dark-700 p-5 md:p-8 rounded-3xl md:rounded-[40px] shadow-sm border border-gold-100 dark:border-dark-600">
+                        <div className="bg-white dark:bg-dark-700 p-5 md:p-8 rounded-3xl md:rounded-[40px] shadow-sm border border-gold-100 dark:border-dark-500">
                             <AnimatePresence mode="wait">
                                 {step === 1 && (
                                     <motion.div
@@ -367,13 +367,13 @@ const Checkout = () => {
 
                     {/* Order Summary */}
                     <div>
-                        <div className="bg-white dark:bg-dark-700 p-5 md:p-8 rounded-3xl md:rounded-[40px] shadow-sm border border-gold-100 dark:border-dark-600 sticky top-32">
+                        <div className="bg-white dark:bg-dark-700 p-5 md:p-8 rounded-3xl md:rounded-[40px] shadow-sm border border-gold-100 dark:border-dark-500 sticky top-32">
                             <h3 className="text-xl font-black mb-6 text-text-primary dark:text-cream-50">ملخص الطلب</h3>
 
                             <div className="space-y-6 mb-8 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                                 {cart.items && cart.items.map((item) => (
                                     <div key={item.id} className="flex gap-4">
-                                        <div className="w-16 h-16 bg-cream-50 dark:bg-dark-600 rounded-xl overflow-hidden border border-gold-50 dark:border-dark-600 flex-shrink-0">
+                                        <div className="w-16 h-16 bg-cream-50 dark:bg-dark-600 rounded-xl overflow-hidden border border-gold-50 dark:border-dark-500 flex-shrink-0">
                                             <img
                                                 src={item.variant.product_main_image || 'https://placehold.co/100x100'}
                                                 className="w-full h-full object-cover"
@@ -400,7 +400,7 @@ const Checkout = () => {
                                         value={couponCode}
                                         onChange={(e) => setCouponCode(e.target.value)}
                                         placeholder="أدخل الكود هنا"
-                                        className="flex-1 px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-600 focus:border-gold-500 outline-none text-sm"
+                                        className="flex-1 px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-dark-800 border border-gold-100 dark:border-dark-500 focus:border-gold-500 outline-none text-sm"
                                     />
                                     <button
                                         onClick={handleApplyCoupon}
@@ -423,7 +423,7 @@ const Checkout = () => {
                                 )}
                             </div>
 
-                            <div className="space-y-3 pt-6 border-t border-gold-100 dark:border-dark-600">
+                            <div className="space-y-3 pt-6 border-t border-gold-100 dark:border-dark-500">
                                 <div className="flex justify-between text-sm text-text-secondary dark:text-gold-400">
                                     <span>المجموع الفرعي</span>
                                     <span className="font-bold">{cart.total_amount} د.ل</span>

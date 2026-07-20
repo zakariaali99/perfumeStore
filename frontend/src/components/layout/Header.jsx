@@ -21,7 +21,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useCartStore from '../../store/cartStore';
 import useThemeStore from '../../store/themeStore';
 import CartDrawer from '../cart/CartDrawer';
-import RamadanBanner from '../common/RamadanBanner';
 import { productsApi } from '../../services/api';
 
 const fallbackCategories = [
@@ -109,7 +108,6 @@ const Header = () => {
 
     return (
         <>
-            <RamadanBanner />
             <header className={`sticky top-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-white/95 dark:bg-dark-800/95 backdrop-blur-md h-20 shadow-xl' : 'bg-transparent h-28'}`}>
                 <div className="container mx-auto px-4 h-full flex items-center justify-between gap-4 md:gap-8">
                     <button
@@ -159,7 +157,7 @@ const Header = () => {
 
                                 {link.dropdown && (
                                     <div className="absolute top-full -right-4 pt-4 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 translate-y-2 group-hover/nav:translate-y-0">
-                                        <div className="bg-white dark:bg-dark-700 w-56 rounded-3xl shadow-2xl border border-gold-50 dark:border-dark-600 overflow-hidden flex flex-col p-2">
+                                        <div className="bg-white dark:bg-dark-700 w-56 rounded-3xl shadow-2xl border border-gold-50 dark:border-dark-500 overflow-hidden flex flex-col p-2">
                                             {link.dropdown.map(item => (
                                                 <Link
                                                     key={item.name}
@@ -178,7 +176,7 @@ const Header = () => {
                     </nav>
 
                     <div className="flex items-center gap-2 md:gap-4">
-                        <div className={`flex items-center transition-all duration-300 ${isSearchOpen ? 'w-full sm:w-64 bg-gray-50 dark:bg-dark-700 px-3 py-1.5 rounded-2xl border border-gold-200 dark:border-dark-600' : 'w-12 bg-transparent justify-center'}`}>
+                        <div className={`hidden sm:flex items-center transition-all duration-300 ${isSearchOpen ? 'w-64 bg-gray-50 dark:bg-dark-700 px-3 py-1.5 rounded-2xl border border-gold-200 dark:border-dark-500' : 'w-12 bg-transparent justify-center'}`}>
                             {isSearchOpen ? (
                                 <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center">
                                     <input
@@ -226,7 +224,7 @@ const Header = () => {
                         {(isLoggedIn && isAdmin) && (
                             <Link
                                 to="/dashboard"
-                                className="hidden md:flex items-center gap-3 p-1.5 pr-4 rounded-2xl bg-gray-50 dark:bg-dark-700 border border-gold-100 dark:border-dark-600 hover:border-gold-500 transition-all"
+                                className="hidden md:flex items-center gap-3 p-1.5 pr-4 rounded-2xl bg-gray-50 dark:bg-dark-700 border border-gold-100 dark:border-dark-500 hover:border-gold-500 transition-all"
                             >
                                 <span className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase tracking-widest leading-none">Management</span>
                                 <div className="w-9 h-9 bg-gold-100 dark:bg-dark-600 rounded-xl flex items-center justify-center text-gold-600">
@@ -265,7 +263,7 @@ const Header = () => {
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={toggleTheme}
-                                        className="p-3 bg-white dark:bg-dark-700 rounded-2xl shadow-sm text-text-primary dark:text-gold-400 border border-gold-50 dark:border-dark-600"
+                                        className="p-3 bg-white dark:bg-dark-700 rounded-2xl shadow-sm text-text-primary dark:text-gold-400 border border-gold-50 dark:border-dark-500"
                                     >
                                         {isDark ? <Sun size={20} /> : <Moon size={20} />}
                                     </button>
