@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { productsApi } from '../services/api';
 import useCartStore from '../store/cartStore';
@@ -28,6 +28,8 @@ const ProductDetail = () => {
     const [selectedVariant, setSelectedVariant] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [quantity, setQuantity] = useState(1);
+    const [showComingSoon, setShowComingSoon] = useState(false);
+    const comingSoonRef = useRef(null);
     const addItem = useCartStore(state => state.addItem);
 
     useEffect(() => {
@@ -53,6 +55,19 @@ const ProductDetail = () => {
         fetchProduct();
         window.scrollTo(0, 0);
     }, [slug]);
+
+    useEffect(() => {
+        if (!showComingSoon) return;
+
+        const handleClickOutside = (e) => {
+            if (comingSoonRef.current && !comingSoonRef.current.contains(e.target)) {
+                setShowComingSoon(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showComingSoon]);
 
     if (loading) return (
         <div className="container py-40 text-center">
@@ -101,20 +116,40 @@ const ProductDetail = () => {
 
                     {/* Left: Images */}
                     <div className="space-y-6">
-                        <div className="aspect-square bg-white dark:bg-dark-700 rounded-[40px] overflow-hidden border border-gold-100/50 dark:border-dark-600 shadow-sm relative group">
+                        <div className="aspect-square bg-cream-50 dark:bg-dark-700 rounded-[40px] overflow-hidden border border-gold-100/50 dark:border-dark-600 shadow-sm relative group flex items-center justify-center p-4">
                             <motion.img
                                 key={selectedImage}
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 src={selectedImage}
                                 alt={product.name_ar}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-contain"
                             />
                             <div className="absolute top-6 left-6 space-y-3">
-                                <button className="p-4 bg-white/80 dark:bg-dark-600/80 backdrop-blur-md rounded-full text-text-primary dark:text-cream-50 hover:bg-gold-500 hover:text-white transition-all shadow-lg">
-                                    <Heart size={20} />
-                                </button>
-                                <button className="p-4 bg-white/80 dark:bg-dark-600/80 backdrop-blur-md rounded-full text-text-primary dark:text-cream-50 hover:bg-gold-500 hover:text-white transition-all shadow-lg">
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowComingSoon(true)}
+                                        className="p-4 bg-white/80 dark:bg-dark-600/80 backdrop-blur-md rounded-full text-text-primary dark:text-cream-50 hover:bg-gold-500 hover:text-white transition-all shadow-lg"
+                                    >
+                                        <Heart size={20} />
+                                    </button>
+                                    {showComingSoon && (
+                                        <div
+                                            ref={comingSoonRef}
+                                            className="absolute top-0 right-full mr-4 bg-white dark:bg-dark-800 text-text-primary dark:text-cream-50 px-6 py-3 rounded-2xl shadow-2xl border border-gold-100 dark:border-dark-600 whitespace-nowrap text-sm font-bold z-50"
+                                        >
+                                            قريباً 🚀
+                                            <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-3 bg-white dark:bg-dark-800 rotate-45 border-t border-l border-gold-100 dark:border-dark-600"></div>
+                                        </div>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(window.location.href);
+                                        toast.success('تم نسخ الرابط');
+                                    }}
+                                    className="p-4 bg-white/80 dark:bg-dark-600/80 backdrop-blur-md rounded-full text-text-primary dark:text-cream-50 hover:bg-gold-500 hover:text-white transition-all shadow-lg"
+                                >
                                     <Share2 size={20} />
                                 </button>
                             </div>

@@ -3,9 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { productsApi } from '../services/api';
 import ProductCard from '../components/products/ProductCard';
 import Pagination from '../components/common/Pagination';
-import { Filter, ChevronDown, SlidersHorizontal } from 'lucide-react';
-import { motion } from 'framer-motion';
-import Modal from '../components/common/Modal';
+import { Filter, ChevronDown, SlidersHorizontal, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const FilterSection = ({ filters, categories, brands, handleFilterChange }) => (
     <div className="space-y-8">
@@ -198,13 +197,13 @@ const Products = () => {
 
                         {/* Product Grid */}
                         {loading ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                                 {[1, 2, 3, 4, 5, 6].map(i => (
                                     <div key={i} className="bg-white dark:bg-dark-700 rounded-2xl h-[450px] animate-pulse border border-gold-100/50 dark:border-dark-600"></div>
                                 ))}
                             </div>
                         ) : products.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                                 {products.map((product, idx) => (
                                     <motion.div
                                         key={product.id}
@@ -245,23 +244,45 @@ const Products = () => {
                 </div>
             </div>
 
-            <Modal variant="drawer" isOpen={showMobileFilters} onClose={() => setShowMobileFilters(false)}>
-                <div className="p-6 space-y-8">
-                    <h2 className="text-xl font-bold text-text-primary dark:text-cream-50">تصفية المنتجات</h2>
-                    <FilterSection
-                        filters={filters}
-                        categories={categories}
-                        brands={brands}
-                        handleFilterChange={handleFilterChange}
-                    />
-                    <button
-                        onClick={() => setShowMobileFilters(false)}
-                        className="w-full py-4 bg-gold-500 text-white rounded-xl font-bold shadow-lg shadow-gold-500/20"
-                    >
-                        عرض النتائج
-                    </button>
-                </div>
-            </Modal>
+            <AnimatePresence>
+                {showMobileFilters && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowMobileFilters(false)}
+                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200]"
+                        />
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                            className="fixed inset-y-0 right-0 w-[80%] max-w-sm bg-white dark:bg-dark-800 z-[200] p-6 shadow-2xl overflow-y-auto"
+                        >
+                            <div className="flex justify-between items-center mb-8">
+                                <h2 className="text-xl font-bold text-text-primary dark:text-cream-50">تصفية المنتجات</h2>
+                                <button onClick={() => setShowMobileFilters(false)} className="p-2 hover:bg-cream-50 dark:hover:bg-dark-600 rounded-full transition-colors text-text-primary dark:text-cream-50">
+                                    <X size={24} />
+                                </button>
+                            </div>
+                            <FilterSection
+                                filters={filters}
+                                categories={categories}
+                                brands={brands}
+                                handleFilterChange={handleFilterChange}
+                            />
+                            <button
+                                onClick={() => setShowMobileFilters(false)}
+                                className="w-full mt-10 py-4 bg-gold-500 text-white rounded-xl font-bold shadow-lg shadow-gold-500/20"
+                            >
+                                عرض النتائج
+                            </button>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

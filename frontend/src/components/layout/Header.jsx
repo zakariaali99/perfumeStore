@@ -122,7 +122,7 @@ const Header = () => {
                                 height: scrolled ? '65px' : '85px'
                             }}
                         >
-                            <img src="/static/frontend/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain scale-[1.35]" />
+                            <img src="/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain scale-[1.35]" />
                         </div>
                         <div className="hidden md:flex flex-col">
                             <div className="flex items-center gap-2">
