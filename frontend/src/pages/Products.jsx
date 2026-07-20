@@ -131,7 +131,7 @@ const Products = () => {
     };
 
     return (
-        <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-24 pb-20 transition-colors duration-300">
+        <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-28 pb-20 transition-colors duration-300">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row gap-8">
 
@@ -148,11 +148,11 @@ const Products = () => {
                     </aside>
 
                     {/* Main Content */}
-                    <main className="flex-1">
+                    <div className="flex-1 min-w-0">
                         {/* Header & Sort */}
                         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
                             <div className="w-full sm:w-auto">
-                                <h1 className="text-3xl font-bold text-text-primary dark:text-cream-50">جميع العطور</h1>
+                                <h1 className="text-2xl md:text-3xl font-bold text-text-primary dark:text-cream-50">جميع العطور</h1>
                                 <p className="text-text-secondary dark:text-gold-400 text-sm">اكتشف مجموعتنا المختارة من أرقى العطور</p>
                             </div>
 
@@ -216,7 +216,7 @@ const Products = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="bg-white dark:bg-dark-700 rounded-3xl p-20 text-center border border-gold-100 dark:border-dark-600 shadow-sm">
+                            <div className="bg-white dark:bg-dark-700 rounded-3xl p-8 md:p-20 text-center border border-gold-100 dark:border-dark-600 shadow-sm">
                                 <Filter size={48} className="mx-auto text-gold-200 dark:text-dark-600 mb-4" />
                                 <h3 className="text-xl font-bold text-text-primary dark:text-cream-50 mb-2">لا توجد منتجات</h3>
                                 <p className="text-text-secondary dark:text-gold-400">حاول تغيير فلاتر البحث للعثور على ما تبحث عنه</p>
@@ -240,7 +240,7 @@ const Products = () => {
                                 onPageChange={setCurrentPage}
                             />
                         </div>
-                    </main>
+                    </div>
                 </div>
             </div>
 
@@ -260,6 +260,12 @@ const Products = () => {
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                             className="fixed inset-y-0 right-0 w-[80%] max-w-sm bg-white dark:bg-dark-800 z-[200] p-6 shadow-2xl overflow-y-auto"
+                            dir="ltr"
+                            drag="x"
+                            dragElastic={0.2}
+                            onDragEnd={(_, info) => {
+                                if (info.offset.x > 100) setShowMobileFilters(false);
+                            }}
                         >
                             <div className="flex justify-between items-center mb-8">
                                 <h2 className="text-xl font-bold text-text-primary dark:text-cream-50">تصفية المنتجات</h2>

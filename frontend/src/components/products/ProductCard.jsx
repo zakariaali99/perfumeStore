@@ -21,11 +21,11 @@ const ProductCard = ({ product }) => {
 
             <div className="p-3 md:p-5 text-center">
                 <div className="flex items-center justify-center gap-2 mb-1">
-                    <span className="text-[10px] md:text-xs text-gold-600 dark:text-gold-400 font-bold opacity-80 uppercase tracking-tighter">
+                    <span className="text-xs text-gold-600 dark:text-gold-400 font-bold opacity-80 uppercase tracking-tighter">
                         {product.gender === 'men' ? '👨 رجالي' : product.gender === 'women' ? '👩 نسائي' : '🚻 للجنسين'}
                     </span>
                     <span className="w-1 h-1 rounded-full bg-gold-200"></span>
-                    <span className="text-[10px] md:text-xs text-gold-600 dark:text-gold-400 font-medium">{product.brand?.name_ar}</span>
+                    <span className="text-xs text-gold-600 dark:text-gold-400 font-medium">{product.brand?.name_ar}</span>
                 </div>
                 <Link to={`/product/${product.slug}`} className="text-sm md:text-lg font-bold text-text-primary dark:text-cream-50 hover:text-gold-500 transition-colors block mb-2 md:mb-3 line-clamp-1">
                     {product.name_ar}
@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
 
                 <Link
                     to={`/product/${product.slug}`}
-                    className="w-full py-2 md:py-3 bg-cream-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white text-gold-600 dark:text-gold-400 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse border border-gold-100 dark:border-dark-600 text-xs md:text-sm"
+                    className="w-full py-3 bg-cream-50 dark:bg-dark-600 hover:bg-gold-500 hover:text-white text-gold-600 dark:text-gold-400 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse border border-gold-100 dark:border-dark-600 text-xs md:text-sm"
                 >
                     <ShoppingCart size={16} className="md:w-[18px] md:h-[18px]" />
                     <span>التفاصيل</span>

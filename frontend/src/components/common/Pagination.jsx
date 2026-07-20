@@ -6,7 +6,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     return (
-        <div className="flex items-center justify-between px-8 py-4 bg-white dark:bg-dark-800 border-t border-gold-100 dark:border-dark-600 rounded-b-[32px]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 px-4 sm:px-8 py-4 bg-white dark:bg-dark-800 border-t border-gold-100 dark:border-dark-600 rounded-b-[32px]">
             <div className="text-xs text-text-secondary dark:text-gold-400 font-bold">
                 الصفحة <span className="font-poppins">{currentPage}</span> من <span className="font-poppins">{totalPages}</span>
             </div>
@@ -18,7 +18,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 >
                     <ChevronRight size={18} />
                 </button>
-                <div className="flex gap-1">
+                <div className="flex flex-wrap gap-1">
                     {pages.map(page => (
                         <button
                             key={page}

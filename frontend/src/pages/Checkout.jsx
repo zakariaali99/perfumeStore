@@ -179,7 +179,7 @@ const Checkout = () => {
                                             </div>
                                             <div className="md:col-span-2">
                                                 <label className="block text-sm font-bold text-text-secondary dark:text-gold-400 mb-2">تاريخ الميلاد (للحصول على خصم يوم ميلادك)</label>
-                                                <div className="flex gap-4">
+                                                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                                                     <select
                                                         name="birth_day"
                                                         value={formData.birth_day}
@@ -209,7 +209,7 @@ const Checkout = () => {
                                                         className="flex-1 px-4 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none"
                                                     >
                                                         <option value="">السنة</option>
-                                                        {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(y => (
+                                                        {Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - i).map(y => (
                                                             <option key={y} value={y}>{y}</option>
                                                         ))}
                                                     </select>
@@ -332,7 +332,7 @@ const Checkout = () => {
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-text-secondary dark:text-gray-400">العنوان:</span>
-                                                <span className="font-bold text-text-primary dark:text-cream-50 text-left max-w-[200px] truncate">{formData.city}، {formData.area}</span>
+                                                <span className="font-bold text-text-primary dark:text-cream-50 text-left max-w-full break-words">{formData.city}، {formData.area}</span>
                                             </div>
                                         </div>
 

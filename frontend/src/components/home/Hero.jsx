@@ -28,7 +28,7 @@ const Hero = () => {
     }, []);
 
     if (loading || slides.length === 0) return (
-        <section className="relative h-screen bg-cream-50 dark:bg-dark-800 animate-pulse flex items-center justify-center">
+        <section className="relative h-[100svh] bg-cream-50 dark:bg-dark-800 animate-pulse flex items-center justify-center">
             <div className="text-center">
                 <div className="w-16 h-16 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
                 <p className="text-text-secondary dark:text-gold-400 font-bold">جاري تحميل العروض...</p>

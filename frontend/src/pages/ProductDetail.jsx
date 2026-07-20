@@ -104,12 +104,12 @@ const ProductDetail = () => {
         <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-24 pb-20 transition-colors duration-300">
             <div className="container mx-auto px-4">
                 {/* Breadcrumbs */}
-                <nav className="flex items-center space-x-2 space-x-reverse text-sm mb-8 text-text-secondary dark:text-gold-400">
-                    <Link to="/" className="hover:text-gold-600 transition-colors">الرئيسية</Link>
-                    <ChevronLeft size={16} />
-                    <Link to="/products" className="hover:text-gold-600 transition-colors">العطور</Link>
-                    <ChevronLeft size={16} />
-                    <span className="text-text-primary dark:text-cream-50 font-medium">{product.name_ar}</span>
+                <nav className="flex items-center space-x-2 space-x-reverse text-sm mb-8 text-text-secondary dark:text-gold-400 overflow-hidden">
+                    <Link to="/" className="hover:text-gold-600 transition-colors shrink-0">الرئيسية</Link>
+                    <ChevronLeft size={16} className="shrink-0" />
+                    <Link to="/products" className="hover:text-gold-600 transition-colors shrink-0">العطور</Link>
+                    <ChevronLeft size={16} className="shrink-0" />
+                    <span className="text-text-primary dark:text-cream-50 font-medium truncate min-w-0">{product.name_ar}</span>
                 </nav>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">

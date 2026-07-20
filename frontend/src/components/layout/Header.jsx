@@ -24,6 +24,11 @@ import CartDrawer from '../cart/CartDrawer';
 import RamadanBanner from '../common/RamadanBanner';
 import { productsApi } from '../../services/api';
 
+const fallbackCategories = [
+    { id: 1, slug: 'oriental', name_ar: 'عطور شرقية' },
+    { id: 2, slug: 'oud', name_ar: 'عطور عود' },
+];
+
 const Header = () => {
     const { cart } = useCartStore();
     const { isDark, toggleTheme } = useThemeStore();
@@ -61,7 +66,7 @@ const Header = () => {
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -116,11 +121,7 @@ const Header = () => {
 
                     <Link to="/" className="flex items-center gap-3 group shrink-0">
                         <div
-                            className="flex justify-center items-center shrink-0 transition-all duration-500 rounded-2xl bg-white overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105"
-                            style={{
-                                width: scrolled ? '65px' : '85px',
-                                height: scrolled ? '65px' : '85px'
-                            }}
+                            className={`flex justify-center items-center shrink-0 transition-all duration-500 rounded-2xl bg-white overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105 ${scrolled ? 'w-[55px] h-[55px] md:w-[65px] md:h-[65px]' : 'w-[70px] h-[70px] md:w-[85px] md:h-[85px]'}`}
                         >
                             <img src="/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain scale-[1.35]" />
                         </div>
@@ -177,7 +178,7 @@ const Header = () => {
                     </nav>
 
                     <div className="flex items-center gap-2 md:gap-4">
-                        <div className={`hidden sm:flex items-center transition-all duration-300 ${isSearchOpen ? 'w-64 bg-gray-50 dark:bg-dark-700 px-3 py-1.5 rounded-2xl border border-gold-200 dark:border-dark-600' : 'w-12 bg-transparent justify-center'}`}>
+                        <div className={`flex items-center transition-all duration-300 ${isSearchOpen ? 'w-full sm:w-64 bg-gray-50 dark:bg-dark-700 px-3 py-1.5 rounded-2xl border border-gold-200 dark:border-dark-600' : 'w-12 bg-transparent justify-center'}`}>
                             {isSearchOpen ? (
                                 <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center">
                                     <input
@@ -315,7 +316,7 @@ const Header = () => {
                                 <nav className="space-y-6">
                                     <p className="text-[10px] uppercase tracking-widest text-text-muted font-black border-r-2 border-gold-500 pr-3">تسوق حسب القسم</p>
                                     <div className="space-y-3">
-                                        {categories.map(item => (
+                                        {(categories.length > 0 ? categories : fallbackCategories).map(item => (
                                             <Link
                                                 key={item.id}
                                                 to={`/products?category=${item.slug}`}

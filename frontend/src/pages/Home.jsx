@@ -107,8 +107,8 @@ const Home = () => {
                                             <Icon size={18} className="md:hidden" />
                                             <Icon size={28} className="hidden md:block" />
                                         </div>
-                                        <h3 className="text-xs sm:text-sm md:text-xl font-black mb-1.5 md:mb-3 text-text-primary dark:text-cream-50">{feature.title}</h3>
-                                        <p className="text-[10px] sm:text-[11px] md:text-base text-text-secondary dark:text-gold-400/70 leading-relaxed md:block">
+                                        <h3 className="text-sm md:text-xl font-black mb-1.5 md:mb-3 text-text-primary dark:text-cream-50">{feature.title}</h3>
+                                        <p className="text-sm md:text-base text-text-secondary dark:text-gold-400/70 leading-relaxed">
                                             {feature.desc}
                                         </p>
                                     </motion.div>
@@ -155,7 +155,7 @@ const Home = () => {
         best_sellers: (section) => products.filter(p => p.is_featured).length > 0 && (
             <section key="best_sellers" className="py-12 md:py-24 bg-cream-50 dark:bg-dark-800 overflow-hidden">
                 <div className="container mx-auto px-4">
-                    <div className="flex flex-row items-center justify-between mb-8 md:mb-16 gap-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-between mb-8 md:mb-16 gap-4">
                         <div>
                             <div className="flex items-center gap-2 text-gold-600 dark:text-gold-400 font-black mb-1 md:mb-3">
                                 <Award size={18} />
@@ -193,7 +193,7 @@ const Home = () => {
         featured_products: (section) => (
             <section key="featured_products" className="py-12 md:py-32 dark:bg-dark-900 bg-white">
                 <div className="container mx-auto px-4">
-                    <div className="flex flex-row items-center justify-between mb-8 md:mb-16 gap-4 border-b border-gold-100 dark:border-dark-700 pb-4 md:pb-8">
+                    <div className="flex flex-col sm:flex-row items-center justify-between mb-8 md:mb-16 gap-4 border-b border-gold-100 dark:border-dark-700 pb-4 md:pb-8">
                         <div>
                             <div className="flex items-center gap-2 text-gold-600 dark:text-gold-400 font-black mb-1 md:mb-4">
                                 <TrendingUp size={16} className="md:w-5 md:h-5" />
@@ -278,7 +278,7 @@ const Home = () => {
                 <div className="container mx-auto px-4 relative z-10 text-center">
                     <h2 className="text-xl md:text-5xl lg:text-7xl font-black mb-8 md:mb-12 italic opacity-10">Art of Perfumery</h2>
                     <div className="max-w-3xl mx-auto space-y-6 md:space-y-10">
-                        <p className="text-xl md:text-4xl lg:text-5xl font-black leading-tight text-gold-400 px-2">
+                        <p className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight text-gold-400 px-2">
                             &quot;{section.content?.quote || 'العطر هو اللغة التي لا تحتاج إلى كلمات لتخبر العالم من أنت.'}&quot;
                         </p>
                         <p className="text-base md:text-xl text-gray-400 leading-loose px-2">
@@ -296,7 +296,7 @@ const Home = () => {
     };
 
     return (
-        <div className="bg-white dark:bg-dark-900 transition-colors duration-300">
+        <div className="bg-white dark:bg-dark-900 transition-colors duration-300 overflow-x-hidden">
             <Hero />
 
             {hpcSections.map(section => {

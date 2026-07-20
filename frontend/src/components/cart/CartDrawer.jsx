@@ -80,7 +80,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                                 <h3 className="font-bold text-text-primary dark:text-cream-50 truncate">{item.variant.product_name_ar}</h3>
                                                 <button
                                                     onClick={() => removeItem(item.id)}
-                                                    className="text-text-muted hover:text-red-500 transition-colors"
+                                                    className="p-3 text-text-muted hover:text-red-500 transition-colors"
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
@@ -88,18 +88,18 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                             <p className="text-xs text-text-secondary dark:text-gold-400 mb-3">حجم {item.variant.size_ml} مل</p>
 
                                             <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-3 bg-cream-50 dark:bg-dark-700 rounded-xl px-2 py-1 border border-gold-50 dark:border-dark-600 text-text-primary dark:text-cream-50">
+                                                <div className="flex items-center gap-3 bg-cream-50 dark:bg-dark-700 rounded-xl px-3 py-2 border border-gold-50 dark:border-dark-600 text-text-primary dark:text-cream-50">
                                                     <button
                                                         onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
                                                         disabled={item.quantity <= 1}
-                                                        className="p-1 hover:text-gold-600 disabled:opacity-30 disabled:hover:text-inherit"
+                                                        className="p-3 hover:text-gold-600 disabled:opacity-30 disabled:hover:text-inherit"
                                                     >
                                                         <Minus size={14} />
                                                     </button>
                                                     <span className="font-bold text-sm min-w-[20px] text-center">{item.quantity}</span>
                                                     <button
                                                         onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
-                                                        className="p-1 hover:text-gold-600"
+                                                        className="p-3 hover:text-gold-600"
                                                     >
                                                         <Plus size={14} />
                                                     </button>
