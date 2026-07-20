@@ -128,15 +128,7 @@ const Header = () => {
                                 <span className={`font-black text-gold-600 tracking-tight transition-all duration-500 ${scrolled ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
                                     عطور مصطفى
                                 </span>
-                                {!scrolled && (
-                                    <motion.span
-                                        animate={{ opacity: [0.3, 0.8, 0.3], scale: [0.9, 1.1, 0.9] }}
-                                        transition={{ duration: 3, repeat: Infinity }}
-                                        className="text-gold-500 text-sm mb-2"
-                                    >
-                                        🌙
-                                    </motion.span>
-                                )}
+
                             </div>
                             <span className={`font-bold uppercase tracking-[0.3em] text-text-secondary dark:text-gold-400 group-hover:text-gold-500 transition-all duration-500 ${scrolled ? 'text-[8px]' : 'text-[10px] md:text-xs'}`}>
                                 Luxury Perfumes
