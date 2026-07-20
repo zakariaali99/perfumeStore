@@ -73,6 +73,10 @@ class ProductModel {
   final BrandModel? brand;
   final String? gender;
   final String? concentration;
+  @JsonKey(name: 'main_image')
+  final String? mainImage;
+  @JsonKey(name: 'min_price')
+  final double? minPrice;
   @JsonKey(name: 'is_featured')
   final bool isFeatured;
   @JsonKey(name: 'is_new')
@@ -89,6 +93,8 @@ class ProductModel {
     this.brand,
     this.gender,
     this.concentration,
+    this.mainImage,
+    this.minPrice,
     required this.isFeatured,
     required this.isNew,
     required this.isActive,

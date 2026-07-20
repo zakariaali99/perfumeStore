@@ -17,6 +17,8 @@ class CustomerProfileModel {
   final String segment;
   @JsonKey(name: 'last_order_date')
   final String? lastOrderDate;
+  final List<dynamic>? interactions;
+  final List<dynamic>? orders;
 
   CustomerProfileModel({
     required this.id,
@@ -28,6 +30,8 @@ class CustomerProfileModel {
     required this.totalOrders,
     required this.segment,
     this.lastOrderDate,
+    this.interactions,
+    this.orders,
   });
 
   factory CustomerProfileModel.fromJson(Map<String, dynamic> json) => _$CustomerProfileModelFromJson(json);

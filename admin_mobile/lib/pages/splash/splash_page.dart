@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -20,7 +21,7 @@ class _SplashPageState extends State<SplashPage> {
   Future<void> _checkAuthAndNavigate() async {
     await Future.delayed(const Duration(seconds: 2));
     final authService = Get.find<AuthService>();
-    
+
     if (authService.isLoggedIn.value && authService.isStaff) {
       Get.offAllNamed('/main-nav');
     } else {
@@ -31,7 +32,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.dark900,
+      backgroundColor: AppColors.dark900,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,23 +45,24 @@ class _SplashPageState extends State<SplashPage> {
             const SizedBox(height: 24),
             Text(
               'متجر مصطفى',
-              style: TextStyle(
-                color: AppTheme.goldPrimary,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.tajawal(
+                color: AppColors.gold500,
+                fontSize: 30,
+                fontWeight: FontWeight.w900,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'لوحة التحكم الإدارية',
-              style: TextStyle(
-                color: AppTheme.goldLight.withOpacity(0.8),
-                fontSize: 16,
+              style: GoogleFonts.tajawal(
+                color: AppColors.gold300.withValues(alpha: 0.8),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 48),
             const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.goldPrimary),
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.gold500),
             ),
           ],
         ),

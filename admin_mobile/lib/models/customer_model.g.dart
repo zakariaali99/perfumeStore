@@ -18,6 +18,8 @@ CustomerProfileModel _$CustomerProfileModelFromJson(
   totalOrders: (json['total_orders'] as num).toInt(),
   segment: json['segment'] as String,
   lastOrderDate: json['last_order_date'] as String?,
+  interactions: json['interactions'] as List<dynamic>?,
+  orders: json['orders'] as List<dynamic>?,
 );
 
 Map<String, dynamic> _$CustomerProfileModelToJson(
@@ -32,4 +34,6 @@ Map<String, dynamic> _$CustomerProfileModelToJson(
   'total_orders': instance.totalOrders,
   'segment': instance.segment,
   'last_order_date': instance.lastOrderDate,
+  'interactions': instance.interactions,
+  'orders': instance.orders,
 };

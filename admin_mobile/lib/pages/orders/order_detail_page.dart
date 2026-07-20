@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import '../../models/order_model.dart';
 import '../../services/api_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/card_container.dart';
+import '../../widgets/status_badge.dart';
 
 class OrderDetailPage extends StatefulWidget {
   final String orderNumber;
@@ -16,14 +20,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   bool _isLoading = true;
   OrderModel? _order;
   bool _isUpdating = false;
-
-  final Map<String, String> _statuses = {
-    'pending': 'قيد الانتظار',
-    'processing': 'قيد المعالجة',
-    'shipped': 'تم الشحن',
-    'delivered': 'تم التسليم',
-    'cancelled': 'ملغي',
-  };
 
   @override
   void initState() {
@@ -55,7 +51,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   Future<void> _updateStatus(String newStatus) async {
     if (_order == null) return;
     setState(() => _isUpdating = true);
-
     try {
       final apiService = Get.find<ApiService>();
       final updatedOrder = await apiService.orders.updateOrderStatus(
@@ -87,37 +82,61 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('طلب رقم ${widget.orderNumber}'),
+        title: Text('طلب #${widget.orderNumber}'),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _order == null
               ? const Center(child: Text('الطلب غير موجود'))
-              : ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    // Status Card & Update Action
-                    Card(
-                      child: Padding(
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CardContainer(
                         padding: const EdgeInsets.all(16),
+                        borderRadius: 32,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Row(
+                              children: [
+                                StatusBadge(status: _order!.status),
+                                const Spacer(),
+                                Text(
+                                  'طلب #${_order!.orderNumber}',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppColors.gold600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
                               'تحديث حالة الطلب',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              style: GoogleFonts.tajawal(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w900,
+                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             DropdownButtonFormField<String>(
                               value: _order!.status,
-                              items: _statuses.entries.map((e) {
-                                return DropdownMenuItem(
-                                  value: e.key,
-                                  child: Text(e.value),
-                                );
-                              }).toList(),
+                              items: const [
+                                DropdownMenuItem(value: 'pending', child: Text('قيد الانتظار')),
+                                DropdownMenuItem(value: 'confirmed', child: Text('مؤكد')),
+                                DropdownMenuItem(value: 'processing', child: Text('قيد التجهيز')),
+                                DropdownMenuItem(value: 'shipped', child: Text('تم الشحن')),
+                                DropdownMenuItem(value: 'delivered', child: Text('تم التوصيل')),
+                                DropdownMenuItem(value: 'cancelled', child: Text('ملغي')),
+                              ],
                               onChanged: _isUpdating ? null : (val) {
                                 if (val != null && val != _order!.status) {
                                   _updateStatus(val);
@@ -130,140 +149,207 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Customer Info Card
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'بيانات العملاء والشحن',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            const Divider(height: 24),
-                            _buildInfoRow('اسم العميل', _order!.customerName),
-                            _buildInfoRow('رقم الهاتف', _order!.customerPhone),
-                            _buildInfoRow('المدينة والمنطقة', '${_order!.city} - ${_order!.area}'),
-                            _buildInfoRow('العنوان', _order!.address),
-                            if ((_order!.notes ?? '').isNotEmpty)
-                              _buildInfoRow('ملاحظات الزبون', _order!.notes!),
-                          ],
+                      const SizedBox(height: 20),
+                      Text(
+                        'بيانات العميل',
+                        style: GoogleFonts.tajawal(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Items Card
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'المنتجات المطلوبة',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      const SizedBox(height: 12),
+                      _buildLabel('رقم الهاتف'),
+                      Text(
+                        _order!.customerPhone,
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildLabel('العنوان'),
+                      Text(
+                        '${_order!.city} - ${_order!.area}',
+                        style: GoogleFonts.tajawal(
+                          fontSize: 12,
+                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        _order!.address,
+                        style: GoogleFonts.tajawal(
+                          fontSize: 12,
+                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                        ),
+                      ),
+                      if (_order!.notes != null && _order!.notes!.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.dark800 : AppColors.cream50,
+                            borderRadius: BorderRadius.circular(32),
+                            border: Border.all(
+                              color: isDark ? AppColors.dark600 : AppColors.gold100,
                             ),
-                            const Divider(height: 24),
-                            if (_order!.items == null || _order!.items!.isEmpty)
-                              const Text('لا توجد عناصر مضافة')
-                            else
-                              ..._order!.items!.map((item) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.notes_rounded, size: 16, color: AppColors.textMuted),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _order!.notes!,
+                                  style: GoogleFonts.tajawal(
+                                    fontSize: 12,
+                                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 24),
+                      Text(
+                        'المنتجات',
+                        style: GoogleFonts.tajawal(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      if (_order!.items != null)
+                        ..._order!.items!.map(
+                          (item) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              item.productName,
-                                              style: const TextStyle(fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              'حجم: ${item.variantSize} مل | العدد: ${item.quantity}',
-                                              style: const TextStyle(color: Colors.grey, fontSize: 12),
-                                            ),
-                                          ],
+                                      Text(
+                                        item.productName,
+                                        style: GoogleFonts.tajawal(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w900,
+                                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                                         ),
                                       ),
                                       Text(
-                                        '${item.totalPrice.toStringAsFixed(2)} ر.س',
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                        '${item.variantSize} مل | ${item.quantity} قطع',
+                                        style: GoogleFonts.tajawal(
+                                          fontSize: 10,
+                                          color: AppColors.textMuted,
+                                        ),
                                       ),
                                     ],
                                   ),
-                                );
-                              }),
-                            const Divider(height: 24),
-
-                            // Total summary
-                            _buildSummaryRow('المجموع الفرعي', '${_order!.subtotal.toStringAsFixed(2)} ر.س'),
-                            _buildSummaryRow('رسوم الشحن', '${_order!.shippingCost.toStringAsFixed(2)} ر.س'),
-                            if (_order!.discountAmount > 0)
-                              _buildSummaryRow('الخصم', '-${_order!.discountAmount.toStringAsFixed(2)} ر.س'),
+                                ),
+                                Text(
+                                  '${item.totalPrice.toStringAsFixed(2)} ر.س',
+                                  style: GoogleFonts.tajawal(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 24),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: AppColors.gold600,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: Column(
+                          children: [
+                            _totalRow('المجموع الفرعي', _order!.subtotal.toStringAsFixed(2)),
                             const SizedBox(height: 8),
-                            _buildSummaryRow(
-                              'الإجمالي',
-                              '${_order!.total.toStringAsFixed(2)} ر.س',
-                              isBold: true,
+                            _totalRow('رسوم الشحن', _order!.shippingCost.toStringAsFixed(2)),
+                            if (_order!.discountAmount > 0) ...[
+                              const SizedBox(height: 8),
+                              _totalRow('الخصم', '-${_order!.discountAmount.toStringAsFixed(2)}'),
+                            ],
+                            const SizedBox(height: 12),
+                            Divider(color: AppColors.white.withValues(alpha: 0.3), height: 1),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'الإجمالي',
+                                  style: GoogleFonts.tajawal(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                                Text(
+                                  '${_order!.total.toStringAsFixed(2)} ر.س',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 32),
+                    ],
+                  ),
                 ),
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildLabel(String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(label, style: const TextStyle(color: Colors.grey)),
-          ),
-          Expanded(
-            child: Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
-          ),
-        ],
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(
+        text,
+        style: GoogleFonts.tajawal(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: isDark ? AppColors.textSecondaryDark : AppColors.textMuted,
+        ),
       ),
     );
   }
 
-  Widget _buildSummaryRow(String label, String value, {bool isBold = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              fontSize: isBold ? 16 : 14,
-            ),
+  Widget _totalRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.tajawal(
+            fontSize: 12,
+            color: AppColors.white.withValues(alpha: 0.8),
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              color: isBold ? AppTheme.goldDark : null,
-              fontSize: isBold ? 16 : 14,
-            ),
+        ),
+        Text(
+          '$value ر.س',
+          style: GoogleFonts.poppins(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: AppColors.white,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
