@@ -10,7 +10,7 @@ import Modal from '../components/common/Modal';
 const FilterSection = ({ filters, categories, brands, handleFilterChange }) => (
     <div className="space-y-8">
         <div>
-            <h3 className="text-lg font-bold mb-4 border-b border-gold-200 dark:border-dark-600 pb-2 text-text-primary dark:text-cream-50">التصنيفات</h3>
+            <h3 className="text-lg font-bold mb-4 border-b border-gold-100 dark:border-dark-600 pb-2 text-text-primary dark:text-cream-50">التصنيفات</h3>
             <div className="space-y-2">
                 <button
                     onClick={() => handleFilterChange('categories', '')}
@@ -31,7 +31,7 @@ const FilterSection = ({ filters, categories, brands, handleFilterChange }) => (
         </div>
 
         <div>
-            <h3 className="text-lg font-bold mb-4 border-b border-gold-200 dark:border-dark-600 pb-2 text-text-primary dark:text-cream-50">الماركات</h3>
+            <h3 className="text-lg font-bold mb-4 border-b border-gold-100 dark:border-dark-600 pb-2 text-text-primary dark:text-cream-50">الماركات</h3>
             <div className="space-y-2">
                 <button
                     onClick={() => handleFilterChange('brand', '')}
@@ -138,7 +138,7 @@ const Products = () => {
 
                     {/* PC Sidebar */}
                     <aside className="hidden md:block w-64 flex-shrink-0">
-                        <div className="bg-white dark:bg-dark-700 p-6 rounded-2xl border border-gold-200/50 dark:border-dark-600 sticky top-28 shadow-sm">
+                        <div className="bg-white dark:bg-dark-700 p-6 rounded-2xl border border-gold-100/50 dark:border-dark-600 sticky top-28 shadow-sm">
                             <FilterSection
                                 filters={filters}
                                 categories={categories}
@@ -164,7 +164,7 @@ const Products = () => {
                                         placeholder="بحث عن عطر..."
                                         value={filters.search}
                                         onChange={(e) => handleFilterChange('search', e.target.value)}
-                                        className="w-full bg-white dark:bg-dark-700 border border-gold-200 dark:border-dark-600 px-4 py-2.5 rounded-xl pr-10 focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                        className="w-full bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-600 px-4 py-2.5 rounded-xl pr-10 focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
                                     />
                                     <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-500 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -174,7 +174,7 @@ const Products = () => {
                                 <div className="flex items-center gap-4 w-full sm:w-auto">
                                     <button
                                         onClick={() => setShowMobileFilters(true)}
-                                        className="md:hidden flex-1 flex items-center justify-center space-x-2 space-x-reverse bg-white dark:bg-dark-700 border border-gold-200 dark:border-dark-600 px-4 py-2.5 rounded-xl text-gold-600 dark:text-gold-400 font-bold"
+                                        className="md:hidden flex-1 flex items-center justify-center space-x-2 space-x-reverse bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-600 px-4 py-2.5 rounded-xl text-gold-600 dark:text-gold-400 font-bold"
                                     >
                                         <SlidersHorizontal size={18} />
                                         <span>الفلاتر</span>
@@ -184,7 +184,7 @@ const Products = () => {
                                         <select
                                             value={filters.ordering}
                                             onChange={(e) => handleFilterChange('ordering', e.target.value)}
-                                            className="w-full bg-white dark:bg-dark-700 border border-gold-200 dark:border-dark-600 px-4 py-2.5 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-gold-500/20 pr-10 text-text-primary dark:text-cream-50"
+                                            className="w-full bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-600 px-4 py-2.5 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-gold-500/20 pr-10 text-text-primary dark:text-cream-50"
                                         >
                                             <option value="-created_at">الأحدث</option>
                                             <option value="min_price">السعر: من الأقل</option>
@@ -200,7 +200,7 @@ const Products = () => {
                         {loading ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {[1, 2, 3, 4, 5, 6].map(i => (
-                                    <div key={i} className="bg-white dark:bg-dark-700 rounded-2xl h-[450px] animate-pulse border border-gold-200/50 dark:border-dark-600"></div>
+                                    <div key={i} className="bg-white dark:bg-dark-700 rounded-2xl h-[450px] animate-pulse border border-gold-100/50 dark:border-dark-600"></div>
                                 ))}
                             </div>
                         ) : products.length > 0 ? (
@@ -217,7 +217,7 @@ const Products = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="bg-white dark:bg-dark-700 rounded-3xl p-20 text-center border border-gold-200 dark:border-dark-600 shadow-sm">
+                            <div className="bg-white dark:bg-dark-700 rounded-3xl p-20 text-center border border-gold-100 dark:border-dark-600 shadow-sm">
                                 <Filter size={48} className="mx-auto text-gold-200 dark:text-dark-600 mb-4" />
                                 <h3 className="text-xl font-bold text-text-primary dark:text-cream-50 mb-2">لا توجد منتجات</h3>
                                 <p className="text-text-secondary dark:text-gold-400">حاول تغيير فلاتر البحث للعثور على ما تبحث عنه</p>
