@@ -20,6 +20,7 @@ import {
     LayoutGrid,
     Briefcase,
     ChevronRight,
+    ChevronLeft,
     X
 } from 'lucide-react';
 import useThemeStore from '../../store/themeStore';
@@ -65,7 +66,7 @@ const DashboardLayout = () => {
     };
 
     return (
-        <div className="bg-cream-50 dark:bg-dark-900 min-h-screen flex font-tajawal transition-colors duration-300">
+        <div className="bg-cream-50 dark:bg-dark-900 min-h-screen flex font-tajawal transition-colors duration-300" dir="rtl">
             {/* Sidebar Desktop */}
             <aside className={`hidden lg:flex ${isCollapsed ? 'w-20' : 'w-72'} bg-white dark:bg-dark-800 border-l border-gold-200 dark:border-dark-600 flex-col sticky top-0 h-screen transition-all duration-300`}>
                 <div className={`p-6 border-b border-gold-100 dark:border-dark-600 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
@@ -85,7 +86,7 @@ const DashboardLayout = () => {
                         className="p-1.5 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-lg text-text-muted dark:text-gold-400 transition-colors shrink-0"
                         title={isCollapsed ? 'توسيع القائمة' : 'طوي القائمة'}
                     >
-                        <ChevronRight size={18} className={`transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
+                        {isCollapsed ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
                     </button>
                 </div>
 

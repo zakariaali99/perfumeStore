@@ -32,7 +32,7 @@ function ModalBase({ isOpen, onClose, variant = 'center', maxWidth = 'max-w-lg',
           ref={modalRef}
           role="dialog"
           aria-modal="true"
-          className={`fixed inset-0 z-50 ${variant === 'drawer' ? 'flex items-center justify-end' : 'flex items-center justify-center p-4'}`}
+          className={`fixed inset-0 z-50 ${variant === 'drawer' ? 'flex items-center justify-start' : 'flex items-center justify-center p-4'}`}
         >
           <motion.div
             key="modal-backdrop"
