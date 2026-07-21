@@ -82,6 +82,9 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='Almostafas Perfume <nore
 
 # Static/Media
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
