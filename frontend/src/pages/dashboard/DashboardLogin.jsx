@@ -1,3 +1,4 @@
+import logoImg from '../../assets/logo.png';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { accountsApi } from '../../services/api';
@@ -37,8 +38,8 @@ const DashboardLogin = () => {
         <div className="min-h-screen bg-cream-50 dark:bg-dark-800 flex items-center justify-center p-6 bg-luxury-pattern">
             <div className="max-w-md w-full">
                 <div className="text-center mb-10">
-                    <div className="w-20 h-20 bg-gold-500 rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-gold-500/20">
-                        <Lock className="text-white" size={32} />
+                    <div className="w-20 h-20 bg-white rounded-[32px] p-2 border border-gold-200 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-gold-500/10 overflow-hidden">
+                        <img src={logoImg} alt="عطور مصطفى" className="w-full h-full object-contain scale-110" />
                     </div>
                     <h1 className="text-3xl font-black text-text-primary dark:text-cream-50 mb-2">لوحة التحكم</h1>
                     <p className="text-text-secondary dark:text-gold-400">سجل الدخول للمتابعة إلى الإدارة</p>

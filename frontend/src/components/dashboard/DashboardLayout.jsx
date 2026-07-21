@@ -1,3 +1,4 @@
+import logoImg from '../../assets/logo.png';
 import { useState } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
@@ -64,7 +65,9 @@ const DashboardLayout = () => {
             {/* Sidebar Desktop */}
             <aside className="hidden lg:flex w-72 bg-white dark:bg-dark-800 border-l border-gold-200 dark:border-dark-600 flex-col sticky top-0 h-screen transition-colors duration-300">
                 <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gold-500 rounded-xl flex items-center justify-center text-white font-black text-xl">M</div>
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-1 border border-gold-200 overflow-hidden shadow-sm">
+                        <img src={logoImg} alt="عطور مصطفى" className="w-full h-full object-contain" />
+                    </div>
                     <div>
                         <h2 className="font-black text-lg leading-none text-text-primary dark:text-cream-50">لوحة التحكم</h2>
                         <span className="text-[10px] text-gold-500 uppercase tracking-widest font-bold">ALMOSTAFAS ADMIN</span>
