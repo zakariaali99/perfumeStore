@@ -32,7 +32,7 @@ class OrderItemInputSerializer(serializers.Serializer):
 class OrderCreateSerializer(serializers.Serializer):
     customer_name = serializers.CharField(max_length=100)
     customer_phone = serializers.CharField(max_length=20)
-    customer_email = serializers.EmailField(required=False, allow_blank=True)
+    customer_email = serializers.EmailField(required=False, allow_blank=True, allow_null=True)
     birth_day = serializers.IntegerField(required=False, allow_null=True)
     birth_month = serializers.IntegerField(required=False, allow_null=True)
     birth_year = serializers.IntegerField(required=False, allow_null=True)
@@ -43,3 +43,17 @@ class OrderCreateSerializer(serializers.Serializer):
     notes = serializers.CharField(required=False, allow_blank=True)
     coupon_code = serializers.CharField(required=False, allow_blank=True)
     items = OrderItemInputSerializer(many=True, min_length=1)
+
+    def to_internal_value(self, data):
+        if isinstance(data, dict):
+            data = data.copy()
+            for field in ['birth_day', 'birth_month', 'birth_year']:
+                val = data.get(field)
+                if val == '' or val is None:
+                    data[field] = None
+                else:
+                    try:
+                        data[field] = int(val)
+                    except (ValueError, TypeError):
+                        data[field] = None
+        return super().to_internal_value(data)

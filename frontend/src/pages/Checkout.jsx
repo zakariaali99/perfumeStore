@@ -91,8 +91,17 @@ const Checkout = () => {
     const handleSubmit = async () => {
         setLoading(true);
         try {
+            const parseNum = (val) => {
+                if (val === null || val === undefined || val === '') return null;
+                const num = parseInt(val, 10);
+                return isNaN(num) ? null : num;
+            };
+
             const orderData = {
                 ...formData,
+                birth_day: parseNum(formData.birth_day),
+                birth_month: parseNum(formData.birth_month),
+                birth_year: parseNum(formData.birth_year),
                 items: cart.items.map(item => ({
                     variant_id: item.variant.id,
                     quantity: item.quantity
@@ -106,8 +115,15 @@ const Checkout = () => {
             navigate(`/track?order_number=${res.data.order_number}`);
         } catch (error) {
             console.error('Order error', error);
-            const msg = error.response?.data?.error || error.response?.data?.message || 'حدث خطأ أثناء إتمام الطلب';
-            toast.error(msg);
+            let msg = error.response?.data?.error || error.response?.data?.message;
+            if (!msg && error.response?.data && typeof error.response.data === 'object') {
+                const firstKey = Object.keys(error.response.data)[0];
+                if (firstKey) {
+                    const firstVal = error.response.data[firstKey];
+                    msg = Array.isArray(firstVal) ? `${firstKey}: ${firstVal[0]}` : String(firstVal);
+                }
+            }
+            toast.error(msg || 'حدث خطأ أثناء إتمام الطلب');
         } finally {
             setLoading(false);
         }
@@ -178,41 +194,38 @@ const Checkout = () => {
                                                 />
                                             </div>
                                             <div className="md:col-span-2">
-                                                <label className="block text-sm font-bold text-text-secondary dark:text-gold-400 mb-2">تاريخ الميلاد (للحصول على خصم يوم ميلادك)</label>
+                                                <label className="block text-sm font-bold text-text-secondary dark:text-gold-400 mb-2">تاريخ الميلاد (اختياري - للحصول على خصم يوم ميلادك)</label>
                                                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                                                    <select
+                                                    <input
+                                                        type="number"
                                                         name="birth_day"
                                                         value={formData.birth_day}
                                                         onChange={handleChange}
-                                                        className="flex-1 px-4 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none"
-                                                    >
-                                                        <option value="">اليوم</option>
-                                                        {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
-                                                            <option key={d} value={d}>{d}</option>
-                                                        ))}
-                                                    </select>
-                                                    <select
+                                                        placeholder="اليوم (1 - 31)"
+                                                        min="1"
+                                                        max="31"
+                                                        className="flex-1 px-5 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none text-text-primary dark:text-cream-50 font-bold"
+                                                    />
+                                                    <input
+                                                        type="number"
                                                         name="birth_month"
                                                         value={formData.birth_month}
                                                         onChange={handleChange}
-                                                        className="flex-1 px-4 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none"
-                                                    >
-                                                        <option value="">الشهر</option>
-                                                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                                                            <option key={m} value={m}>{m}</option>
-                                                        ))}
-                                                    </select>
-                                                    <select
+                                                        placeholder="الشهر (1 - 12)"
+                                                        min="1"
+                                                        max="12"
+                                                        className="flex-1 px-5 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none text-text-primary dark:text-cream-50 font-bold"
+                                                    />
+                                                    <input
+                                                        type="number"
                                                         name="birth_year"
                                                         value={formData.birth_year}
                                                         onChange={handleChange}
-                                                        className="flex-1 px-4 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none"
-                                                    >
-                                                        <option value="">السنة</option>
-                                                        {Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - i).map(y => (
-                                                            <option key={y} value={y}>{y}</option>
-                                                        ))}
-                                                    </select>
+                                                        placeholder="السنة (مثلاً 1995)"
+                                                        min="1930"
+                                                        max={new Date().getFullYear()}
+                                                        className="flex-1 px-5 py-4 rounded-2xl bg-gray-50 dark:bg-dark-800 border-2 border-transparent focus:border-gold-500 focus:bg-white dark:focus:bg-dark-600 transition-all outline-none text-text-primary dark:text-cream-50 font-bold font-poppins"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
