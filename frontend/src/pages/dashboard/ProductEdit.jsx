@@ -154,21 +154,21 @@ const ProductEdit = () => {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={handleBack}
-                        className="p-2 hover:bg-gold-50 rounded-xl transition-all text-text-secondary"
+                        className="p-2 hover:bg-gold-50 dark:hover:bg-dark-700 rounded-xl transition-all text-text-secondary dark:text-gold-400"
                     >
                         <ChevronRight size={24} />
                     </button>
                     <div>
-                        <h2 className="text-3xl font-black text-text-primary mb-1">
+                        <h2 className="text-3xl font-black text-text-primary dark:text-cream-50 mb-1">
                             {isEdit ? 'تعديل المنتج' : 'إضافة منتج جديد'}
                         </h2>
-                        <p className="text-text-secondary text-sm">أدخل تفاصيل العطر، الصور، والتصنيفات بدقة.</p>
+                        <p className="text-text-secondary dark:text-gold-400 text-sm">أدخل تفاصيل العطر، الصور، والتصنيفات بدقة.</p>
                     </div>
                 </div>
                 <div className="flex gap-4">
                     <button
                         onClick={handleBack}
-                        className="px-6 py-3 border border-gold-300 rounded-2xl font-bold bg-white hover:bg-gold-50 transition-all"
+                        className="px-6 py-3 border border-gold-300 dark:border-dark-600 rounded-2xl font-bold bg-white dark:bg-dark-700 text-text-primary dark:text-cream-50 hover:bg-gold-50 dark:hover:bg-dark-600 transition-all"
                     >
                         إلغاء
                     </button>
@@ -186,48 +186,48 @@ const ProductEdit = () => {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Info */}
                 <div className="lg:col-span-2 space-y-8">
-                    <div className="bg-white p-8 rounded-[40px] border border-gold-200 shadow-sm space-y-6">
-                        <div className="flex items-center gap-2 text-gold-600 font-black text-sm mb-4">
+                    <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm space-y-6">
+                        <div className="flex items-center gap-2 text-gold-600 dark:text-gold-400 font-black text-sm mb-4">
                             <Type size={18} />
                             المعلومات الأساسية
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">اسم العطر (عربي)</label>
+                                <label className="text-xs font-bold text-text-secondary dark:text-gold-400 px-1 uppercase tracking-wider">اسم العطر (عربي)</label>
                                 <input
                                     name="name_ar"
                                     value={formData.name_ar}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-bold"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 text-text-primary dark:text-cream-50 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-bold"
                                     required
                                 />
                             </div>
 
                             <div className="space-y-2 col-span-1 md:col-span-2">
-                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">رابط المنتج (Slug)</label>
+                                <label className="text-xs font-bold text-text-secondary dark:text-gold-400 px-1 uppercase tracking-wider">رابط المنتج (Slug)</label>
                                 <input
                                     name="slug"
                                     value={formData.slug}
                                     onChange={handleChange}
                                     placeholder="example-perfume-name"
-                                    className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-bold font-poppins text-left"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 text-text-primary dark:text-cream-50 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 font-bold font-poppins text-left"
                                     dir="ltr"
                                     required
                                 />
-                                <p className="text-[10px] text-text-muted px-1">يجب أن يكون باللغة الإنجليزية ولا يحتوي على مسافات (استخدم -).</p>
+                                <p className="text-[10px] text-text-muted dark:text-gold-400/70 px-1">يجب أن يكون باللغة الإنجليزية ولا يحتوي على مسافات (استخدم -).</p>
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">وصف العطر والقصة</label>
+                            <label className="text-xs font-bold text-text-secondary dark:text-gold-400 px-1 uppercase tracking-wider">وصف العطر والقصة</label>
                             <textarea
                                 name="description"
                                 value={formData.description}
                                 onChange={handleChange}
                                 rows="4"
                                 placeholder="الوصف المختصر..."
-                                className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 leading-loose mb-4"
+                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 text-text-primary dark:text-cream-50 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 leading-loose mb-4"
                             />
                             <textarea
                                 name="story"
@@ -235,41 +235,41 @@ const ProductEdit = () => {
                                 onChange={handleChange}
                                 rows="6"
                                 placeholder="القصة العطرية الكاملة..."
-                                className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 leading-loose"
+                                className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 text-text-primary dark:text-cream-50 px-5 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 leading-loose"
                             />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">مناسب لـ</label>
+                                <label className="text-xs font-bold text-text-secondary dark:text-gold-400 px-1 uppercase tracking-wider">مناسب لـ</label>
                                 <input
                                     name="occasion"
                                     value={formData.occasion}
                                     onChange={handleChange}
                                     placeholder="ليلي، حفلات، كلاسيكي..."
-                                    className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 text-text-primary dark:text-cream-50 px-5 py-4 rounded-2xl focus:outline-none"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1 uppercase tracking-wider">مزاج العطر</label>
+                                <label className="text-xs font-bold text-text-secondary dark:text-gold-400 px-1 uppercase tracking-wider">مزاج العطر</label>
                                 <input
                                     name="vibe"
                                     value={formData.vibe}
                                     onChange={handleChange}
                                     placeholder="قوي، دافئ، رجولي..."
-                                    className="w-full bg-cream-50 border border-gold-100 px-5 py-4 rounded-2xl focus:outline-none"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 text-text-primary dark:text-cream-50 px-5 py-4 rounded-2xl focus:outline-none"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white p-8 rounded-[40px] border border-gold-200 shadow-sm space-y-6">
-                        <div className="flex items-center gap-2 text-gold-600 font-black text-sm mb-4">
+                    <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm space-y-6">
+                        <div className="flex items-center gap-2 text-gold-600 dark:text-gold-400 font-black text-sm mb-4">
                             <ImageIcon size={18} />
                             معرض الصور
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <label className="aspect-square bg-cream-50 border-2 border-dashed border-gold-300 rounded-3xl flex flex-col items-center justify-center gap-2 text-gold-400 cursor-pointer hover:bg-gold-50 transition-all relative overflow-hidden">
+                            <label className="aspect-square bg-cream-50 dark:bg-dark-600 border-2 border-dashed border-gold-300 dark:border-dark-500 rounded-3xl flex flex-col items-center justify-center gap-2 text-gold-400 cursor-pointer hover:bg-gold-50 dark:hover:bg-dark-500 transition-all relative overflow-hidden">
                                 {imagePreview ? (
                                     <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                                 ) : (
@@ -281,7 +281,7 @@ const ProductEdit = () => {
                                 <input type="file" onChange={handleImageChange} className="hidden" accept="image/*" />
                             </label>
                             {/* Placeholder for uploaded images */}
-                            <div className="aspect-square bg-gray-100 rounded-3xl relative group">
+                            <div className="aspect-square bg-gray-100 dark:bg-dark-600 rounded-3xl relative group border border-gold-100 dark:border-dark-600">
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl flex items-center justify-center">
                                     <button type="button" className="p-2 bg-red-500 text-white rounded-xl"><Trash2 size={16} /></button>
                                 </div>
@@ -292,15 +292,15 @@ const ProductEdit = () => {
 
                 {/* Sidebar Info */}
                 <div className="space-y-8">
-                    <div className="bg-white p-8 rounded-[40px] border border-gold-200 shadow-sm space-y-6">
-                        <div className="flex items-center gap-2 text-gold-600 font-black text-sm mb-4">
+                    <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm space-y-6">
+                        <div className="flex items-center gap-2 text-gold-600 dark:text-gold-400 font-black text-sm mb-4">
                             <LayoutGrid size={18} />
                             التصنيفات
                         </div>
 
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1">التصنيفات</label>
+                                <label className="text-xs font-bold text-text-secondary dark:text-gold-400 px-1">التصنيفات</label>
                                 <select
                                     name="categories"
                                     multiple
@@ -309,19 +309,19 @@ const ProductEdit = () => {
                                         const options = Array.from(e.target.selectedOptions).map(o => String(o.value));
                                         setFormData({ ...formData, categories: options });
                                     }}
-                                    className="w-full bg-cream-50 border border-gold-100 px-4 py-4 rounded-2xl focus:outline-none min-h-[120px]"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 text-text-primary dark:text-cream-50 px-4 py-4 rounded-2xl focus:outline-none min-h-[120px]"
                                 >
                                     {categories.map(c => <option key={c.id} value={c.id}>{c.name_ar}</option>)}
                                 </select>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1">الماركة</label>
+                                <label className="text-xs font-bold text-text-secondary dark:text-gold-400 px-1">الماركة</label>
                                 <select
                                     name="brand"
                                     value={formData.brand}
                                     onChange={handleChange}
-                                    className="w-full bg-cream-50 border border-gold-100 px-4 py-4 rounded-2xl focus:outline-none"
+                                    className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 text-text-primary dark:text-cream-50 px-4 py-4 rounded-2xl focus:outline-none"
                                 >
                                     <option value="">اختر الماركة</option>
                                     {brands.map(b => <option key={b.id} value={b.id}>{b.name_ar}</option>)}
@@ -329,14 +329,14 @@ const ProductEdit = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-text-secondary px-1">الجنس</label>
+                                <label className="text-xs font-bold text-text-secondary dark:text-gold-400 px-1">الجنس</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     {['men', 'women', 'unisex'].map(g => (
                                         <button
                                             key={g}
                                             type="button"
                                             onClick={() => setFormData({ ...formData, gender: g })}
-                                            className={`py-3 rounded-xl text-xs font-bold transition-all border ${formData.gender === g ? 'bg-gold-500 text-white border-gold-500 shadow-md shadow-gold-500/20' : 'bg-cream-50 text-text-secondary border-gold-100 hover:bg-gold-50'}`}
+                                            className={`py-3 rounded-xl text-xs font-bold transition-all border ${formData.gender === g ? 'bg-gold-500 text-white border-gold-500 shadow-md shadow-gold-500/20' : 'bg-cream-50 dark:bg-dark-600 text-text-secondary dark:text-gold-400 border-gold-100 dark:border-dark-600 hover:bg-gold-50 dark:hover:bg-dark-500'}`}
                                         >
                                             {g === 'men' ? 'رجالي' : g === 'women' ? 'نسائي' : 'للجنسين'}
                                         </button>
@@ -346,14 +346,14 @@ const ProductEdit = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-8 rounded-[40px] border border-gold-200 shadow-sm space-y-6">
-                        <div className="flex items-center gap-2 text-gold-600 font-black text-sm mb-4">
+                    <div className="bg-white dark:bg-dark-700 p-8 rounded-[40px] border border-gold-200 dark:border-dark-600 shadow-sm space-y-6">
+                        <div className="flex items-center gap-2 text-gold-600 dark:text-gold-400 font-black text-sm mb-4">
                             <Briefcase size={18} />
                             خيارات العرض
                         </div>
 
                         <div className="space-y-4">
-                            <label className="flex items-center justify-between p-4 bg-cream-50 rounded-2xl cursor-pointer">
+                            <label className="flex items-center justify-between p-4 bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 rounded-2xl cursor-pointer text-text-primary dark:text-cream-50">
                                 <span className="text-sm font-bold">تفعيل المنتج</span>
                                 <input
                                     type="checkbox"
@@ -363,7 +363,7 @@ const ProductEdit = () => {
                                     className="w-5 h-5 accent-gold-500"
                                 />
                             </label>
-                            <label className="flex items-center justify-between p-4 bg-cream-50 rounded-2xl cursor-pointer">
+                            <label className="flex items-center justify-between p-4 bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 rounded-2xl cursor-pointer text-text-primary dark:text-cream-50">
                                 <span className="text-sm font-bold">منتج مميز (Featured)</span>
                                 <input
                                     type="checkbox"
@@ -373,7 +373,7 @@ const ProductEdit = () => {
                                     className="w-5 h-5 accent-gold-500"
                                 />
                             </label>
-                            <label className="flex items-center justify-between p-4 bg-cream-50 rounded-2xl cursor-pointer">
+                            <label className="flex items-center justify-between p-4 bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 rounded-2xl cursor-pointer text-text-primary dark:text-cream-50">
                                 <span className="text-sm font-bold">وصول جديد (New)</span>
                                 <input
                                     type="checkbox"
@@ -383,7 +383,7 @@ const ProductEdit = () => {
                                     className="w-5 h-5 accent-gold-500"
                                 />
                             </label>
-                            <label className="flex items-center justify-between p-4 bg-cream-50 rounded-2xl cursor-pointer">
+                            <label className="flex items-center justify-between p-4 bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 rounded-2xl cursor-pointer text-text-primary dark:text-cream-50">
                                 <span className="text-sm font-bold">الأكثر مبيعاً (Bestseller)</span>
                                 <input
                                     type="checkbox"
