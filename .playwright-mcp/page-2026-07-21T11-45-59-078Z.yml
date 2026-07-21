@@ -1,0 +1,13 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - heading "We're sorry, but something went wrong." [level=1] [ref=e6]
+      - paragraph [ref=e7]: The issue has been logged for investigation. Please try again later.
+  - link "Technical details for the administrator of this website" [ref=e9] [cursor=pointer]:
+    - /url: "#"
+  - contentinfo [ref=e10]:
+    - generic [ref=e11]:
+      - text: This website is powered by
+      - link "Phusion Passenger(R)" [ref=e12] [cursor=pointer]:
+        - /url: https:<wbr>//www.phusionpassenger.com
+      - text: ®, the smart application server built by Phusion®.
