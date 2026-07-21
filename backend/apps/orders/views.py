@@ -266,18 +266,16 @@ class OrderViewSet(viewsets.ModelViewSet):
                 {'error': 'رقم الطلب مطلوب'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        if not phone:
-            return Response(
-                {'error': 'رقم الهاتف مطلوب للتتبع'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
 
         try:
-            order = Order.objects.get(order_number=order_number, customer_phone=phone)
+            if phone:
+                order = Order.objects.get(order_number=order_number, customer_phone=phone)
+            else:
+                order = Order.objects.get(order_number=order_number)
             serializer = self.get_serializer(order)
             return Response(serializer.data)
         except Order.DoesNotExist:
             return Response(
-                {'error': 'الطلب غير موجود'},
+                {'error': 'الطلب غير موجود. يرجى التأكد من البيانات والمحاولة مرة أخرى.'},
                 status=status.HTTP_404_NOT_FOUND
             )
