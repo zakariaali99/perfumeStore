@@ -19,7 +19,8 @@ CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Allowed hosts should already be set in base.py via env, but ensure no localhost wildcard in prod
+# Allowed hosts from env, with fallback for the production domain
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['mostafa-perfumes.ly', 'www.mostafa-perfumes.ly'])
 if not DEBUG and 'localhost' in ALLOWED_HOSTS:
     ALLOWED_HOSTS.remove('localhost')
 
@@ -80,7 +81,11 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='Almostafas Perfume <noreply@almostafas.com>')
 
 # Static/Media
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Ensure log directory exists
 os.makedirs(os.path.join(BASE_DIR, 'logs'), exist_ok=True)
