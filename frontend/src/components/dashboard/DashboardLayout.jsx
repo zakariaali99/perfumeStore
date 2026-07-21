@@ -18,24 +18,28 @@ import {
     Moon,
     TrendingUp,
     LayoutGrid,
-    Briefcase
+    Briefcase,
+    ChevronRight,
+    X
 } from 'lucide-react';
 import useThemeStore from '../../store/themeStore';
 import Modal from '../common/Modal';
 
-const SidebarLink = ({ to, icon: Icon, label, active, onClick }) => (
+const SidebarLink = ({ to, icon: Icon, label, active, collapsed, onClick }) => (
     <Link
         to={to}
         onClick={onClick}
-        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${active ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600 hover:text-gold-600'}`}
+        title={collapsed ? label : undefined}
+        className={`flex items-center ${collapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3 rounded-xl transition-all ${active ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600 hover:text-gold-600'}`}
     >
-        <Icon size={20} />
-        <span className="font-bold">{label}</span>
+        <Icon size={20} className="shrink-0" />
+        {!collapsed && <span className="font-bold truncate">{label}</span>}
     </Link>
 );
 
 const DashboardLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggleTheme } = useThemeStore();
@@ -63,36 +67,49 @@ const DashboardLayout = () => {
     return (
         <div className="bg-cream-50 dark:bg-dark-900 min-h-screen flex font-tajawal transition-colors duration-300">
             {/* Sidebar Desktop */}
-            <aside className="hidden lg:flex w-72 bg-white dark:bg-dark-800 border-l border-gold-200 dark:border-dark-600 flex-col sticky top-0 h-screen transition-colors duration-300">
-                <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-1 border border-gold-200 overflow-hidden shadow-sm">
-                        <img src={logoImg} alt="عطور مصطفى" className="w-full h-full object-contain" />
+            <aside className={`hidden lg:flex ${isCollapsed ? 'w-20' : 'w-72'} bg-white dark:bg-dark-800 border-l border-gold-200 dark:border-dark-600 flex-col sticky top-0 h-screen transition-all duration-300`}>
+                <div className={`p-6 border-b border-gold-100 dark:border-dark-600 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+                    <div className="flex items-center gap-3 overflow-hidden">
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-1 border border-gold-200 shrink-0 overflow-hidden shadow-sm">
+                            <img src={logoImg} alt="عطور مصطفى" className="w-full h-full object-contain" />
+                        </div>
+                        {!isCollapsed && (
+                            <div className="truncate">
+                                <h2 className="font-black text-lg leading-none text-text-primary dark:text-cream-50 truncate">لوحة التحكم</h2>
+                                <span className="text-[10px] text-gold-500 uppercase tracking-widest font-bold block truncate mt-1">ALMOSTAFAS ADMIN</span>
+                            </div>
+                        )}
                     </div>
-                    <div>
-                        <h2 className="font-black text-lg leading-none text-text-primary dark:text-cream-50">لوحة التحكم</h2>
-                        <span className="text-[10px] text-gold-500 uppercase tracking-widest font-bold">ALMOSTAFAS ADMIN</span>
-                    </div>
+                    <button
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        className="p-1.5 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-lg text-text-muted dark:text-gold-400 transition-colors shrink-0"
+                        title={isCollapsed ? 'توسيع القائمة' : 'طوي القائمة'}
+                    >
+                        <ChevronRight size={18} className={`transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
+                    </button>
                 </div>
 
-                <nav className="flex-1 p-6 space-y-2">
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                     {menuItems.map((item) => (
                         <SidebarLink
                             key={item.to}
                             to={item.to}
                             icon={item.icon}
                             label={item.label}
+                            collapsed={isCollapsed}
                             active={item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to)}
                         />
                     ))}
                 </nav>
 
-                <div className="p-6 border-t border-gold-100 dark:border-dark-600">
+                <div className="p-4 border-t border-gold-100 dark:border-dark-600">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-3 w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all font-bold"
+                        title={isCollapsed ? 'خروج' : undefined}
+                        className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3 w-full text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all font-bold`}
                     >
-                        <LogOut size={20} />
-                        خروج
+                        <LogOut size={20} className="shrink-0" />
+                        {!isCollapsed && <span className="truncate">خروج</span>}
                     </button>
                 </div>
             </aside>
@@ -143,14 +160,25 @@ const DashboardLayout = () => {
                 </main>
             </div>
 
-            <Modal variant="drawer" isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
-                <div className="p-8 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between">
+            <Modal variant="drawer" maxWidth="max-w-[300px]" isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
+                <div className="p-6 border-b border-gold-100 dark:border-dark-600 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gold-500 rounded-xl flex items-center justify-center text-white font-black text-xl">M</div>
-                        <h2 className="font-black text-lg leading-none text-text-primary dark:text-cream-50">لوحة التحكم</h2>
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-1 border border-gold-200 overflow-hidden shadow-sm shrink-0">
+                            <img src={logoImg} alt="عطور مصطفى" className="w-full h-full object-contain" />
+                        </div>
+                        <div>
+                            <h2 className="font-black text-lg leading-none text-text-primary dark:text-cream-50">لوحة التحكم</h2>
+                            <span className="text-[10px] text-gold-500 uppercase tracking-widest font-bold block mt-1">ALMOSTAFAS ADMIN</span>
+                        </div>
                     </div>
+                    <button
+                        onClick={() => setIsSidebarOpen(false)}
+                        className="p-2 hover:bg-gold-50 dark:hover:bg-dark-600 rounded-xl text-text-muted dark:text-gold-400 transition-colors"
+                    >
+                        <X size={20} />
+                    </button>
                 </div>
-                <nav className="flex-1 p-6 space-y-2">
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                     {menuItems.map((item) => (
                         <SidebarLink
                             key={item.to}
@@ -162,10 +190,16 @@ const DashboardLayout = () => {
                         />
                     ))}
                 </nav>
-                <div className="p-6 border-t border-gold-100 dark:border-dark-600">
-                    <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 w-full text-red-500 font-bold">
-                        <LogOut size={20} />
-                        خروج
+                <div className="p-4 border-t border-gold-100 dark:border-dark-600">
+                    <button
+                        onClick={() => {
+                            setIsSidebarOpen(false);
+                            handleLogout();
+                        }}
+                        className="flex items-center gap-3 px-4 py-3 w-full text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all font-bold"
+                    >
+                        <LogOut size={20} className="shrink-0" />
+                        <span>خروج</span>
                     </button>
                 </div>
             </Modal>
