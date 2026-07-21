@@ -1,0 +1,68 @@
+- generic [ref=f2e3]:
+  - banner [ref=f2e4]:
+    - generic [ref=f2e5]:
+      - link "عطور مصطفى عطور مصطفى Luxury Perfumes" [ref=f2e6] [cursor=pointer]:
+        - /url: /
+        - img "عطور مصطفى" [ref=f2e8]
+        - generic [ref=f2e9]:
+          - generic [ref=f2e10]: عطور مصطفى
+          - generic [ref=f2e12]: Luxury Perfumes
+      - navigation [ref=f2e13]:
+        - link "كل العطور" [ref=f2e15] [cursor=pointer]:
+          - /url: /products
+        - link "الأقسام" [ref=f2e17] [cursor=pointer]:
+          - /url: /
+        - link "تتبع الطلب" [ref=f2e21] [cursor=pointer]:
+          - /url: /track
+        - link "من نحن" [ref=f2e23] [cursor=pointer]:
+          - /url: /about
+        - link "اتصل بنا" [ref=f2e25] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=f2e26]:
+        - button [ref=f2e28]
+        - button [ref=f2e32]
+        - button [ref=f2e35]
+  - main [ref=f2e39]:
+    - paragraph [ref=f2e44]: جاري تحميل العروض...
+  - contentinfo [ref=f2e45]:
+    - generic [ref=f2e46]:
+      - generic [ref=f2e47]:
+        - generic [ref=f2e48]:
+          - heading "عطور مصطفى" [level=2] [ref=f2e49]
+          - paragraph [ref=f2e50]: نحن نقدم أفخر العطور العربية والشرقية المختارة بعناية فائقة. نسعى لإيصال روائح الفخامة والأصالة لكل بيت ليبي.
+          - generic [ref=f2e51]:
+            - link [ref=f2e52] [cursor=pointer]:
+              - /url: https://www.instagram.com/the.mostafa.perfumes?igsh=MXVnejh4d25qMjV4ZQ==
+            - link [ref=f2e56] [cursor=pointer]:
+              - /url: https://www.tiktok.com/@mostafaperfumes?_r=1&_t=ZS-943SX1wYWer
+            - link [ref=f2e59] [cursor=pointer]:
+              - /url: https://m.youtube.com/@mostafaperfumes?si=3KH5kj2c5Q47rVYB
+        - generic [ref=f2e63]:
+          - heading "روابط سريعة" [level=3] [ref=f2e64]
+          - list [ref=f2e65]:
+            - listitem [ref=f2e66]:
+              - link "كل العطور" [ref=f2e67] [cursor=pointer]:
+                - /url: /products
+            - listitem [ref=f2e68]:
+              - link "من نحن" [ref=f2e69] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=f2e70]:
+              - link "اتصل بنا" [ref=f2e71] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=f2e72]:
+              - link "تتبع طلبك" [ref=f2e73] [cursor=pointer]:
+                - /url: /track
+        - generic [ref=f2e74]:
+          - heading "تواصل معنا" [level=3] [ref=f2e75]
+          - list [ref=f2e76]:
+            - listitem [ref=f2e77]: طرابلس، ليبيا
+            - listitem [ref=f2e81]:
+              - generic [ref=f2e84]: "0917359191"
+            - listitem [ref=f2e85]: info@mostafastore.ly
+      - generic [ref=f2e89]:
+        - paragraph [ref=f2e91]: © 2026 جميع الحقوق محفوظة لمتجر عطور مصطفى
+        - generic [ref=f2e92]:
+          - link "الشروط والأحكام" [ref=f2e93] [cursor=pointer]:
+            - /url: /terms
+          - link "سياسة الخصوصية" [ref=f2e94] [cursor=pointer]:
+            - /url: /privacy
