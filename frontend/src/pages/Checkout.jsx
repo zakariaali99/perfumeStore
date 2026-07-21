@@ -106,7 +106,7 @@ const Checkout = () => {
                     variant_id: item.variant.id,
                     quantity: item.quantity
                 })),
-                coupon_code: coupon ? coupon.code : null
+                coupon_code: coupon ? coupon.code : ''
             };
 
             const res = await ordersApi.create(orderData);

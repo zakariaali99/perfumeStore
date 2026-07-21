@@ -41,7 +41,7 @@ class OrderCreateSerializer(serializers.Serializer):
     address = serializers.CharField()
     location_details = serializers.CharField(required=False, allow_blank=True)
     notes = serializers.CharField(required=False, allow_blank=True)
-    coupon_code = serializers.CharField(required=False, allow_blank=True)
+    coupon_code = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     items = OrderItemInputSerializer(many=True, min_length=1)
 
     def to_internal_value(self, data):
@@ -56,4 +56,6 @@ class OrderCreateSerializer(serializers.Serializer):
                         data[field] = int(val)
                     except (ValueError, TypeError):
                         data[field] = None
+            if data.get('coupon_code') is None:
+                data['coupon_code'] = ''
         return super().to_internal_value(data)
