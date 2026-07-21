@@ -19,8 +19,8 @@ CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Allowed hosts from env, with fallback for the production domain
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['mostafa-perfumes.ly', 'www.mostafa-perfumes.ly'])
+# Allowed hosts from env, always include production domains
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[]) + ['mostafa-perfumes.ly', 'www.mostafa-perfumes.ly']
 if not DEBUG and 'localhost' in ALLOWED_HOSTS:
     ALLOWED_HOSTS.remove('localhost')
 
