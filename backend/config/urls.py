@@ -26,7 +26,7 @@ urlpatterns += [
 
 # SPA catch-all — serve index.html for all non-API, non-admin, non-static, non-media routes
 urlpatterns += [
-    re_path(r'^(?!api/|admin/|static/|media/).*$',
+    re_path(r'^(?!api/|admin/|static/|media/|logo\.png|favicon\.ico).*$',
             TemplateView.as_view(template_name='index.html'))
 ]
 

@@ -1,3 +1,4 @@
+import logoImg from '../../assets/logo.png';
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -121,7 +122,7 @@ const Header = () => {
                         <div
                             className={`flex justify-center items-center shrink-0 transition-all duration-500 rounded-2xl bg-white overflow-hidden shadow-lg shadow-gold-600/10 border border-gold-100 group-hover:scale-105 ${scrolled ? 'w-[55px] h-[55px] md:w-[65px] md:h-[65px]' : 'w-[70px] h-[70px] md:w-[85px] md:h-[85px]'}`}
                         >
-                            <img src="/logo.png" alt="عطور مصطفى" className="w-full h-full object-contain scale-[1.35]" />
+                            <img src={logoImg} alt="عطور مصطفى" className="w-full h-full object-contain scale-[1.35]" />
                         </div>
                         <div className="hidden md:flex flex-col">
                             <div className="flex items-center gap-2">
