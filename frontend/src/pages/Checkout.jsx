@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import useCartStore from '../store/cartStore';
 import { ordersApi, marketingApi } from '../services/api';
+import Modal from '../components/common/Modal';
 import {
     ChevronRight,
     ChevronLeft,
@@ -13,6 +14,9 @@ import {
     User,
     AlertCircle,
     CheckCircle,
+    Copy,
+    MessageCircle,
+    Search,
     X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,6 +28,8 @@ const Checkout = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [step, setStep] = useState(1);
+    const [createdOrder, setCreatedOrder] = useState(null);
+    const [copied, setCopied] = useState(false);
 
     const [couponCode, setCouponCode] = useState('');
     const [applyingCoupon, setApplyingCoupon] = useState(false);
@@ -46,9 +52,11 @@ const Checkout = () => {
 
     useEffect(() => {
         if (!cart.items || cart.items.length === 0) {
-            navigate('/cart');
+            if (!createdOrder) {
+                navigate('/cart');
+            }
         }
-    }, [cart, navigate]);
+    }, [cart, navigate, createdOrder]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -111,8 +119,8 @@ const Checkout = () => {
 
             const res = await ordersApi.create(orderData);
             clearCart();
+            setCreatedOrder(res.data);
             toast.success('تم استلام طلبك بنجاح!');
-            navigate(`/track?order_number=${res.data.order_number}`);
         } catch (error) {
             console.error('Order error', error);
             let msg = error.response?.data?.error || error.response?.data?.message;
@@ -456,6 +464,75 @@ const Checkout = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Order Success Popup Modal */}
+            <Modal
+                isOpen={!!createdOrder}
+                onClose={() => {
+                    const ordNum = createdOrder?.order_number;
+                    setCreatedOrder(null);
+                    if (ordNum) navigate(`/track?order_number=${ordNum}`);
+                }}
+                title="تم استلام طلبك بنجاح! 🎉"
+                subtitle="ALMOSTAFAS PERFUMES"
+            >
+                <div className="p-6 md:p-8 space-y-6 text-center">
+                    <div className="w-20 h-20 bg-gold-100 dark:bg-gold-900/30 text-gold-600 dark:text-gold-400 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                        <CheckCircle2 size={44} />
+                    </div>
+
+                    <div>
+                        <h3 className="text-2xl font-black text-text-primary dark:text-cream-50 mb-2">شكراً لثقتكم بعطور مصطفى</h3>
+                        <p className="text-sm text-text-secondary dark:text-gold-400">تم تسجيل طلبك بنجاح وهو الآن قيد المعالجة والتجهيز.</p>
+                    </div>
+
+                    {/* Order Number Box with Copy Button */}
+                    <div className="bg-cream-50 dark:bg-dark-700/60 p-5 rounded-3xl border border-gold-200 dark:border-dark-600 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="text-right sm:text-right w-full sm:w-auto">
+                            <span className="text-xs font-bold text-text-secondary dark:text-gold-400 block mb-1">رقم الطلب الخاص بك</span>
+                            <span className="font-poppins font-black text-2xl text-text-primary dark:text-cream-50 tracking-wide">{createdOrder?.order_number}</span>
+                        </div>
+                        <button
+                            onClick={() => {
+                                if (createdOrder?.order_number) {
+                                    navigator.clipboard.writeText(createdOrder.order_number);
+                                    setCopied(true);
+                                    toast.success('تم نسخ رقم الطلب إلى الحافظة');
+                                    setTimeout(() => setCopied(false), 2500);
+                                }
+                            }}
+                            className="w-full sm:w-auto px-5 py-3 bg-gold-500 hover:bg-gold-600 text-white font-bold rounded-2xl text-sm transition-all shadow-md shadow-gold-500/20 flex items-center justify-center gap-2 cursor-pointer shrink-0"
+                        >
+                            {copied ? <CheckCircle size={18} /> : <Copy size={18} />}
+                            {copied ? 'تم النسخ' : 'نسخ رقم الطلب'}
+                        </button>
+                    </div>
+
+                    {/* WhatsApp Button */}
+                    <a
+                        href={`https://wa.me/?text=${encodeURIComponent(`مرحباً، أود المتابعة بخصوص طلبي رقم ${createdOrder?.order_number}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-emerald-600/20 text-base"
+                    >
+                        <MessageCircle size={22} />
+                        التواصل عبر الواتساب للطلب #{createdOrder?.order_number}
+                    </a>
+
+                    {/* Track Order Button */}
+                    <button
+                        onClick={() => {
+                            const ordNum = createdOrder?.order_number;
+                            setCreatedOrder(null);
+                            navigate(`/track?order_number=${ordNum}`);
+                        }}
+                        className="w-full py-4 bg-dark-800 dark:bg-gold-500 hover:bg-dark-900 dark:hover:bg-gold-600 text-white rounded-2xl font-black flex items-center justify-center gap-2 transition-all shadow-lg cursor-pointer text-base"
+                    >
+                        <Search size={20} />
+                        الانتقال إلى صفحة تتبع الطلب
+                    </button>
+                </div>
+            </Modal>
         </div>
     );
 };

@@ -261,21 +261,31 @@ class OrderViewSet(viewsets.ModelViewSet):
         order_number = request.query_params.get('order_number')
         phone = request.query_params.get('phone')
 
-        if not order_number:
+        if not order_number and not phone:
             return Response(
-                {'error': 'رقم الطلب مطلوب'},
+                {'error': 'يرجى إدخال رقم الطلب أو رقم الهاتف للتتبع'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        try:
-            if phone:
-                order = Order.objects.get(order_number=order_number, customer_phone=phone)
-            else:
-                order = Order.objects.get(order_number=order_number)
-            serializer = self.get_serializer(order)
-            return Response(serializer.data)
-        except Order.DoesNotExist:
-            return Response(
-                {'error': 'الطلب غير موجود. يرجى التأكد من البيانات والمحاولة مرة أخرى.'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        if order_number:
+            try:
+                if phone:
+                    order = Order.objects.get(order_number=order_number, customer_phone=phone)
+                else:
+                    order = Order.objects.get(order_number=order_number)
+                serializer = self.get_serializer(order)
+                return Response({'single': True, 'order': serializer.data})
+            except Order.DoesNotExist:
+                return Response(
+                    {'error': 'الطلب غير موجود. يرجى التأكد من الرقم والمحاولة مرة أخرى.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            orders = Order.objects.filter(customer_phone=phone).order_by('-created_at')
+            if not orders.exists():
+                return Response(
+                    {'error': 'لم يتم العثور على أي طلبات مرتبطة برقم الهاتف هذا.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            serializer = self.get_serializer(orders, many=True)
+            return Response({'single': False, 'orders': serializer.data})
