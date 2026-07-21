@@ -19,7 +19,7 @@ try:
         sys.path.insert(0, apps_path)
 
     # FORCE the settings module
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings.base'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings.production'
 
     # Import Django and initialize
     from django.core.wsgi import get_wsgi_application
