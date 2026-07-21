@@ -16,6 +16,13 @@ import { toast } from 'react-hot-toast';
 const ProductEdit = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const handleBack = () => {
+        if (window.history.state && window.history.state.idx > 0) {
+            navigate(-1);
+        } else {
+            navigate('/dashboard/products');
+        }
+    };
     const isEdit = Boolean(id);
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);
@@ -132,7 +139,7 @@ const ProductEdit = () => {
                 await adminProductsApi.create(data);
                 toast.success('تم إضافة المنتج بنجاح');
             }
-            navigate('/dashboard/products');
+            handleBack();
         } catch (err) {
             console.error(err);
             toast.error('حدث خطأ أثناء حفظ البيانات: ' + (err.response?.data?.detail || JSON.stringify(err.response?.data) || ''));
@@ -146,7 +153,7 @@ const ProductEdit = () => {
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
                     <button
-                        onClick={() => navigate('/dashboard/products')}
+                        onClick={handleBack}
                         className="p-2 hover:bg-gold-50 rounded-xl transition-all text-text-secondary"
                     >
                         <ChevronRight size={24} />
@@ -160,7 +167,7 @@ const ProductEdit = () => {
                 </div>
                 <div className="flex gap-4">
                     <button
-                        onClick={() => navigate('/dashboard/products')}
+                        onClick={handleBack}
                         className="px-6 py-3 border border-gold-300 rounded-2xl font-bold bg-white hover:bg-gold-50 transition-all"
                     >
                         إلغاء
