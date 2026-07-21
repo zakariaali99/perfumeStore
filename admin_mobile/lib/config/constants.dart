@@ -4,7 +4,7 @@ class AppConstants {
   // Base API URL
   // Default to localhost for development / iOS simulator
   // Can be changed to http://10.0.2.2:8000/api/ for Android emulator
-  static const String defaultBaseUrl = 'http://127.0.0.1:8000/api/';
+  static const String defaultBaseUrl = 'https://mostafa-perfumes.ly/api/';
   
   // Storage Keys
   static const String tokenKey = 'access_token';
