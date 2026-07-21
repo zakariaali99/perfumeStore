@@ -3,6 +3,7 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from django.views.static import serve
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -18,12 +19,17 @@ urlpatterns = [
     path("api/backups/", include("backups.urls")),
 ]
 
-# SPA catch-all — serve index.html for all non-API, non-admin, non-static routes
-urlpatterns += [re_path(r'^(?!api/|admin/|static/|media/).*$',
-                        TemplateView.as_view(template_name='index.html'))]
+# Explicit media serving route (works in all environments regardless of DEBUG setting)
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
 
-# Serve media files in all environments (DEBUG or not)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# SPA catch-all — serve index.html for all non-API, non-admin, non-static, non-media routes
+urlpatterns += [
+    re_path(r'^(?!api/|admin/|static/|media/).*$',
+            TemplateView.as_view(template_name='index.html'))
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
