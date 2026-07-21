@@ -34,9 +34,12 @@ const DashboardProducts = () => {
     };
 
     useEffect(() => {
-        fetchProducts();
         fetchCategories();
-    }, [currentPage]);
+    }, []);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [currentPage, searchTerm, filterCategory]);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -75,21 +78,6 @@ const DashboardProducts = () => {
         }
     };
 
-    useEffect(() => {
-        if (isFirstMount.current) {
-            isFirstMount.current = false;
-            return;
-        }
-        const delayDebounce = setTimeout(() => {
-            if (currentPage !== 1) {
-                setPage(1);
-            } else {
-                fetchProducts();
-            }
-        }, 500);
-        return () => clearTimeout(delayDebounce);
-    }, [searchTerm, filterCategory]);
-
     return (
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -114,13 +102,19 @@ const DashboardProducts = () => {
                         type="text"
                         placeholder="ابحث باسم المنتج، البراند أو SKU..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            if (currentPage !== 1) setPage(1);
+                        }}
                         className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 pr-12 pl-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-sm text-text-primary dark:text-cream-50"
                     />
                 </div>
                 <select
                     value={filterCategory}
-                    onChange={(e) => setFilterCategory(e.target.value)}
+                    onChange={(e) => {
+                        setFilterCategory(e.target.value);
+                        if (currentPage !== 1) setPage(1);
+                    }}
                     className="bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
                 >
                     <option value="">كل التصنيفات</option>

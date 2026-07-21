@@ -50,7 +50,7 @@ const DashboardOrders = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, [currentPage]);
+    }, [currentPage, searchTerm, filterStatus]);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -79,21 +79,6 @@ const DashboardOrders = () => {
         }
     };
 
-    useEffect(() => {
-        if (isFirstMount.current) {
-            isFirstMount.current = false;
-            return;
-        }
-        const delayDebounce = setTimeout(() => {
-            if (currentPage !== 1) {
-                setPage(1);
-            } else {
-                fetchOrders();
-            }
-        }, 500);
-        return () => clearTimeout(delayDebounce);
-    }, [searchTerm, filterStatus]);
-
     return (
         <div className="space-y-8">
             <div className="flex justify-between items-center">
@@ -109,15 +94,21 @@ const DashboardOrders = () => {
                     <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted dark:text-gold-400" size={18} />
                     <input
                         type="text"
-                        placeholder="ابحث برقم الطلب، اسم العميل أو الهاتف..."
+                        placeholder="ابحث باسم العميل، رقم الهاتف أو رقم الطلب..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            if (currentPage !== 1) setPage(1);
+                        }}
                         className="w-full bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 pr-12 pl-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-sm text-text-primary dark:text-cream-50"
                     />
                 </div>
                 <select
                     value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
+                    onChange={(e) => {
+                        setFilterStatus(e.target.value);
+                        if (currentPage !== 1) setPage(1);
+                    }}
                     className="bg-cream-50 dark:bg-dark-600 border border-gold-100 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
                 >
                     <option value="">كل الحالات</option>
