@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { productsApi, adminProductsApi } from '../../services/api';
 import {
@@ -22,6 +22,7 @@ const DashboardProducts = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const currentPage = Number(searchParams.get('page')) || 1;
     const [totalPages, setTotalPages] = useState(1);
+    const isFirstMount = useRef(true);
 
     const setPage = (page) => {
         setSearchParams(prev => {
@@ -75,6 +76,10 @@ const DashboardProducts = () => {
     };
 
     useEffect(() => {
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
         const delayDebounce = setTimeout(() => {
             if (currentPage !== 1) {
                 setPage(1);
