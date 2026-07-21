@@ -41,13 +41,14 @@ try:
 
 except Exception as e:
     # Catch import-time errors
+    _startup_error = e
     with open(os.path.join(project_root, 'error_log.txt'), 'a') as f:
-        f.write(f"\n--- Import Error: {str(e)} ---\n")
+        f.write(f"\n--- Import Error: {str(_startup_error)} ---\n")
         f.write(traceback.format_exc())
     
     def application(environ, start_response):
         status = '500 Internal Server Error'
-        output = f"Critical Startup Error: {str(e)}".encode('utf-8')
+        output = f"Critical Startup Error: {str(_startup_error)}".encode('utf-8')
         response_headers = [('Content-type', 'text/plain'), ('Content-Length', str(len(output)))]
         start_response(status, response_headers)
         return [output]
