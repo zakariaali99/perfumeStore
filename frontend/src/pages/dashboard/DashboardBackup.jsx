@@ -71,36 +71,24 @@ const DashboardBackup = () => {
         }
     };
 
-    const handleDownload = async (backup) => {
-        const toastId = toast.loading('جاري تجهيز وتحميل النسخة الاحتياطية...');
+    const handleDownload = (backup) => {
         try {
             const token = localStorage.getItem('access_token');
             const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/';
-            const downloadUrl = `${baseURL.endsWith('/') ? baseURL : `${baseURL}/`}backups/${backup.id}/download/`;
+            const cleanBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+            const downloadUrl = `${cleanBaseURL}backups/${backup.id}/download/?token=${token}`;
 
-            const response = await fetch(downloadUrl, {
-                headers: {
-                    'Authorization': token ? `Bearer ${token}` : ''
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('فشل الاستجابة من الخادم');
-            }
-
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
-            link.href = url;
+            link.href = downloadUrl;
+            link.target = '_blank';
             link.setAttribute('download', `backup_${backup.id}.zip`);
             document.body.appendChild(link);
             link.click();
             link.remove();
-            window.URL.revokeObjectURL(url);
-            toast.success('تم تحميل النسخة الاحتياطية بنجاح', { id: toastId });
+            toast.success('بدأ تحميل النسخة الاحتياطية مباشرة عبر المتصفح');
         } catch (err) {
             console.error('Backup download error:', err);
-            toast.error('فشل تحميل النسخة الاحتياطية', { id: toastId });
+            toast.error('فشل تحميل النسخة الاحتياطية');
         }
     };
 

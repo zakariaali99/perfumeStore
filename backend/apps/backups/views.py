@@ -67,8 +67,23 @@ class BackupViewSet(viewsets.ModelViewSet):
                 os.remove(zip_path)
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get'], permission_classes=[permissions.AllowAny])
     def download(self, request, pk=None):
+        token_str = request.query_params.get('token') or request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token_str:
+            return Response({'error': 'رمز الأمان مطلوب'}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            from rest_framework_simplejwt.tokens import AccessToken
+            from django.contrib.auth import get_user_model
+            token = AccessToken(token_str)
+            user_id = token['user_id']
+            User = get_user_model()
+            user = User.objects.get(id=user_id)
+            if not (user.is_staff or user.is_superuser):
+                return Response({'error': 'غير مصرح'}, status=status.HTTP_403_FORBIDDEN)
+        except Exception:
+            return Response({'error': 'رمز الأمان غير صالح أو منتهي الصلاحية'}, status=status.HTTP_401_UNAUTHORIZED)
+
         backup = self.get_object()
         if backup.status != 'ready':
             return Response(
