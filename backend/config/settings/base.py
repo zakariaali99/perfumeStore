@@ -147,6 +147,11 @@ SIMPLE_JWT = {
 
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = True # In production change this
+CORS_EXPOSE_HEADERS = [
+    'Content-Type',
+    'Content-Length',
+    'Content-Disposition',
+]
 
 # Email Settings
 EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')

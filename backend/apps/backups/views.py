@@ -78,13 +78,15 @@ class BackupViewSet(viewsets.ModelViewSet):
         file_path = backup.file.path
         if not os.path.exists(file_path):
             raise Http404('الملف غير موجود')
+        file_size = os.path.getsize(file_path)
+        filename = os.path.basename(file_path)
         response = FileResponse(
             open(file_path, 'rb'),
             content_type='application/zip',
+            as_attachment=True,
+            filename=filename,
         )
-        response['Content-Disposition'] = (
-            f'attachment; filename="{os.path.basename(file_path)}"'
-        )
+        response['Content-Length'] = str(file_size)
         return response
 
     @action(detail=True, methods=['post'])
