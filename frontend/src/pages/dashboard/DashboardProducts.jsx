@@ -160,7 +160,7 @@ const DashboardProducts = () => {
                                                 </div>
                                                 <div>
                                                     <p className="font-black text-text-primary dark:text-cream-50">{product.name_ar}</p>
-                                                    <p className="text-xs text-text-secondary dark:text-gold-400 font-poppins">{product.slug}</p>
+                                                    <p className="text-xs text-gold-600 dark:text-gold-400 font-poppins font-bold">{product.product_number}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -184,7 +184,7 @@ const DashboardProducts = () => {
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-2">
                                                 <Link
-                                                    to={`/product/${product.slug}`}
+                                                    to={`/product/${product.id}`}
                                                     target="_blank"
                                                     className="p-2 text-text-muted dark:text-gold-400 hover:text-gold-600 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
                                                 >

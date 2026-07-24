@@ -16,6 +16,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
+    pagination_class = None
 
 
 class BrandViewSet(viewsets.ReadOnlyModelViewSet):
@@ -23,6 +24,7 @@ class BrandViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = BrandSerializer
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
+    pagination_class = None
 
 
 class FragranceFamilyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -30,6 +32,7 @@ class FragranceFamilyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FragranceFamilySerializer
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
+    pagination_class = None
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
@@ -37,15 +40,14 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = []
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = {
-        'categories__slug': ['exact'],
-        'brand__slug': ['exact'],
+        'categories': ['exact'],
+        'brand': ['exact'],
         'gender': ['exact'],
         'is_featured': ['exact'],
         'is_new': ['exact'],
     }
     search_fields = ['name_ar', 'description']
     ordering_fields = ['created_at', 'sales_count', 'view_count', 'min_price']
-    lookup_field = 'slug'
 
     def get_queryset(self):
         return Product.objects.filter(is_active=True).annotate(
@@ -59,7 +61,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         ).select_related('brand').prefetch_related('categories', 'variants').distinct().order_by('-created_at')
 
     @action(detail=True, methods=['get'])
-    def related(self, request, slug=None):
+    def related(self, request, pk=None):
         product = self.get_object()
         category_ids = product.categories.values_list('id', flat=True)
         related = Product.objects.filter(
@@ -88,7 +90,7 @@ class AdminProductViewSet(viewsets.ModelViewSet):
         'gender': ['exact'],
         'is_active': ['exact'],
     }
-    search_fields = ['name_ar', 'slug', 'description']
+    search_fields = ['name_ar', 'description']
     ordering_fields = ['created_at', 'sales_count', 'view_count']
 
     def get_serializer_class(self):

@@ -14,7 +14,9 @@ import {
     ArrowDown,
     Eye,
     EyeOff,
-    CheckSquare
+    CheckSquare,
+    LayoutGrid,
+    List
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Modal from '../../components/common/Modal';
@@ -24,6 +26,7 @@ const DashboardCMS = () => {
     const [banners, setBanners] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('slides');
+    const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [formData, setFormData] = useState({
@@ -391,29 +394,50 @@ const DashboardCMS = () => {
                 )}
             </div>
 
-            {/* Tabs */}
-            <div className="flex gap-2 p-1.5 bg-white dark:bg-dark-700 rounded-2xl border border-gold-200 dark:border-dark-600 w-fit">
-                <button
-                    onClick={() => setActiveTab('slides')}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'slides' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
-                >
-                    <Layout size={18} />
-                    السلايدر الرئيسي
-                </button>
-                <button
-                    onClick={() => setActiveTab('banners')}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'banners' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
-                >
-                    <Layers size={18} />
-                    البانرات الإعلانية
-                </button>
-                <button
-                    onClick={() => setActiveTab('hpc')}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'hpc' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
-                >
-                    <CheckSquare size={18} />
-                    أقسام الرئيسية (HPC)
-                </button>
+            {/* Tabs & View Mode */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex gap-2 p-1.5 bg-white dark:bg-dark-700 rounded-2xl border border-gold-200 dark:border-dark-600 w-fit">
+                    <button
+                        onClick={() => setActiveTab('slides')}
+                        className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'slides' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
+                    >
+                        <Layout size={18} />
+                        السلايدر الرئيسي
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('banners')}
+                        className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'banners' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
+                    >
+                        <Layers size={18} />
+                        البانرات الإعلانية
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('hpc')}
+                        className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'hpc' ? 'bg-gold-500 text-white shadow-lg shadow-gold-500/20' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-dark-600'}`}
+                    >
+                        <CheckSquare size={18} />
+                        أقسام الرئيسية (HPC)
+                    </button>
+                </div>
+
+                {activeTab !== 'hpc' && (
+                    <div className="flex p-1 bg-white dark:bg-dark-700 rounded-2xl border border-gold-200 dark:border-dark-600 gap-1">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            title="عرض كبطاقات"
+                            className={`p-2.5 rounded-xl transition-all ${viewMode === 'grid' ? 'bg-gold-500 text-white shadow-md' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50'}`}
+                        >
+                            <LayoutGrid size={18} />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            title="عرض كقائمة"
+                            className={`p-2.5 rounded-xl transition-all ${viewMode === 'list' ? 'bg-gold-500 text-white shadow-md' : 'text-text-secondary dark:text-gold-400 hover:bg-gold-50'}`}
+                        >
+                            <List size={18} />
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* List */}
@@ -421,7 +445,7 @@ const DashboardCMS = () => {
                 <div className="space-y-4">
                     <div className="flex items-center justify-between bg-white dark:bg-dark-700 p-4 rounded-2xl border border-gold-200 dark:border-dark-600">
                         <p className="text-sm font-bold text-text-secondary dark:text-gold-400">
-                            الأقساب النشطة: <span className="text-gold-600 dark:text-gold-400">{hpc.filter(s => s.is_active).length}</span> من {hpc.length}
+                            الأقسام النشطة: <span className="text-gold-600 dark:text-gold-400">{hpc.filter(s => s.is_active).length}</span> من {hpc.length}
                         </p>
                     </div>
                     {loading ? (
@@ -475,7 +499,7 @@ const DashboardCMS = () => {
                         ))
                     )}
                 </div>
-            ) : (
+            ) : viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
                     {loading ? (
                         [1, 2, 3, 4].map(i => <div key={i} className="h-64 bg-white dark:bg-dark-700 animate-pulse rounded-[32px] border border-gold-200 dark:border-dark-600"></div>)
@@ -524,6 +548,75 @@ const DashboardCMS = () => {
                             </div>
                         ))
                     )}
+                </div>
+            ) : (
+                /* List View Table */
+                <div className="bg-white dark:bg-dark-700 rounded-[32px] border border-gold-200 dark:border-dark-600 overflow-hidden shadow-sm">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-right text-sm">
+                            <thead className="bg-cream-50 dark:bg-dark-800 text-text-secondary dark:text-gold-400 text-xs font-bold uppercase">
+                                <tr>
+                                    <th className="px-6 py-4">الصورة والتفاصيل</th>
+                                    <th className="px-6 py-4">الترتيب</th>
+                                    <th className="px-6 py-4">الرابط</th>
+                                    <th className="px-6 py-4">الحالة</th>
+                                    <th className="px-6 py-4 text-left">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gold-50 dark:divide-dark-600">
+                                {loading ? (
+                                    [1, 2, 3].map(i => (
+                                        <tr key={i} className="animate-pulse h-16">
+                                            <td colSpan="5" className="px-6 py-4"></td>
+                                        </tr>
+                                    ))
+                                ) : (activeTab === 'slides' ? slides : banners).length === 0 ? (
+                                    <tr>
+                                        <td colSpan="5" className="px-6 py-12 text-center text-text-muted font-bold">لا توجد عناصر لعرضها</td>
+                                    </tr>
+                                ) : (
+                                    (activeTab === 'slides' ? slides : banners).map((item) => (
+                                        <tr key={item.id} className="hover:bg-cream-50/50 dark:hover:bg-dark-800/40 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-20 h-12 bg-cream-50 dark:bg-dark-800 rounded-xl overflow-hidden border border-gold-100 dark:border-dark-600 shrink-0">
+                                                        <img src={item.image} alt="" className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-text-primary dark:text-cream-50">{item.title || 'بدون عنوان'}</h4>
+                                                        {item.subtitle && <p className="text-xs text-text-muted dark:text-gold-400">{item.subtitle}</p>}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 font-bold font-poppins text-gold-600">{item.order}</td>
+                                            <td className="px-6 py-4 font-poppins text-xs text-text-muted">{item.button_link || item.link || '-'}</td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-3 py-1 rounded-full text-[10px] font-black ${item.is_active ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                                                    {item.is_active ? 'نشط' : 'مخفي'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <button
+                                                        onClick={() => handleOpenModal(item)}
+                                                        className="p-2 text-text-muted dark:text-gold-400 hover:text-blue-600 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
+                                                    >
+                                                        <Edit size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(item.id)}
+                                                        className="p-2 text-text-muted dark:text-gold-400 hover:text-red-600 bg-gray-50 dark:bg-dark-600 rounded-xl transition-all"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
 

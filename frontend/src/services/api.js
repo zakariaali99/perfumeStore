@@ -68,10 +68,10 @@ export const accountsApi = {
 
 export const productsApi = {
     getAll: (params) => api.get('products/products/', { params }),
-    getDetail: (slug) => api.get(`products/products/${slug}/`),
+    getDetail: (id) => api.get(`products/products/${id}/`),
     getCategories: () => api.get('products/categories/'),
     getBrands: () => api.get('products/brands/'),
-    getRelated: (slug) => api.get(`products/products/${slug}/related/`),
+    getRelated: (id) => api.get(`products/products/${id}/related/`),
 };
 
 export const cartApi = {
@@ -127,6 +127,12 @@ export const adminProductsApi = {
     create: (data) => api.post('products/admin/products/', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     update: (id, data) => api.patch(`products/admin/products/${id}/`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     delete: (id) => api.delete(`products/admin/products/${id}/`),
+};
+
+export const adminVariantsApi = {
+    create: (data) => api.post('products/admin/variants/', data),
+    update: (id, data) => api.patch(`products/admin/variants/${id}/`, data),
+    delete: (id) => api.delete(`products/admin/variants/${id}/`),
 };
 
 export const adminCategoriesApi = {

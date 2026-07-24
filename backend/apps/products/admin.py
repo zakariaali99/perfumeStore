@@ -39,9 +39,9 @@ class FragranceFamilyAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name_ar', 'slug', 'brand', 'gender', 'is_active', 'is_featured', 'is_new', 'created_at']
+    list_display = ['product_number', 'name_ar', 'brand', 'gender', 'is_active', 'is_featured', 'is_new', 'created_at']
     list_filter = ['is_active', 'is_featured', 'is_new', 'gender', 'categories', 'brand']
-    search_fields = ['name_ar', 'slug', 'description']
+    search_fields = ['name_ar', 'description']
     filter_horizontal = ['categories', 'fragrance_families']
     inlines = [ProductVariantInline, ProductNoteInline, ProductImageInline]
 

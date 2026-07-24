@@ -111,7 +111,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             variant = variants[variant_id]
             qty = item['quantity']
 
-            if variant.stock_quantity < qty:
+            if variant.available_stock < qty:
                 return Response(
                     {'error': f'Stock insufficient for {variant.product.name_ar}'},
                     status=status.HTTP_400_BAD_REQUEST
@@ -180,9 +180,16 @@ class OrderViewSet(viewsets.ModelViewSet):
                 unit_price=item['unit_price'],
                 total_price=item['total_price']
             )
-            ProductVariant.objects.filter(id=item['variant'].id).update(
-                stock_quantity=F('stock_quantity') - item['quantity']
-            )
+            v = item['variant']
+            if v.is_calculated_from_ml and v.size_ml and v.size_ml > 0:
+                needed_ml = v.size_ml * item['quantity']
+                Product.objects.filter(id=v.product.id).update(
+                    bulk_ml_stock=F('bulk_ml_stock') - needed_ml
+                )
+            else:
+                ProductVariant.objects.filter(id=v.id).update(
+                    stock_quantity=F('stock_quantity') - item['quantity']
+                )
 
         # Increment coupon usage
         if coupon:

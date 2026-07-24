@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 const ProductDetail = () => {
-    const { slug } = useParams();
+    const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -36,7 +36,7 @@ const ProductDetail = () => {
         const fetchProduct = async () => {
             setLoading(true);
             try {
-                const res = await productsApi.getDetail(slug);
+                const res = await productsApi.getDetail(id);
                 const data = res.data;
                 setProduct(data);
                 setSelectedImage(data.main_image);
@@ -44,7 +44,7 @@ const ProductDetail = () => {
                     setSelectedVariant(data.variants[0]);
                 }
 
-                const relatedRes = await productsApi.getRelated(slug);
+                const relatedRes = await productsApi.getRelated(id);
                 setRelatedProducts(relatedRes.data);
             } catch (error) {
                 console.error("Error fetching product", error);
@@ -54,7 +54,7 @@ const ProductDetail = () => {
         };
         fetchProduct();
         window.scrollTo(0, 0);
-    }, [slug]);
+    }, [id]);
 
     useEffect(() => {
         if (!showComingSoon) return;

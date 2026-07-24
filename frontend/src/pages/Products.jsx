@@ -3,54 +3,117 @@ import { useSearchParams } from 'react-router-dom';
 import { productsApi } from '../services/api';
 import ProductCard from '../components/products/ProductCard';
 import Pagination from '../components/common/Pagination';
-import { Filter, ChevronDown, SlidersHorizontal, X } from 'lucide-react';
+import { Filter, ChevronDown, SlidersHorizontal, X, Tag, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const FilterSection = ({ filters, categories, brands, handleFilterChange }) => (
-    <div className="space-y-8">
-        <div>
-            <h3 className="text-lg font-bold mb-4 border-b border-gold-100 dark:border-dark-500 pb-2 text-text-primary dark:text-cream-50">التصنيفات</h3>
-            <div className="space-y-2">
-                <button
-                    onClick={() => handleFilterChange('categories', '')}
-                    className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.categories === '' ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
-                >
-                    الكل
-                </button>
-                {Array.isArray(categories) && categories.map(cat => (
-                    <button
-                        key={cat.id}
-                        onClick={() => handleFilterChange('categories', cat.slug)}
-                        className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.categories === cat.slug ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
-                    >
-                        {cat.name_ar}
-                    </button>
-                ))}
-            </div>
-        </div>
+const FilterSection = ({ filters, categories, brands, handleFilterChange }) => {
+    const [catSearch, setCatSearch] = useState('');
+    const [brandSearch, setBrandSearch] = useState('');
 
-        <div>
-            <h3 className="text-lg font-bold mb-4 border-b border-gold-100 dark:border-dark-500 pb-2 text-text-primary dark:text-cream-50">الماركات</h3>
-            <div className="space-y-2">
-                <button
-                    onClick={() => handleFilterChange('brand', '')}
-                    className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.brand === '' ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
-                >
-                    الكل
-                </button>
-                {Array.isArray(brands) && brands.map(brand => (
+    const filteredCats = Array.isArray(categories)
+        ? categories.filter(c => c.name_ar.toLowerCase().includes(catSearch.toLowerCase()))
+        : [];
+
+    const filteredBrands = Array.isArray(brands)
+        ? brands.filter(b => b.name_ar.toLowerCase().includes(brandSearch.toLowerCase()))
+        : [];
+
+    return (
+        <div className="space-y-6">
+            {/* Categories Filter */}
+            <div className="bg-cream-50/50 dark:bg-dark-700/50 p-4 rounded-2xl border border-gold-100 dark:border-dark-600">
+                <div className="flex items-center justify-between mb-3 border-b border-gold-100 dark:border-dark-600 pb-2">
+                    <h3 className="text-sm font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
+                        <Tag size={16} className="text-gold-500" />
+                        التصنيفات
+                    </h3>
+                    {filters.categories && (
+                        <button
+                            onClick={() => handleFilterChange('categories', '')}
+                            className="text-[10px] text-gold-600 dark:text-gold-400 font-bold hover:underline"
+                        >
+                            تفريغ
+                        </button>
+                    )}
+                </div>
+
+                {categories.length > 5 && (
+                    <input
+                        type="text"
+                        value={catSearch}
+                        onChange={(e) => setCatSearch(e.target.value)}
+                        placeholder="بحث بالفئة..."
+                        className="w-full bg-white dark:bg-dark-600 border border-gold-100 dark:border-dark-500 text-xs px-3 py-2 rounded-xl mb-3 focus:outline-none focus:ring-1 focus:ring-gold-500 text-text-primary dark:text-cream-50"
+                    />
+                )}
+
+                <div className="max-h-52 overflow-y-auto space-y-1.5 pr-1 pb-4">
                     <button
-                        key={brand.id}
-                        onClick={() => handleFilterChange('brand', brand.slug)}
-                        className={`block w-full text-right px-3 py-2 rounded-lg transition-colors ${filters.brand === brand.slug ? 'bg-gold-500 text-white' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
+                        onClick={() => handleFilterChange('categories', '')}
+                        className={`block w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all ${filters.categories === '' ? 'bg-gold-500 text-white shadow-sm' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
                     >
-                        {brand.name_ar}
+                        الكل
                     </button>
-                ))}
+                    {filteredCats.map(cat => (
+                        <button
+                            key={cat.id}
+                            onClick={() => handleFilterChange('categories', String(cat.id))}
+                            className={`block w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all ${filters.categories === String(cat.id) ? 'bg-gold-500 text-white shadow-sm' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
+                        >
+                            {cat.name_ar}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Brands Filter */}
+            <div className="bg-cream-50/50 dark:bg-dark-700/50 p-4 rounded-2xl border border-gold-100 dark:border-dark-600">
+                <div className="flex items-center justify-between mb-3 border-b border-gold-100 dark:border-dark-600 pb-2">
+                    <h3 className="text-sm font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
+                        <Award size={16} className="text-gold-500" />
+                        الماركات العطرية
+                    </h3>
+                    {filters.brand && (
+                        <button
+                            onClick={() => handleFilterChange('brand', '')}
+                            className="text-[10px] text-gold-600 dark:text-gold-400 font-bold hover:underline"
+                        >
+                            تفريغ
+                        </button>
+                    )}
+                </div>
+
+                {brands.length > 5 && (
+                    <input
+                        type="text"
+                        value={brandSearch}
+                        onChange={(e) => setBrandSearch(e.target.value)}
+                        placeholder="بحث بالماركة..."
+                        className="w-full bg-white dark:bg-dark-600 border border-gold-100 dark:border-dark-500 text-xs px-3 py-2 rounded-xl mb-3 focus:outline-none focus:ring-1 focus:ring-gold-500 text-text-primary dark:text-cream-50"
+                    />
+                )}
+
+                <div className="max-h-52 overflow-y-auto space-y-1.5 pr-1 pb-4">
+                    <button
+                        onClick={() => handleFilterChange('brand', '')}
+                        className={`block w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all ${filters.brand === '' ? 'bg-gold-500 text-white shadow-sm' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
+                    >
+                        الكل
+                    </button>
+                    {filteredBrands.map(brand => (
+                        <button
+                            key={brand.id}
+                            onClick={() => handleFilterChange('brand', String(brand.id))}
+                            className={`block w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all ${filters.brand === String(brand.id) ? 'bg-gold-500 text-white shadow-sm' : 'hover:bg-gold-50 dark:hover:bg-dark-600 text-text-secondary dark:text-gold-400'}`}
+                        >
+                            {brand.name_ar}
+                        </button>
+                    ))}
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -96,8 +159,8 @@ const Products = () => {
                     page: currentPage,
                     page_size: 12,
                 };
-                if (filters.categories) apiParams.categories__slug = filters.categories;
-                if (filters.brand) apiParams.brand__slug = filters.brand;
+                if (filters.categories) apiParams.categories = filters.categories;
+                if (filters.brand) apiParams.brand = filters.brand;
                 
                 const res = await productsApi.getAll(apiParams);
                 setProducts(res.data.results || res.data);
@@ -118,41 +181,36 @@ const Products = () => {
     const setPage = (page) => {
         setCurrentPage(page);
         const newParams = new URLSearchParams(searchParams);
-        if (page > 1) {
-            newParams.set('page', page);
-        } else {
-            newParams.delete('page');
-        }
-        setSearchParams(newParams, { replace: true });
+        newParams.set('page', page);
+        setSearchParams(newParams);
     };
 
     const handleFilterChange = (key, value) => {
-        setPage(1);
         setFilters(prev => ({ ...prev, [key]: value }));
-        
-        // Update URL to reflect new category/brand
-        if (key === 'categories' || key === 'brand') {
-            const newParams = new URLSearchParams(searchParams);
-            if (value) {
-                // Map 'categories' internal key to 'category' in URL for consistency with other parts of the app
-                const urlKey = key === 'categories' ? 'category' : key;
-                newParams.set(urlKey, value);
-            } else {
-                const urlKey = key === 'categories' ? 'category' : key;
-                newParams.delete(urlKey);
-            }
-            setSearchParams(newParams);
-        }
+        setCurrentPage(1);
     };
 
     return (
-        <div className="bg-cream-50 dark:bg-dark-900 min-h-screen pt-28 pb-20 transition-colors duration-300">
-            <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row gap-8">
+        <div className="min-h-screen bg-background-light dark:bg-dark-900 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                {/* Header */}
+                <div className="text-center mb-12">
+                    <h1 className="text-4xl font-extrabold text-text-primary dark:text-cream-50 tracking-tight sm:text-5xl mb-4">
+                        مجموعة العطور الفاخرة
+                    </h1>
+                    <p className="max-w-2xl mx-auto text-xl text-text-secondary dark:text-gold-400">
+                        اكتشف تشكيلتنا الحصرية من أرقى العطور العالمية والشرقية
+                    </p>
+                </div>
 
-                    {/* PC Sidebar */}
-                    <aside className="hidden md:block w-64 flex-shrink-0">
-                        <div className="bg-white dark:bg-dark-700 p-6 rounded-2xl border border-gold-100/50 dark:border-dark-500 sticky top-28 shadow-sm">
+                <div className="flex flex-col md:flex-row gap-8">
+                    {/* Desktop Sidebar Filters */}
+                    <div className="hidden md:block w-64 shrink-0">
+                        <div className="bg-white dark:bg-dark-700 p-6 rounded-3xl border border-gold-100 dark:border-dark-500 shadow-sm sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pb-8 mb-12">
+                            <h2 className="text-xl font-bold mb-6 text-text-primary dark:text-cream-50 flex items-center space-x-2 space-x-reverse">
+                                <Filter size={20} className="text-gold-500" />
+                                <span>تصفية العطور</span>
+                            </h2>
                             <FilterSection
                                 filters={filters}
                                 categories={categories}
@@ -160,52 +218,46 @@ const Products = () => {
                                 handleFilterChange={handleFilterChange}
                             />
                         </div>
-                    </aside>
+                    </div>
 
-                    {/* Main Content */}
-                    <div className="flex-1 min-w-0">
-                        {/* Header & Sort */}
-                        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-                            <div className="w-full sm:w-auto">
-                                <h1 className="text-2xl md:text-3xl font-bold text-text-primary dark:text-cream-50">جميع العطور</h1>
-                                <p className="text-text-secondary dark:text-gold-400 text-sm">اكتشف مجموعتنا المختارة من أرقى العطور</p>
+                    {/* Main Content Area */}
+                    <div className="flex-1">
+                        {/* Top Bar */}
+                        <div className="bg-white dark:bg-dark-700 p-4 rounded-2xl border border-gold-100 dark:border-dark-500 shadow-sm mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                            {/* Search Input */}
+                            <div className="relative flex-1 w-full">
+                                <input
+                                    type="text"
+                                    placeholder="ابحث عن عطر أو ماركة..."
+                                    value={filters.search}
+                                    onChange={(e) => handleFilterChange('search', e.target.value)}
+                                    className="w-full bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-500 px-4 py-2.5 rounded-xl pr-10 focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
+                                />
+                                <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-500 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-                                <div className="relative w-full sm:w-64">
-                                    <input
-                                        type="text"
-                                        placeholder="بحث عن عطر..."
-                                        value={filters.search}
-                                        onChange={(e) => handleFilterChange('search', e.target.value)}
-                                        className="w-full bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-500 px-4 py-2.5 rounded-xl pr-10 focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-text-primary dark:text-cream-50"
-                                    />
-                                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-500 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </div>
+                            <div className="flex items-center gap-4 w-full sm:w-auto">
+                                <button
+                                    onClick={() => setShowMobileFilters(true)}
+                                    className="md:hidden flex-1 flex items-center justify-center space-x-2 space-x-reverse bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-500 px-4 py-2.5 rounded-xl text-gold-600 dark:text-gold-400 font-bold"
+                                >
+                                    <SlidersHorizontal size={18} />
+                                    <span>الفلاتر</span>
+                                </button>
 
-                                <div className="flex items-center gap-4 w-full sm:w-auto">
-                                    <button
-                                        onClick={() => setShowMobileFilters(true)}
-                                        className="md:hidden flex-1 flex items-center justify-center space-x-2 space-x-reverse bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-500 px-4 py-2.5 rounded-xl text-gold-600 dark:text-gold-400 font-bold"
+                                <div className="relative flex-1 sm:flex-none">
+                                    <select
+                                        value={filters.ordering}
+                                        onChange={(e) => handleFilterChange('ordering', e.target.value)}
+                                        className="w-full bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-500 px-4 py-2.5 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-gold-500/20 pr-10 text-text-primary dark:text-cream-50"
                                     >
-                                        <SlidersHorizontal size={18} />
-                                        <span>الفلاتر</span>
-                                    </button>
-
-                                    <div className="relative flex-1 sm:flex-none">
-                                        <select
-                                            value={filters.ordering}
-                                            onChange={(e) => handleFilterChange('ordering', e.target.value)}
-                                            className="w-full bg-white dark:bg-dark-700 border border-gold-100 dark:border-dark-500 px-4 py-2.5 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-gold-500/20 pr-10 text-text-primary dark:text-cream-50"
-                                        >
-                                            <option value="-created_at">الأحدث</option>
-                                            <option value="min_price">السعر: من الأقل</option>
-                                            <option value="-min_price">السعر: من الأعلى</option>
-                                        </select>
-                                        <ChevronDown className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-500" size={18} />
-                                    </div>
+                                        <option value="-created_at">الأحدث</option>
+                                        <option value="min_price">السعر: من الأقل</option>
+                                        <option value="-min_price">السعر: من الأعلى</option>
+                                    </select>
+                                    <ChevronDown className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-500" size={18} />
                                 </div>
                             </div>
                         </div>
@@ -259,6 +311,7 @@ const Products = () => {
                 </div>
             </div>
 
+            {/* Mobile Filter Drawer */}
             <AnimatePresence>
                 {showMobileFilters && (
                     <>
@@ -274,29 +327,29 @@ const Products = () => {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 right-0 w-[80%] max-w-sm bg-white dark:bg-dark-800 z-[200] p-6 shadow-2xl overflow-y-auto"
-                            dir="ltr"
-                            drag="x"
-                            dragElastic={0.2}
-                            onDragEnd={(_, info) => {
-                                if (info.offset.x > 100) setShowMobileFilters(false);
-                            }}
+                            className="fixed inset-y-0 right-0 w-[85%] max-w-sm bg-white dark:bg-dark-800 z-[200] p-6 shadow-2xl overflow-y-auto flex flex-col justify-between"
+                            dir="rtl"
                         >
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-xl font-bold text-text-primary dark:text-cream-50">تصفية المنتجات</h2>
-                                <button onClick={() => setShowMobileFilters(false)} className="p-2 hover:bg-cream-50 dark:hover:bg-dark-600 rounded-full transition-colors text-text-primary dark:text-cream-50">
-                                    <X size={24} />
-                                </button>
+                            <div>
+                                <div className="flex justify-between items-center mb-6 border-b border-gold-100 dark:border-dark-600 pb-4">
+                                    <h2 className="text-xl font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
+                                        <SlidersHorizontal size={20} className="text-gold-500" />
+                                        تصفية العطور
+                                    </h2>
+                                    <button onClick={() => setShowMobileFilters(false)} className="p-2 hover:bg-cream-50 dark:hover:bg-dark-600 rounded-full transition-colors text-text-primary dark:text-cream-50">
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                                <FilterSection
+                                    filters={filters}
+                                    categories={categories}
+                                    brands={brands}
+                                    handleFilterChange={handleFilterChange}
+                                />
                             </div>
-                            <FilterSection
-                                filters={filters}
-                                categories={categories}
-                                brands={brands}
-                                handleFilterChange={handleFilterChange}
-                            />
                             <button
                                 onClick={() => setShowMobileFilters(false)}
-                                className="w-full mt-10 py-4 bg-gold-500 text-white rounded-xl font-bold shadow-lg shadow-gold-500/20"
+                                className="w-full mt-8 py-4 bg-gold-600 text-white rounded-2xl font-black shadow-lg shadow-gold-600/20 text-sm"
                             >
                                 عرض النتائج
                             </button>

@@ -19,6 +19,8 @@ class DashboardStatsView(APIView):
     RANGE_WINDOWS = {
         '30d': timedelta(days=30),
         '90d': timedelta(days=90),
+        '180d': timedelta(days=180),
+        'year': timedelta(days=365),
     }
 
     def _get_window(self, range_param, now):
@@ -41,7 +43,7 @@ class DashboardStatsView(APIView):
 
     def get(self, request):
         now = timezone.now()
-        range_param = request.query_params.get('range', 'all')
+        range_param = request.query_params.get('range', '30d')
         start, end = self._get_window(range_param, now)
         use_window = start is not None and end is not None
 
@@ -54,7 +56,6 @@ class DashboardStatsView(APIView):
         total_orders = orders_qs.count()
 
         if use_window:
-            # Active customers = distinct customers with orders in the window
             total_customers = (
                 CustomerProfile.objects.filter(orders__created_at__gte=start, orders__created_at__lte=end)
                 .distinct()
@@ -70,7 +71,6 @@ class DashboardStatsView(APIView):
             )
             monthly_revenue = total_revenue
         else:
-            # All-time view: keep legacy current-month vs previous-month trend
             total_customers = CustomerProfile.objects.count()
             this_month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
             last_month_start = this_month_start - relativedelta(months=1)
@@ -93,7 +93,7 @@ class DashboardStatsView(APIView):
         if prev_revenue > 0:
             rev_trend = ((monthly_revenue - prev_revenue) / prev_revenue) * 100
 
-        # Monthly Revenue (filtered by window when range is set)
+        # Monthly Revenue
         monthly_sales_qs = self._apply_window(
             Order.objects.filter(status='delivered'), start, end
         )
@@ -104,24 +104,49 @@ class DashboardStatsView(APIView):
             .order_by('month')
         )
 
-        # Top Products (filtered by window)
+        # Top Products
         top_products_qs = self._apply_window(OrderItem.objects, start, end, field='order__created_at')
         top_products = list(
             top_products_qs.select_related('variant__product')
             .values('variant__product_id', 'product_name')
             .annotate(total_sold=Sum('quantity'), revenue=Sum('total_price'))
-            .order_by('-total_sold')[:5]
+            .order_by('-total_sold')[:6]
         )
 
-        # City Sales (filtered by window)
+        # Brand Sales
+        brand_sales = list(
+            self._apply_window(OrderItem.objects, start, end, field='order__created_at')
+            .filter(variant__product__brand__isnull=False)
+            .values('variant__product__brand__name_ar')
+            .annotate(revenue=Sum('total_price'), total_sold=Sum('quantity'))
+            .order_by('-revenue')[:6]
+        )
+
+        # Category Sales
+        category_sales = list(
+            self._apply_window(OrderItem.objects, start, end, field='order__created_at')
+            .filter(variant__product__categories__isnull=False)
+            .values('variant__product__categories__name_ar')
+            .annotate(revenue=Sum('total_price'), total_sold=Sum('quantity'))
+            .order_by('-revenue')[:6]
+        )
+
+        # Order Status Distribution
+        status_distribution = list(
+            orders_qs.values('status')
+            .annotate(count=Count('id'))
+            .order_by('-count')
+        )
+
+        # City Sales
         city_sales_qs = self._apply_window(Order.objects, start, end)
         city_sales = list(
             city_sales_qs.values('city')
             .annotate(revenue=Sum('total'), count=Count('id'))
-            .order_by('-revenue')
+            .order_by('-revenue')[:6]
         )
 
-        # Customer Segments (filtered by window)
+        # Customer Segments
         if use_window:
             segments_qs = CustomerProfile.objects.filter(
                 orders__created_at__gte=start, orders__created_at__lte=end
@@ -132,7 +157,14 @@ class DashboardStatsView(APIView):
             segments_qs.values('segment').annotate(count=Count('id', distinct=use_window))
         )
 
-        # Recent Orders (filtered by window)
+        # Low Stock Inventory Alerts
+        low_stock_alerts = list(
+            ProductVariant.objects.filter(stock_quantity__lte=F('low_stock_threshold'))
+            .select_related('product')
+            .values('id', 'product__name_ar', 'size_ml', 'stock_quantity', 'low_stock_threshold')[:6]
+        )
+
+        # Recent Orders
         recent_orders_qs = (
             self._apply_window(Order.objects, start, end)
             .select_related('customer', 'coupon', 'assigned_to')
@@ -153,8 +185,12 @@ class DashboardStatsView(APIView):
             },
             'monthly_sales': monthly_sales,
             'top_products': top_products,
+            'brand_sales': brand_sales,
+            'category_sales': category_sales,
+            'status_distribution': status_distribution,
             'city_sales': city_sales,
             'customer_segments': customer_segments,
+            'low_stock_alerts': low_stock_alerts,
             'recent_orders': OrderSerializer(recent_orders_qs, many=True).data
         })
 
@@ -170,6 +206,7 @@ class InventoryReportView(APIView):
         return Response({
             'low_stock': [
                 {
+                    'id': v.id,
                     'product': v.product.name_ar,
                     'size': v.size_ml,
                     'stock': v.stock_quantity,

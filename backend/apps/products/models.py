@@ -54,16 +54,26 @@ class Product(models.Model):
         ('unisex', 'للجنسين')
     ]
 
+    STOCK_TYPE_CHOICES = [
+        ('unit', 'بالقطع'),
+        ('bulk_ml', 'بالسائل - مل')
+    ]
+
     name_ar = models.CharField(max_length=200, verbose_name="الاسم بالعربية")
-    slug = models.SlugField(unique=True, allow_unicode=True)
     description = models.TextField(blank=True, default="", verbose_name="الوصف")
     story = models.TextField(blank=True, default="", help_text="القصة العطرية", verbose_name="القصة العطرية")
+
+    @property
+    def product_number(self):
+        return f"PRD-{self.id:04d}" if self.id else ""
 
     categories = models.ManyToManyField(Category, blank=True, verbose_name="الفئات")
     brand = models.ForeignKey(Brand, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="الماركة")
     fragrance_families = models.ManyToManyField(FragranceFamily, blank=True, verbose_name="العائلات العطرية")
 
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='unisex', verbose_name="الجنس")
+    stock_type = models.CharField(max_length=10, choices=STOCK_TYPE_CHOICES, default='unit', verbose_name="نوع إدارة المخزون")
+    bulk_ml_stock = models.PositiveIntegerField(default=0, verbose_name="مخزون السائل الإجمالي (مل)")
 
     occasion = models.TextField(blank=True, help_text="ex: ليلي, حفلات, كلاسيكي", verbose_name="مناسب لـ")
     vibe = models.TextField(blank=True, help_text="ex: قوي, دافئ, رجولي", verbose_name="مزاج العطر")
@@ -106,13 +116,26 @@ class ProductVariant(models.Model):
     image = models.ImageField(upload_to='variants/', blank=True, verbose_name="صورة خاصة للعبوة")
 
     is_active = models.BooleanField(default=True, verbose_name="نشط")
+    is_calculated_from_ml = models.BooleanField(default=True, verbose_name="حساب تلقائي من مخزون السائل")
+
+    @property
+    def available_stock(self):
+        if self.is_calculated_from_ml and self.product.bulk_ml_stock and self.size_ml and self.size_ml > 0:
+            return self.product.bulk_ml_stock // self.size_ml
+        return self.stock_quantity
 
     class Meta:
         verbose_name = "عبوة المنتج"
         verbose_name_plural = "عبوات المنتجات"
 
+    def save(self, *args, **kwargs):
+        if not self.sku:
+            import uuid
+            self.sku = f"SKU-{uuid.uuid4().hex[:8].upper()}"
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.product.name_ar} - {self.size_ml}ml"
+        return f"{self.product.name_ar} - {self.name or f'{self.size_ml}ml'}"
 
     @property
     def current_price(self):
