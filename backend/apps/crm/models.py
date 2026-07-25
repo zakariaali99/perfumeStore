@@ -64,6 +64,21 @@ class CustomerProfile(models.Model):
         unique_together = ('name', 'phone')
         ordering = ['-created_at']
 
+    def update_segment(self, save=True):
+        from django.utils import timezone
+        now = timezone.now()
+        if self.last_order_date and (now - self.last_order_date).days > 60:
+            self.segment = 'inactive'
+        elif self.total_orders >= 5 or (self.total_spent and self.total_spent >= 500):
+            self.segment = 'vip'
+        elif self.total_orders >= 2:
+            self.segment = 'regular'
+        else:
+            self.segment = 'new'
+
+        if save:
+            self.save(update_fields=['segment'])
+
     def __str__(self):
         return f"{self.name} - {self.phone}"
 

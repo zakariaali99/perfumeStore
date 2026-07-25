@@ -61,3 +61,32 @@ class CustomerProfileViewSet(viewsets.ModelViewSet):
     def segments_stats(self, request):
         stats = CustomerProfile.objects.values('segment').annotate(count=Count('id'))
         return Response(stats)
+
+    @action(detail=False, methods=['get'])
+    def export_csv(self, request):
+        import csv
+        from django.http import HttpResponse
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+        response['Content-Disposition'] = 'attachment; filename="customers_export.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['ID', 'الاسم', 'رقم الهاتف', 'البريد الإلكتروني', 'المدينة', 'التصنيف', 'إجمالي الطلبات', 'إجمالي الإنفاق (د.ل)'])
+
+        segment_labels = {'new': 'جديد', 'regular': 'منتظم', 'vip': 'VIP', 'inactive': 'خامل'}
+
+        for profile in queryset:
+            writer.writerow([
+                profile.id,
+                profile.name,
+                profile.phone,
+                profile.email or '',
+                profile.city or '',
+                segment_labels.get(profile.segment, profile.segment),
+                profile.total_orders,
+                str(profile.total_spent),
+            ])
+
+        return response

@@ -119,6 +119,7 @@ export const crmApi = {
     getInteractions: (params) => api.get('crm/interactions/', { params }),
     addInteraction: (customerId, data) => api.post(`crm/customers/${customerId}/add_interaction/`, data),
     getTags: () => api.get('crm/tags/'),
+    exportCsv: (params) => api.get('crm/customers/export_csv/', { params, responseType: 'blob' }),
 };
 
 export const adminProductsApi = {

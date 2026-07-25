@@ -12,10 +12,18 @@ import {
     X,
     Clock,
     Tag as TagIcon,
-    Plus
+    Plus,
+    Download
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Pagination from '../../components/common/Pagination';
+
+const segmentMap = {
+    new: { label: 'جديد', bg: 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+    regular: { label: 'منتظم', bg: 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+    vip: { label: 'VIP 👑', bg: 'bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 font-black' },
+    inactive: { label: 'خامل', bg: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400' },
+};
 
 const DashboardCustomers = () => {
     const [customers, setCustomers] = useState([]);
@@ -27,6 +35,7 @@ const DashboardCustomers = () => {
     const [detailLoading, setDetailLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [exporting, setExporting] = useState(false);
     const [interactionForm, setInteractionForm] = useState({
         interaction_type: 'call',
         subject: '',
@@ -56,6 +65,29 @@ const DashboardCustomers = () => {
         fetchCustomers();
     }, [fetchCustomers]);
 
+    const handleExportCsv = async () => {
+        setExporting(true);
+        try {
+            const token = localStorage.getItem('access_token');
+            const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/';
+            const cleanBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+            const url = `${cleanBaseURL}crm/customers/export_csv/?token=${token}&segment=${filterSegment}&search=${encodeURIComponent(searchTerm)}`;
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.setAttribute('download', 'customers_export.csv');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            toast.success('تم تصدير قائمة العملاء بنجاح');
+        } catch {
+            toast.error('فشل تصدير بيانات العملاء');
+        } finally {
+            setExporting(false);
+        }
+    };
+
     const fetchCustomerDetail = async (id) => {
         setDetailLoading(true);
         try {
@@ -69,7 +101,6 @@ const DashboardCustomers = () => {
             setDetailLoading(false);
         }
     };
-
 
     const handleViewCustomer = (customer) => {
         setSelectedCustomer(customer);
@@ -98,8 +129,16 @@ const DashboardCustomers = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-3xl font-black text-text-primary dark:text-cream-50 mb-1">إدارة العملاء (CRM)</h2>
-                    <p className="text-text-secondary dark:text-gold-400 text-sm">متابعة سجل المشتريات وتصنيف العملاء.</p>
+                    <p className="text-text-secondary dark:text-gold-400 text-sm">متابعة سجل المشتريات والتصنيف التلقائي للعملاء.</p>
                 </div>
+                <button
+                    onClick={handleExportCsv}
+                    disabled={exporting}
+                    className="bg-gold-600 hover:bg-gold-700 text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-md shadow-gold-600/20 text-sm disabled:opacity-50"
+                >
+                    <Download size={18} />
+                    تصدير إلى CSV
+                </button>
             </div>
 
             {/* Filters */}
@@ -120,9 +159,10 @@ const DashboardCustomers = () => {
                     className="bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
                 >
                     <option value="">كل القطاعات</option>
-                    <option value="new">عملاء جدد</option>
-                    <option value="regular">عملاء منتظمين</option>
-                    <option value="vip">عملاء VIP</option>
+                    <option value="new">عملاء جدد (New)</option>
+                    <option value="regular">عملاء منتظمين (Regular)</option>
+                    <option value="vip">عملاء VIP 👑</option>
+                    <option value="inactive">عملاء خاملين (Inactive)</option>
                 </select>
             </div>
 
@@ -178,12 +218,14 @@ const DashboardCustomers = () => {
                                             {parseFloat(customer.total_spent).toFixed(2)} د.ل
                                         </td>
                                         <td className="px-4 md:px-8 py-5">
-                                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${customer.segment === 'vip' ? 'bg-purple-50 text-purple-600' :
-                                                customer.segment === 'regular' ? 'bg-blue-50 text-blue-600' :
-                                                    'bg-green-50 text-green-600'
-                                                }`}>
-                                                {customer.segment}
-                                            </span>
+                                            {(() => {
+                                                const s = segmentMap[customer.segment] || { label: customer.segment, bg: 'bg-gray-100 text-gray-700' };
+                                                return (
+                                                    <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${s.bg}`}>
+                                                        {s.label}
+                                                    </span>
+                                                );
+                                            })()}
                                         </td>
                                         <td className="px-4 md:px-8 py-5 hidden lg:table-cell text-text-secondary dark:text-gold-400 font-bold text-xs">
                                             {customer.last_order_date ? new Date(customer.last_order_date).toLocaleDateString('ar-LY') : 'لا يوجد'}
@@ -237,9 +279,14 @@ const DashboardCustomers = () => {
                                     <h3 className="text-xl font-black text-text-primary dark:text-cream-50">{selectedCustomer.name}</h3>
                                     <div className="flex items-center gap-2">
                                         <p className="text-sm text-text-secondary dark:text-gold-400 font-poppins">{selectedCustomer.phone}</p>
-                                        <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${selectedCustomer.segment === 'vip' ? 'bg-purple-50 text-purple-600' : 'bg-green-50 text-green-600'}`}>
-                                            {selectedCustomer.segment}
-                                        </span>
+                                        {(() => {
+                                            const s = segmentMap[selectedCustomer.segment] || { label: selectedCustomer.segment, bg: 'bg-gray-100 text-gray-700' };
+                                            return (
+                                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${s.bg}`}>
+                                                    {s.label}
+                                                </span>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
                             </div>

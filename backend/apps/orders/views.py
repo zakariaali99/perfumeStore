@@ -205,6 +205,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         CustomerProfile.objects.filter(id=customer_profile.id).update(
             avg_order_value=F('total_spent') / F('total_orders')
         )
+        customer_profile.refresh_from_db()
+        customer_profile.update_segment()
 
         # Initial status history
         OrderStatusHistory.objects.create(
