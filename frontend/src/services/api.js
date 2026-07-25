@@ -29,13 +29,6 @@ api.interceptors.request.use((config) => {
     if (!guestSession) {
         guestSession = 'gs_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         guestSession = guestSession.substring(0, 40);
-        try {
-            localStorage.setItem('cart-storage', JSON.stringify({
-                state: { coupon: null, guestSession }
-            }));
-        } catch (e) {
-            console.error("Error writing cart storage", e);
-        }
     }
 
     config.headers['X-Cart-Session'] = guestSession;

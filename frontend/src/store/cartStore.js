@@ -3,13 +3,27 @@ import { persist } from 'zustand/middleware';
 import { toast } from 'react-hot-toast';
 import { cartApi } from '../services/api';
 
+const getOrGenerateGuestSession = () => {
+    try {
+        const cartStorage = localStorage.getItem('cart-storage');
+        if (cartStorage) {
+            const parsed = JSON.parse(cartStorage);
+            if (parsed?.state?.guestSession) {
+                return parsed.state.guestSession;
+            }
+        }
+    } catch (e) {}
+    const session = 'gs_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    return session.substring(0, 40);
+};
+
 const useCartStore = create(
     persist(
-        (set) => ({
+        (set, get) => ({
             cart: { items: [], total_amount: 0 },
             loading: false,
             coupon: null,
-            guestSession: null,
+            guestSession: getOrGenerateGuestSession(),
 
             fetchCart: async () => {
                 set({ loading: true });
