@@ -937,8 +937,8 @@ const ProductEdit = () => {
             {/* Variant Modal for Edit Mode */}
             {isVariantModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-fade-in">
-                        <div className="p-6 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800">
+                    <div className="bg-white dark:bg-dark-700 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
+                        <div className="p-6 border-b border-gold-100 dark:border-dark-600 flex justify-between items-center bg-cream-50 dark:bg-dark-800 shrink-0">
                             <h3 className="text-lg font-black text-gold-600">
                                 {editingVariant ? 'تعديل العبوة' : 'إضافة عبوة جديدة'}
                             </h3>
@@ -950,7 +950,7 @@ const ProductEdit = () => {
                                 <X size={20} />
                             </button>
                         </div>
-                        <form onSubmit={handleVariantSubmit} className="p-6 space-y-5">
+                        <form onSubmit={handleVariantSubmit} className="p-6 space-y-5 overflow-y-auto flex-1 custom-scrollbar">
                             <div className="bg-gold-50 dark:bg-dark-800 p-4 rounded-2xl flex items-center justify-between">
                                 <span className="font-bold text-text-secondary dark:text-gold-400 text-sm">العبوة الأصلية (بدون تحديد حجم)</span>
                                 <label className="relative inline-flex items-center cursor-pointer">

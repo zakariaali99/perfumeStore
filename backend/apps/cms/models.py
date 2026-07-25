@@ -39,7 +39,7 @@ class Banner(models.Model):
     ]
     title = models.CharField(max_length=100, verbose_name="العنوان")
     image = models.ImageField(upload_to='cms/banners/', verbose_name="الصورة")
-    link = models.CharField(max_length=200, verbose_name="الرابط")
+    link = models.CharField(max_length=200, blank=True, verbose_name="الرابط")
     position = models.CharField(max_length=20, choices=POSITION_CHOICES, verbose_name="المكان")
     is_active = models.BooleanField(default=True, verbose_name="نشط")
 

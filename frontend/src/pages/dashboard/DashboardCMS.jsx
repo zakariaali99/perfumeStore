@@ -166,7 +166,7 @@ const DashboardCMS = () => {
             if (key === 'image' || key === 'image_mobile') {
                 if (formData[key] instanceof File) data.append(key, formData[key]);
             } else if (key !== 'image_mobile') {
-                data.append(key, formData[key]);
+                data.append(key, formData[key] ?? '');
             }
         });
 

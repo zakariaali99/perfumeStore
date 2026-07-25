@@ -5,10 +5,12 @@ const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea:not([disab
 export default function useModal(isOpen, onClose) {
   const modalRef = useRef(null);
   const previousActiveElement = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Escape') {
-      onClose?.();
+      onCloseRef.current?.();
       return;
     }
 
@@ -37,7 +39,7 @@ export default function useModal(isOpen, onClose) {
         }
       }
     }
-  }, [onClose]);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -50,7 +52,9 @@ export default function useModal(isOpen, onClose) {
       const modal = modalRef.current;
       if (modal) {
         const firstFocusable = modal.querySelector(FOCUSABLE_SELECTOR);
-        firstFocusable?.focus();
+        if (!modal.contains(document.activeElement)) {
+          firstFocusable?.focus();
+        }
       }
     });
 
