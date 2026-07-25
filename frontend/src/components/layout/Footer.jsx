@@ -9,8 +9,10 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="md:col-span-2">
                         <h2 className="text-3xl font-black mb-4 text-gold-400 tracking-tight">عطور مصطفى</h2>
-                        <p className="text-gray-400 leading-relaxed max-w-md mb-8">
-                            نحن نقدم أفخر العطور العربية والشرقية المختارة بعناية فائقة. نسعى لإيصال روائح الفخامة والأصالة لكل بيت ليبي.
+                        <p className="text-gray-300 font-bold leading-relaxed max-w-md mb-8">
+                            تقسيمات العطور من مكتبتي الخاصة،
+                            <br />
+                            حتا لو ماشريتش كسبنا شوفتك و تعال اشري مره تانية….
                         </p>
                         <div className="flex gap-4">
                             <a href="https://www.instagram.com/the.mostafa.perfumes?igsh=MXVnejh4d25qMjV4ZQ==" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-dark-600 hover:bg-gold-500 rounded-xl flex items-center justify-center transition-colors">
@@ -44,7 +46,7 @@ const Footer = () => {
                         <ul className="space-y-4 text-gray-400">
                             <li className="flex items-center gap-3">
                                 <MapPin size={16} className="text-gold-500" />
-                                طرابلس، ليبيا
+                                مصراتة، ليبيا
                             </li>
                             <li className="flex items-center gap-3">
                                 <Phone size={16} className="text-gold-500" />

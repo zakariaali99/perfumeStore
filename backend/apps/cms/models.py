@@ -54,10 +54,10 @@ class Banner(models.Model):
 
 class StoreSettings(models.Model):
     store_name = models.CharField(max_length=100, default="Almustafa's Perfume", verbose_name="اسم المتجر")
-    contact_phone = models.CharField(max_length=20, blank=True, verbose_name="هاتف التواصل")
-    whatsapp = models.CharField(max_length=20, blank=True, verbose_name="رقم الواتساب")
-    email = models.EmailField(blank=True, verbose_name="البريد الإلكتروني")
-    address = models.TextField(blank=True, verbose_name="العنوان")
+    contact_phone = models.CharField(max_length=20, default="0917359191", blank=True, verbose_name="هاتف التواصل")
+    whatsapp = models.CharField(max_length=20, default="0917359191", blank=True, verbose_name="رقم الواتساب")
+    email = models.EmailField(blank=True, default="info@mostafastore.ly", verbose_name="البريد الإلكتروني")
+    address = models.TextField(blank=True, default="مصراتة، ليبيا", verbose_name="العنوان")
 
     facebook_link = models.URLField(blank=True, verbose_name="رابط فيسبوك")
     instagram_link = models.URLField(blank=True, verbose_name="رابط انستغرام")
