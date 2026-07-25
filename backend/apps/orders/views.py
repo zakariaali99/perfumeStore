@@ -72,20 +72,24 @@ class OrderViewSet(viewsets.ModelViewSet):
         data = serializer.validated_data
 
         # Customer profile
+        phone = data.get('customer_phone', '').strip()
+        customer_name = data.get('customer_name', '').strip()
+
         defaults = {
-            'phone': data.get('customer_phone', ''),
+            'name': customer_name,
+            'phone': phone,
             'email': data.get('customer_email', ''),
             'city': data.get('city', ''),
             'area': data.get('area', ''),
             'address': data.get('address', ''),
             'location_details': data.get('location_details', ''),
         }
-        customer_profile, created = CustomerProfile.objects.get_or_create(
-            name=data['customer_name'],
-            phone=data['customer_phone'],
-            defaults=defaults
-        )
-        if not created:
+
+        customer_profile = CustomerProfile.objects.filter(phone=phone).first()
+        if not customer_profile:
+            customer_profile = CustomerProfile.objects.create(**defaults)
+        else:
+            customer_profile.name = customer_name
             for key, value in defaults.items():
                 if value:
                     setattr(customer_profile, key, value)
