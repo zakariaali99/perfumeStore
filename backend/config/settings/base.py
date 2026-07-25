@@ -146,11 +146,16 @@ SIMPLE_JWT = {
 }
 
 # CORS Settings
+from corsheaders.defaults import default_headers
+
 CORS_ALLOW_ALL_ORIGINS = True # In production change this
 CORS_EXPOSE_HEADERS = [
     'Content-Type',
     'Content-Length',
     'Content-Disposition',
+]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-cart-session',
 ]
 
 # Email Settings

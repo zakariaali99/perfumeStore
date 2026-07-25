@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from .models import Order, OrderItem, OrderStatusHistory
 from .serializers import OrderSerializer, OrderCreateSerializer
 from cart.models import Cart
-from products.models import ProductVariant
+from products.models import Product, ProductVariant
 from crm.models import CustomerProfile
 from cms.models import StoreSettings
 from marketing.models import Coupon
