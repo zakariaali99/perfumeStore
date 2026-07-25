@@ -9,6 +9,7 @@ const useCartStore = create(
             cart: { items: [], total_amount: 0 },
             loading: false,
             coupon: null,
+            guestSession: null,
 
             fetchCart: async () => {
                 set({ loading: true });
@@ -75,7 +76,7 @@ const useCartStore = create(
         }),
         {
             name: 'cart-storage',
-            partialize: (state) => ({ coupon: state.coupon }),
+            partialize: (state) => ({ coupon: state.coupon, guestSession: state.guestSession }),
         }
     )
 );

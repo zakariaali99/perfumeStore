@@ -7,12 +7,39 @@ const api = axios.create({
     },
 });
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and guest session header
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('access_token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Add cart session for guest carts
+    let guestSession = null;
+    try {
+        const cartStorage = localStorage.getItem('cart-storage');
+        if (cartStorage) {
+            const parsed = JSON.parse(cartStorage);
+            guestSession = parsed?.state?.guestSession;
+        }
+    } catch (e) {
+        console.error("Error reading cart storage", e);
+    }
+
+    if (!guestSession) {
+        guestSession = 'gs_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        guestSession = guestSession.substring(0, 40);
+        try {
+            localStorage.setItem('cart-storage', JSON.stringify({
+                state: { coupon: null, guestSession }
+            }));
+        } catch (e) {
+            console.error("Error writing cart storage", e);
+        }
+    }
+
+    config.headers['X-Cart-Session'] = guestSession;
+
     return config;
 });
 

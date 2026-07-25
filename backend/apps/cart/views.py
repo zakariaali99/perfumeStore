@@ -30,10 +30,14 @@ class CartViewSet(viewsets.ModelViewSet):
             cart, created = Cart.objects.get_or_create(user=self.request.user)
             return cart
         else:
-            session_key = self.request.session.session_key
-            if not session_key:
-                self.request.session.create()
+            session_key = self.request.headers.get('X-Cart-Session')
+            if session_key:
+                session_key = session_key[:40]
+            else:
                 session_key = self.request.session.session_key
+                if not session_key:
+                    self.request.session.create()
+                    session_key = self.request.session.session_key
             cart, created = Cart.objects.get_or_create(session_key=session_key)
             return cart
 

@@ -85,11 +85,18 @@ class OrderViewSet(viewsets.ModelViewSet):
             'location_details': data.get('location_details', ''),
         }
 
-        customer_profile = CustomerProfile.objects.filter(phone=phone).first()
+        customer_profile = CustomerProfile.objects.filter(name=customer_name, phone=phone).first()
         if not customer_profile:
-            customer_profile = CustomerProfile.objects.create(**defaults)
+            customer_profile = CustomerProfile.objects.filter(phone=phone).first()
+            if customer_profile:
+                customer_profile.name = customer_name
+                for key, value in defaults.items():
+                    if value:
+                        setattr(customer_profile, key, value)
+                customer_profile.save()
+            else:
+                customer_profile = CustomerProfile.objects.create(**defaults)
         else:
-            customer_profile.name = customer_name
             for key, value in defaults.items():
                 if value:
                     setattr(customer_profile, key, value)
