@@ -59,13 +59,18 @@ const DashboardCustomers = () => {
     const fetchCustomers = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await crmApi.getProfiles({
+            const params = {
                 search: searchTerm,
-                segment: filterSegment,
-                tags: filterTag,
                 page: currentPage,
                 page_size: 10
-            });
+            };
+            if (filterSegment) {
+                params.segment = filterSegment;
+            }
+            if (filterTag) {
+                params.tags = filterTag;
+            }
+            const res = await crmApi.getProfiles(params);
             setCustomers(res.data.results || res.data);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
         } catch (error) {
