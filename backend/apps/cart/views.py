@@ -63,7 +63,7 @@ class CartViewSet(viewsets.ModelViewSet):
         except ProductVariant.DoesNotExist:
             return Response({'error': 'Variant not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        if quantity > variant.stock_quantity:
+        if quantity > variant.available_stock:
             return Response(
                 {'error': f'Insufficient stock for {variant.product.name_ar}'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -72,7 +72,7 @@ class CartViewSet(viewsets.ModelViewSet):
         item, created = CartItem.objects.get_or_create(cart=cart, variant=variant)
         if not created:
             new_quantity = item.quantity + quantity
-            if new_quantity > variant.stock_quantity:
+            if new_quantity > variant.available_stock:
                 return Response(
                     {'error': f'Insufficient stock for {variant.product.name_ar}'},
                     status=status.HTTP_400_BAD_REQUEST
@@ -107,7 +107,7 @@ class CartViewSet(viewsets.ModelViewSet):
         cart = self.get_cart()
         try:
             item = CartItem.objects.select_related('variant').get(id=item_id, cart=cart)
-            if quantity > item.variant.stock_quantity:
+            if quantity > item.variant.available_stock:
                 return Response(
                     {'error': f'Insufficient stock for {item.variant.product.name_ar}'},
                     status=status.HTTP_400_BAD_REQUEST

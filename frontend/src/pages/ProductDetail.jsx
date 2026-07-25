@@ -85,15 +85,15 @@ const ProductDetail = () => {
 
     const handleAddToCart = async () => {
         if (!selectedVariant) return;
-        if (quantity > selectedVariant.stock_quantity) {
-            toast.error(`عذراً، الكمية المتوفرة ${selectedVariant.stock_quantity} فقط`);
+        if (quantity > selectedVariant.available_stock) {
+            toast.error(`عذراً، الكمية المتوفرة ${selectedVariant.available_stock} فقط`);
             return;
         }
         await addItem(selectedVariant.id, quantity);
     };
 
     const handleIncrement = () => {
-        if (selectedVariant && quantity < selectedVariant.stock_quantity) {
+        if (selectedVariant && quantity < selectedVariant.available_stock) {
             setQuantity(quantity + 1);
         } else {
             toast.error('وصلت للحد الأقصى للكمية المتوفرة');
@@ -268,10 +268,10 @@ const ProductDetail = () => {
                                 </div>
 
                                 <div className="text-left">
-                                    {selectedVariant?.stock_quantity > 0 ? (
+                                    {selectedVariant?.available_stock > 0 ? (
                                         <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/30 text-green-600 rounded-2xl text-xs font-black ring-1 ring-green-100 dark:ring-green-900">
                                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                            متوفر الآن ({selectedVariant.stock_quantity})
+                                            متوفر الآن ({selectedVariant.available_stock})
                                         </span>
                                     ) : (
                                         <span className="inline-flex items-center px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-2xl text-xs font-black ring-1 ring-red-100 dark:ring-red-900">تحت الطلب</span>
@@ -290,7 +290,7 @@ const ProductDetail = () => {
                                     <span className="w-16 text-center text-2xl font-black font-poppins text-text-primary dark:text-cream-50">{quantity}</span>
                                     <button
                                         onClick={handleIncrement}
-                                        disabled={!selectedVariant || quantity >= selectedVariant.stock_quantity}
+                                        disabled={!selectedVariant || quantity >= selectedVariant.available_stock}
                                         className="p-4 hover:bg-white dark:hover:bg-dark-700 rounded-xl transition-all text-gold-700 dark:text-gold-400 disabled:opacity-50"
                                     >
                                         <Plus size={20} />
@@ -298,7 +298,7 @@ const ProductDetail = () => {
                                 </div>
 
                                 <button
-                                    disabled={!selectedVariant || selectedVariant.stock_quantity === 0}
+                                    disabled={!selectedVariant || selectedVariant.available_stock === 0}
                                     onClick={handleAddToCart}
                                     className="flex-1 w-full bg-gold-600 hover:bg-gold-700 disabled:bg-gray-200 dark:disabled:bg-dark-600 text-white font-black py-5 rounded-[24px] flex items-center justify-center gap-4 transition-all active:scale-95 shadow-xl shadow-gold-600/30 text-xl"
                                 >
