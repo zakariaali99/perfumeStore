@@ -105,15 +105,31 @@ const Checkout = () => {
                 return isNaN(num) ? null : num;
             };
 
+            const validItems = (cart.items || [])
+                .filter(item => item && item.variant && item.variant.id)
+                .map(item => ({
+                    variant_id: item.variant.id,
+                    quantity: item.quantity || 1
+                }));
+
+            if (validItems.length === 0) {
+                toast.error('سلة التسوق فارغة أو تحتوي على منتجات غير متوفرة');
+                setLoading(false);
+                return;
+            }
+
             const orderData = {
-                ...formData,
+                customer_name: formData.customer_name || '',
+                customer_phone: formData.customer_phone || '',
+                customer_email: formData.customer_email || '',
+                city: formData.city || '',
+                area: formData.area || '',
+                address: formData.address || '',
+                notes: formData.notes || '',
                 birth_day: parseNum(formData.birth_day),
                 birth_month: parseNum(formData.birth_month),
                 birth_year: parseNum(formData.birth_year),
-                items: cart.items.map(item => ({
-                    variant_id: item.variant.id,
-                    quantity: item.quantity
-                })),
+                items: validItems,
                 coupon_code: coupon ? coupon.code : ''
             };
 

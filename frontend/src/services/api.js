@@ -78,7 +78,7 @@ export const cartApi = {
     get: () => api.get('cart/'),
     addItem: (data) => api.post('cart/add_item/', data),
     updateItem: (data) => api.patch('cart/update_item/', data),
-    removeItem: (itemId) => api.delete('cart/remove_item/', { data: { item_id: itemId } }),
+    removeItem: (itemId) => api.delete('cart/remove_item/', { params: { item_id: itemId }, data: { item_id: itemId } }),
     clear: () => api.delete('cart/clear/'),
 };
 

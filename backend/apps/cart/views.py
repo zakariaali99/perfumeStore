@@ -119,9 +119,11 @@ class CartViewSet(viewsets.ModelViewSet):
 
         return Response(self.get_serializer(cart).data)
 
-    @action(detail=False, methods=['delete'])
+    @action(detail=False, methods=['delete', 'post'])
     def remove_item(self, request):
-        item_id = request.data.get('item_id')
+        item_id = request.data.get('item_id') or request.query_params.get('item_id')
+        if not item_id:
+            return Response({'error': 'Item ID is required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             item = CartItem.objects.get(id=item_id, cart=self.get_cart())
             item.delete()
