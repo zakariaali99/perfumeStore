@@ -62,7 +62,7 @@ function ModalBase({ isOpen, onClose, variant = 'center', maxWidth = 'max-w-lg',
               initial="hidden"
               animate="visible"
               exit="exit"
-              className={`relative bg-white dark:bg-dark-800 w-full ${maxWidth} ${rounded} shadow-2xl z-10 overflow-hidden border border-gold-200/50 dark:border-dark-600`}
+              className={`relative bg-white dark:bg-dark-800 w-full ${maxWidth} ${rounded} shadow-2xl z-10 overflow-hidden border border-gold-200/50 dark:border-dark-600 max-h-[90vh] flex flex-col`}
             >
               {children}
             </motion.div>
