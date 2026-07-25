@@ -48,7 +48,7 @@ const DashboardCustomers = () => {
         const fetchTags = async () => {
             try {
                 const res = await crmApi.getTags();
-                setTags(res.data || []);
+                setTags(res.data?.results || res.data || []);
             } catch (err) {
                 console.error('Error fetching tags:', err);
             }
@@ -185,7 +185,7 @@ const DashboardCustomers = () => {
                     className="bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
                 >
                     <option value="">كل الوسوم</option>
-                    {tags.map((tag) => (
+                    {Array.isArray(tags) && tags.map((tag) => (
                         <option key={tag.id} value={tag.id}>
                             {tag.name}
                         </option>
