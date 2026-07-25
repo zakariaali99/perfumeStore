@@ -52,8 +52,16 @@ const DashboardProducts = () => {
             setProducts(res.data.results || res.data);
             setTotalPages(Math.ceil((res.data.count || res.data.length) / 10));
         } catch (err) {
-            if (err.response?.status !== 401) {
+            if (err.response?.status === 404 && currentPage > 1) {
+                setPage(1);
+            } else if (err.response?.status === 403) {
+                toast.error('ليس لديك صلاحية لرؤية منتجات الإدارة');
+                setProducts([]);
+                setTotalPages(1);
+            } else if (err.response?.status !== 401) {
                 toast.error('تعذر تحميل المنتجات');
+                setProducts([]);
+                setTotalPages(1);
             }
         } finally {
             setLoading(false);

@@ -167,6 +167,12 @@ const Products = () => {
                 setTotalPages(Math.ceil((res.data.count || res.data.length) / 12));
             } catch (error) {
                 console.error("Error fetching products", error);
+                if (error.response?.status === 404 && currentPage > 1) {
+                    setCurrentPage(1);
+                } else {
+                    setProducts([]);
+                    setTotalPages(1);
+                }
             } finally {
                 setLoading(false);
             }
