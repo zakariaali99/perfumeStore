@@ -30,6 +30,8 @@ const DashboardCustomers = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterSegment, setFilterSegment] = useState('');
+    const [tags, setTags] = useState([]);
+    const [filterTag, setFilterTag] = useState('');
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [customerDetail, setCustomerDetail] = useState(null);
     const [detailLoading, setDetailLoading] = useState(false);
@@ -42,12 +44,25 @@ const DashboardCustomers = () => {
         content: ''
     });
 
+    useEffect(() => {
+        const fetchTags = async () => {
+            try {
+                const res = await crmApi.getTags();
+                setTags(res.data || []);
+            } catch (err) {
+                console.error('Error fetching tags:', err);
+            }
+        };
+        fetchTags();
+    }, []);
+
     const fetchCustomers = useCallback(async () => {
         setLoading(true);
         try {
             const res = await crmApi.getProfiles({
                 search: searchTerm,
                 segment: filterSegment,
+                tags: filterTag,
                 page: currentPage,
                 page_size: 10
             });
@@ -59,7 +74,7 @@ const DashboardCustomers = () => {
         } finally {
             setLoading(false);
         }
-    }, [currentPage, searchTerm, filterSegment]);
+    }, [currentPage, searchTerm, filterSegment, filterTag]);
 
     useEffect(() => {
         fetchCustomers();
@@ -71,7 +86,7 @@ const DashboardCustomers = () => {
             const token = localStorage.getItem('access_token');
             const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/';
             const cleanBaseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
-            const url = `${cleanBaseURL}crm/customers/export_csv/?token=${token}&segment=${filterSegment}&search=${encodeURIComponent(searchTerm)}`;
+            const url = `${cleanBaseURL}crm/customers/export_csv/?token=${token}&segment=${filterSegment}&tags=${filterTag}&search=${encodeURIComponent(searchTerm)}`;
             
             const link = document.createElement('a');
             link.href = url;
@@ -163,6 +178,18 @@ const DashboardCustomers = () => {
                     <option value="regular">عملاء منتظمين (Regular)</option>
                     <option value="vip">عملاء VIP 👑</option>
                     <option value="inactive">عملاء خاملين (Inactive)</option>
+                </select>
+                <select
+                    value={filterTag}
+                    onChange={(e) => setFilterTag(e.target.value)}
+                    className="bg-cream-50 dark:bg-dark-600 border border-gold-50 dark:border-dark-600 px-4 py-3 rounded-2xl focus:outline-none text-sm min-w-[150px] text-text-primary dark:text-cream-50"
+                >
+                    <option value="">كل الوسوم</option>
+                    {tags.map((tag) => (
+                        <option key={tag.id} value={tag.id}>
+                            {tag.name}
+                        </option>
+                    ))}
                 </select>
             </div>
 
@@ -303,14 +330,43 @@ const DashboardCustomers = () => {
                                 </div>
                             ) : customerDetail && (
                                 <>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-gold-50 dark:bg-dark-800 p-6 rounded-[32px] border border-gold-100 dark:border-dark-600">
-                                            <p className="text-[10px] font-black text-gold-600 dark:text-gold-400 uppercase mb-1">إجمالي الإنفاق</p>
-                                            <p className="text-xl font-black font-poppins text-gold-700 dark:text-gold-400">{parseFloat(customerDetail.total_spent).toFixed(2)} د.ل</p>
+                                    {/* Birthday Alerts */}
+                                    {(() => {
+                                        const bDay = Number(customerDetail.birth_day);
+                                        const bMonth = Number(customerDetail.birth_month);
+                                        if (bDay && bMonth) {
+                                            const today = new Date();
+                                            const isBdayToday = today.getDate() === bDay && (today.getMonth() + 1) === bMonth;
+                                            const isBdayMonth = (today.getMonth() + 1) === bMonth;
+                                            if (isBdayToday) {
+                                                return (
+                                                    <div className="p-5 bg-gradient-to-r from-amber-500 to-gold-600 text-white rounded-[28px] flex items-center gap-3 font-bold text-sm shadow-lg shadow-gold-500/25 animate-bounce">
+                                                        <span>🎉 يصادف اليوم عيد ميلاد العميل! يمكنك إرسال كود تهنئة وخصم خاص.</span>
+                                                    </div>
+                                                );
+                                            } else if (isBdayMonth) {
+                                                return (
+                                                    <div className="p-4 bg-gold-50 dark:bg-dark-800 border border-gold-200 dark:border-dark-600 text-gold-700 dark:text-gold-400 rounded-[28px] flex items-center gap-3 font-bold text-sm">
+                                                        <span>🎂 يصادف هذا الشهر عيد ميلاد العميل.</span>
+                                                    </div>
+                                                );
+                                            }
+                                        }
+                                        return null;
+                                    })()}
+
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="bg-gold-50 dark:bg-dark-800 p-5 rounded-[28px] border border-gold-100 dark:border-dark-600">
+                                            <p className="text-[9px] font-black text-gold-600 dark:text-gold-400 uppercase mb-1">إجمالي الإنفاق</p>
+                                            <p className="text-sm md:text-base font-black font-poppins text-gold-700 dark:text-gold-400">{parseFloat(customerDetail.total_spent).toFixed(2)} د.ل</p>
                                         </div>
-                                        <div className="bg-blue-50 dark:bg-dark-800 p-6 rounded-[32px] border border-blue-100 dark:border-dark-600">
-                                            <p className="text-[10px] font-black text-blue-600 dark:text-gold-400 uppercase mb-1">الطلبات</p>
-                                            <p className="text-xl font-black font-poppins text-blue-700">{customerDetail.total_orders}</p>
+                                        <div className="bg-blue-50 dark:bg-dark-800 p-5 rounded-[28px] border border-blue-100 dark:border-dark-600">
+                                            <p className="text-[9px] font-black text-blue-600 dark:text-gold-400 uppercase mb-1">الطلبيات</p>
+                                            <p className="text-sm md:text-base font-black font-poppins text-blue-700">{customerDetail.total_orders}</p>
+                                        </div>
+                                        <div className="bg-purple-50 dark:bg-dark-800 p-5 rounded-[28px] border border-purple-100 dark:border-dark-600">
+                                            <p className="text-[9px] font-black text-purple-600 dark:text-gold-400 uppercase mb-1">معدل الطلب</p>
+                                            <p className="text-sm md:text-base font-black font-poppins text-purple-700">{parseFloat(customerDetail.avg_order_value || 0).toFixed(2)} د.ل</p>
                                         </div>
                                     </div>
 
@@ -341,6 +397,83 @@ const DashboardCustomers = () => {
                                                     {customerDetail.preferred_gender === 'M' ? 'رجالي' : customerDetail.preferred_gender === 'F' ? 'نسائي' : customerDetail.preferred_gender === 'U' ? 'للجنسين' : 'غير محدد'}
                                                 </p>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Fragrance Preferences */}
+                                    {((customerDetail.favorite_brands_display && customerDetail.favorite_brands_display.length > 0) || 
+                                      (customerDetail.favorite_families_display && customerDetail.favorite_families_display.length > 0)) && (
+                                        <div className="space-y-4">
+                                            <h4 className="font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
+                                                <TagIcon size={18} className="text-gold-500" />
+                                                التفضيلات العطرية
+                                            </h4>
+                                            <div className="bg-cream-50 dark:bg-dark-800 p-6 rounded-[32px] border border-gold-50 dark:border-dark-600 space-y-4">
+                                                {customerDetail.favorite_brands_display && customerDetail.favorite_brands_display.length > 0 && (
+                                                    <div>
+                                                        <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">الماركات المفضلة</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {customerDetail.favorite_brands_display.map((brand, idx) => (
+                                                                <span key={idx} className="bg-gold-100/50 dark:bg-dark-600 text-gold-700 dark:text-gold-400 px-3 py-1 rounded-full text-xs font-bold">
+                                                                    {brand}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {customerDetail.favorite_families_display && customerDetail.favorite_families_display.length > 0 && (
+                                                    <div>
+                                                        <p className="text-[10px] font-black text-text-secondary dark:text-gold-400 uppercase mb-1">العائلات العطرية المفضلة</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {customerDetail.favorite_families_display.map((family, idx) => (
+                                                                <span key={idx} className="bg-cream-100 dark:bg-dark-600 text-gold-700 dark:text-gold-400 px-3 py-1 rounded-full text-xs font-bold">
+                                                                    {family}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* WhatsApp Direct templates */}
+                                    <div className="space-y-4">
+                                        <h4 className="font-black text-text-primary dark:text-cream-50 flex items-center gap-2">
+                                            <MessageSquare size={18} className="text-gold-500" />
+                                            قوالب رسائل واتساب الجاهزة
+                                        </h4>
+                                        <div className="bg-cream-50 dark:bg-dark-800 p-6 rounded-[32px] border border-gold-50 dark:border-dark-600 space-y-3">
+                                            {[
+                                                {
+                                                    title: 'متابعة ما بعد الشراء (عطور)',
+                                                    text: `أهلاً ${customerDetail.name}، نتمنى أن تكون عطور متجرنا قد نالت إعجابك! نسعد بخدمتك دائماً ونرحب بآرائك.`
+                                                },
+                                                {
+                                                    title: 'دعوة وعرض VIP خاص',
+                                                    text: `أهلاً ${customerDetail.name}، بصفتك من كبار عملاء VIP لدينا، قمنا بتوفير تشكيلة جديدة وحصرية خصيصاً لك بخصم خاص!`
+                                                },
+                                                {
+                                                    title: 'تهنئة عيد الميلاد',
+                                                    text: `كل عام وأنت بخير أستاذ ${customerDetail.name} بمناسبة عيد ميلادك! يسعدنا إهداؤك كود خصم حصري: BDAY10 لطلبك القادم.`
+                                                }
+                                            ].map((tpl, i) => (
+                                                <button
+                                                    key={i}
+                                                    onClick={() => {
+                                                        const cleanPhone = customerDetail.phone.replace(/\s+/g, '');
+                                                        const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(tpl.text)}`;
+                                                        window.open(waUrl, '_blank');
+                                                    }}
+                                                    className="w-full text-right bg-white dark:bg-dark-700 hover:bg-gold-50/50 dark:hover:bg-dark-600 p-4 rounded-2xl border border-gold-100 dark:border-dark-600 flex justify-between items-center transition-all group"
+                                                >
+                                                    <div className="space-y-1">
+                                                        <p className="font-black text-xs text-gold-700 dark:text-gold-400">{tpl.title}</p>
+                                                        <p className="text-[10px] text-text-secondary dark:text-gold-400 truncate max-w-[320px] md:max-w-[450px]">{tpl.text}</p>
+                                                    </div>
+                                                    <MessageSquare size={16} className="text-green-500 group-hover:scale-110 transition-transform" />
+                                                </button>
+                                            ))}
                                         </div>
                                     </div>
 
