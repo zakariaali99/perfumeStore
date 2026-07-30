@@ -28,3 +28,8 @@ old-sys/
 # DB
 *.sqlite3
 backend/db.sqlite3
+
+# Next step & New system
+next_step/
+new/
+
