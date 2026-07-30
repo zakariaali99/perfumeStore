@@ -10,9 +10,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
     const handleUpdateQuantity = (item, newQuantity) => {
         if (newQuantity < 1) return;
 
-        if (item.variant && item.variant.stock_quantity !== undefined) {
-            if (newQuantity > item.variant.stock_quantity) {
-                toast.error(`عذراً، الكمية المتوفرة ${item.variant.stock_quantity} فقط`);
+        if (item.variant && item.variant.available_stock !== undefined) {
+            if (newQuantity > item.variant.available_stock) {
+                toast.error(`عذراً، الكمية المتوفرة ${item.variant.available_stock} فقط`);
                 return;
             }
         }

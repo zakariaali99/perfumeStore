@@ -42,7 +42,6 @@ class ProductFactory(factory.django.DjangoModelFactory):
         skip_postgeneration_save = True
 
     name_ar = factory.Sequence(lambda n: f'عطر {n}')
-    slug = factory.Sequence(lambda n: f'perfume-{n}')
     description = 'وصف العطر'
     story = 'قصة العطر'
     gender = 'unisex'

@@ -63,24 +63,22 @@ const Checkout = () => {
     };
 
     const handleApplyCoupon = async () => {
-        if (!couponCode) return;
+        const trimmedCode = couponCode.trim();
+        if (!trimmedCode) return;
         setApplyingCoupon(true);
         try {
-            const res = await marketingApi.validateCoupon(couponCode, cart.total_amount);
+            const res = await marketingApi.validateCoupon(trimmedCode, cart.total_amount);
             const couponData = res.data;
 
-            let calculated_discount = 0;
-            if (couponData.discount_type === 'percentage') {
-                calculated_discount = (cart.total_amount * couponData.discount_value) / 100;
-                if (couponData.max_discount) {
-                    calculated_discount = Math.min(calculated_discount, couponData.max_discount);
-                }
-            } else {
-                calculated_discount = couponData.discount_value;
+            if (!couponData.valid) {
+                toast.error(couponData.message || 'كود الخصم غير صحيح أو منتهي الصلاحية');
+                return;
             }
 
+            const calculated_discount = parseFloat(couponData.discount_amount) || 0;
+
             applyCoupon({
-                code: couponCode,
+                code: trimmedCode,
                 discount_type: couponData.discount_type,
                 discount_value: couponData.discount_value,
                 calculated_discount
@@ -97,6 +95,22 @@ const Checkout = () => {
     };
 
     const handleSubmit = async () => {
+        if (!formData.customer_name.trim()) {
+            toast.error('يرجى إدخال الاسم بالكامل');
+            setStep(1);
+            return;
+        }
+        if (!formData.customer_phone.trim()) {
+            toast.error('يرجى إدخال رقم الهاتف');
+            setStep(1);
+            return;
+        }
+        if (!formData.city.trim() || !formData.address.trim()) {
+            toast.error('يرجى إكمال تفاصيل العنوان (المدينة والعنوان التفصيلي)');
+            setStep(2);
+            return;
+        }
+
         setLoading(true);
         try {
             const parseNum = (val) => {
@@ -119,13 +133,13 @@ const Checkout = () => {
             }
 
             const orderData = {
-                customer_name: formData.customer_name || '',
-                customer_phone: formData.customer_phone || '',
-                customer_email: formData.customer_email || '',
-                city: formData.city || '',
-                area: formData.area || '',
-                address: formData.address || '',
-                notes: formData.notes || '',
+                customer_name: formData.customer_name.trim(),
+                customer_phone: formData.customer_phone.trim(),
+                customer_email: formData.customer_email.trim(),
+                city: formData.city.trim(),
+                area: formData.area.trim(),
+                address: formData.address.trim(),
+                notes: formData.notes.trim(),
                 birth_day: parseNum(formData.birth_day),
                 birth_month: parseNum(formData.birth_month),
                 birth_year: parseNum(formData.birth_year),

@@ -1,7 +1,7 @@
 import datetime
 import random
 from decimal import Decimal
-from django.db import transaction, IntegrityError
+from django.db import transaction, IntegrityError, NotSupportedError
 from django.db.models import F
 from django.utils import timezone
 from rest_framework import viewsets, status, permissions
@@ -71,7 +71,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-        # Customer profile
+        # Customer profile resolution
         phone = data.get('customer_phone', '').strip()
         customer_name = data.get('customer_name', '').strip()
 
@@ -85,29 +85,32 @@ class OrderViewSet(viewsets.ModelViewSet):
             'location_details': data.get('location_details', ''),
         }
 
-        customer_profile = CustomerProfile.objects.filter(name=customer_name, phone=phone).first()
-        if not customer_profile:
+        try:
+            with transaction.atomic():
+                customer_profile, created = CustomerProfile.objects.get_or_create(
+                    phone=phone,
+                    defaults={'name': customer_name, **defaults}
+                )
+                if not created and customer_profile.name != customer_name:
+                    customer_profile.name = customer_name
+                    for key, value in defaults.items():
+                        if value:
+                            setattr(customer_profile, key, value)
+                    customer_profile.save()
+        except IntegrityError:
             customer_profile = CustomerProfile.objects.filter(phone=phone).first()
-            if customer_profile:
-                customer_profile.name = customer_name
-                for key, value in defaults.items():
-                    if value:
-                        setattr(customer_profile, key, value)
-                customer_profile.save()
-            else:
-                customer_profile = CustomerProfile.objects.create(**defaults)
-        else:
-            for key, value in defaults.items():
-                if value:
-                    setattr(customer_profile, key, value)
-            customer_profile.save()
 
-        # Resolve variants with locking
+        # Resolve variants with locking (fallback for SQLite which doesn't support SELECT FOR UPDATE)
         items_data = data['items']
         variant_ids = [item['variant_id'] for item in items_data]
-        variants = {
-            v.id: v for v in ProductVariant.objects.select_for_update().filter(id__in=variant_ids)
-        }
+        try:
+            variants = {
+                v.id: v for v in ProductVariant.objects.select_for_update().filter(id__in=variant_ids)
+            }
+        except NotSupportedError:
+            variants = {
+                v.id: v for v in ProductVariant.objects.filter(id__in=variant_ids)
+            }
 
         order_items = []
         subtotal = Decimal('0.00')
@@ -192,7 +195,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                 total_price=item['total_price']
             )
             v = item['variant']
-            if v.is_calculated_from_ml and v.size_ml and v.size_ml > 0:
+            if v.product.stock_type == 'bulk_ml' and v.is_calculated_from_ml and v.size_ml and v.size_ml > 0:
                 needed_ml = v.size_ml * item['quantity']
                 Product.objects.filter(id=v.product.id).update(
                     bulk_ml_stock=F('bulk_ml_stock') - needed_ml
@@ -206,15 +209,16 @@ class OrderViewSet(viewsets.ModelViewSet):
         if coupon:
             Coupon.objects.filter(id=coupon.id).update(used_count=F('used_count') + 1)
 
-        # Update customer stats atomically
+        # Update customer stats safely without zero division DB expressions
+        new_total_orders = (customer_profile.total_orders or 0) + 1
+        new_total_spent = (customer_profile.total_spent or Decimal('0.00')) + total
+        new_avg = (new_total_spent / Decimal(new_total_orders)).quantize(Decimal('0.01'))
+
         CustomerProfile.objects.filter(id=customer_profile.id).update(
-            total_orders=F('total_orders') + 1,
-            total_spent=F('total_spent') + total,
+            total_orders=new_total_orders,
+            total_spent=new_total_spent,
+            avg_order_value=new_avg,
             last_order_date=timezone.now()
-        )
-        # avg_order_value computed via DB expression
-        CustomerProfile.objects.filter(id=customer_profile.id).update(
-            avg_order_value=F('total_spent') / F('total_orders')
         )
         customer_profile.refresh_from_db()
         customer_profile.update_segment()
@@ -227,13 +231,13 @@ class OrderViewSet(viewsets.ModelViewSet):
             changed_by=request.user if request.user.is_authenticated else None
         )
 
-        # Clear cart best-effort
+        # Clear cart best-effort using user auth or guest X-Cart-Session header
         try:
             if request.user.is_authenticated:
                 cart_obj = Cart.objects.filter(user=request.user).first()
             else:
-                session_key = request.session.session_key
-                cart_obj = Cart.objects.filter(session_key=session_key).first() if session_key else None
+                session_key = request.headers.get('X-Cart-Session') or request.session.session_key
+                cart_obj = Cart.objects.filter(session_key=session_key[:40]).first() if session_key else None
             if cart_obj:
                 cart_obj.items.all().delete()
         except Exception:
@@ -294,7 +298,10 @@ class OrderViewSet(viewsets.ModelViewSet):
                 else:
                     order = Order.objects.get(order_number=order_number)
                 serializer = self.get_serializer(order)
-                return Response({'single': True, 'order': serializer.data})
+                data = dict(serializer.data)
+                data['single'] = True
+                data['order'] = serializer.data
+                return Response(data)
             except Order.DoesNotExist:
                 return Response(
                     {'error': 'الطلب غير موجود. يرجى التأكد من الرقم والمحاولة مرة أخرى.'},

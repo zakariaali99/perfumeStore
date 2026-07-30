@@ -214,12 +214,17 @@ def test_update_status_delivered_then_returned_restores_stock(admin_client):
     assert variant.stock_quantity == 10
 
 
-def test_track_order_requires_phone_and_order_number(api_client):
-    response = api_client.get(f"{ORDERS_URL}track/?order_number=ORD-123")
+def test_track_order_requires_at_least_one_parameter(api_client):
+    response = api_client.get(f"{ORDERS_URL}track/")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+
+def test_track_order_by_phone_only(api_client):
+    order = OrderFactory(customer_phone="0911234567")
     response = api_client.get(f"{ORDERS_URL}track/?phone=0911234567")
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["single"] is False
+    assert len(response.data["orders"]) == 1
 
 
 def test_track_order_returns_order_when_matches(api_client):
